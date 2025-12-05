@@ -6,30 +6,24 @@
     <title>UBeli - Homepage</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
     <header class="header">
         <div class="container header-content">
             <a href="/" class="logo">UBeli</a>
-
             <div class="search-bar">
-                <span class="search-icon">🔍</span>
+                <span class="search-icon"><i class="fas fa-search"></i></span>
                 <input type="text" placeholder="Cari Barang...">
             </div>
-
             <div class="header-actions">
                 <a href="/penjual/tambah-produk" class="btn-jual">+ Jual Barang</a>
-                
                 <div class="icon-group">
-                    <a href="/wishlist" class="icon-link" title="Wishlist">❤️</a>
-                    <a href="#" class="icon-link" title="Notifikasi">🔔</a>
-                    <a href="#" class="icon-link" title="Chat">💬</a>
-                    
-                    <div class="profile-menu">
-                        <a href="/login" th:if="${session.user == null}" class="icon-link">👤 Login</a>
-                        <a href="/profil" th:if="${session.user != null}" class="icon-link">👤 <span th:text="${session.user.namaLengkap}">User</span></a>
-                    </div>
+                    <a href="/wishlist" class="icon-link"><i class="far fa-heart"></i></a>
+                    <a href="#" class="icon-link"><i class="far fa-bell"></i></a>
+                    <a href="#" class="icon-link"><i class="far fa-comment"></i></a>
+                    <a href="/login" class="icon-link"><i class="far fa-user"></i></a>
                 </div>
             </div>
         </div>

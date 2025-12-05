@@ -11,4 +11,5 @@ public interface PembeliRepository extends JpaRepository<Pembeli, Long> {
     
     // Cek apakah email sudah terdaftar (saat register)
     boolean existsByEmail(String email);
+    //Pembeli findByEmailAndPassword(String email, String password);
 }

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk ke UBeli</title>
+
+  <link rel="stylesheet" th:href="@{/css/auth.css}">
+
+  <!--font-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="form-container">
+      <h2 class="title">
+        Masuk ke <span class="highlight">U</span><span class="secondary">Beli</span>
+      </h2>
+
+      <!-- Spring Security default login POST -->
+      <form th:action="@{/login}" method="POST" class="register-form">
+
+        <input type="email" name="email" placeholder="email@domain.com" required>
+
+        <div class="password-field">
+          <input id="password" type="password" name="password" placeholder="password" required>
+
+          <button type="button" class="eye-toggle" aria-label="Toggle password visibility">
+              <i data-lucide="eye" class="icon-eye"></i>
+              <i data-lucide="eye-off" class="icon-eye-off hidden"></i>
+          </button>
+        </div>
+
+        <button type="submit" class="btn">Masuk</button>
+
+        <a th:href="@{/register}" class="btn2">Belum punya akun?</a>
+      </form>
+
+      <!-- Error message from login?error -->
+      <p class="error" th:if="${param.error}">
+        Email atau password salah
+      </p>
+
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    lucide.createIcons();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.querySelector('.eye-toggle');
+        const passwordInput = document.getElementById('password');
+        const iconEye = document.querySelector('.icon-eye');
+        const iconEyeOff = document.querySelector('.icon-eye-off');
+
+        toggleBtn.addEventListener('click', () => {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        iconEye.classList.toggle('hidden', !isPassword);
+        iconEyeOff.classList.toggle('hidden', isPassword);
+        });
+    });
+  </script>
+
+</body>
+</html>
