@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profil - UBeli</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="/" class="logo">UBeli</a>
+            <div class="search-bar">
+                <span class="search-icon"><i class="fas fa-search"></i></span>
+                <input type="text" placeholder="Cari Barang...">
+            </div>
+            <div class="header-actions">
+                <a href="/penjual/tambah-produk" class="btn-jual">+ Jual Barang</a>
+                <div class="icon-group">
+                    <a href="/wishlist" class="icon-link"><i class="far fa-heart"></i></a>
+                    <a href="#" class="icon-link"><i class="far fa-bell"></i></a>
+                    <a href="#" class="icon-link"><i class="far fa-comment"></i></a>
+                    <a href="/profil" class="icon-link"><i class="far fa-user"></i></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <div class="edit-profil-container">
+            
+            <form th:action="@{/penjual/update-profil}" method="post" class="edit-profil-form">
+                
+                <!-- Avatar Section -->
+                <div class="edit-avatar-section">
+                    <div class="edit-avatar">
+                        <i class="fas fa-user"></i>
+                        <label for="fotoInput" class="edit-avatar-badge">
+                            <i class="fas fa-pen"></i>
+                        </label>
+                        <input type="file" id="fotoInput" name="foto" accept="image/*" style="display: none;">
+                    </div>
+                    <h2 class="edit-nama" th:text="${penjual.namaLengkap}">Fajar</h2>
+                </div>
+
+                <!-- Form Fields -->
+                <div class="edit-form-fields">
+                    
+                    <!-- Email -->
+                    <div class="form-field">
+                        <div class="field-input-wrapper">
+                            <input type="email" name="email" th:value="${penjual.email}" placeholder="email@domain.com">
+                            <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- No HP -->
+                    <div class="form-field">
+                        <div class="field-input-wrapper">
+                            <input type="tel" name="noHp" th:value="${penjual.noHp}" placeholder="+62 898 9289 2839">
+                            <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-field">
+                        <div class="field-input-wrapper">
+                            <input type="text" name="deskripsi" placeholder="Description">
+                            <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Metode Pembayaran -->
+                <div class="payment-section">
+                    <h4>Metode Pembayaran yang Diterima</h4>
+                    
+                    <div class="payment-options">
+                        
+                        <!-- COD -->
+                        <label class="payment-option">
+                            <input type="checkbox" name="metodePembayaran" value="COD" checked>
+                            <div class="payment-option-box">
+                                <div class="payment-icon cod">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <span class="payment-name">Cash on Delivery (COD)</span>
+                                    <span class="payment-desc">Bayar saat barang tiba</span>
+                                </div>
+                                <div class="payment-check">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- QRIS -->
+                        <label class="payment-option">
+                            <input type="checkbox" name="metodePembayaran" value="QRIS" checked>
+                            <div class="payment-option-box">
+                                <div class="payment-icon qris">
+                                    <i class="fas fa-qrcode"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <span class="payment-name">QRIS</span>
+                                    <span class="payment-desc">Mendukung semua bank dan e-wallet</span>
+                                </div>
+                                <div class="payment-check">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="edit-form-actions">
+                    <button type="submit" class="btn-simpan">Simpan Perubahan</button>
+                    <a href="/penjual/profil-toko" class="btn-batal">Batal</a>
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+    <footer style="text-align: center; padding: 20px; margin-top: 40px; background: #fff;">
+        &copy; 2023 UBeli. All rights reserved.
+    </footer>
+
+    <script>
+        // Photo preview
+        document.getElementById('fotoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const avatar = document.querySelector('.edit-avatar');
+                    avatar.style.backgroundImage = 'url(' + event.target.result + ')';
+                    avatar.style.backgroundSize = 'cover';
+                    avatar.querySelector('i.fa-user').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Field edit button focus
+        document.querySelectorAll('.btn-field-edit').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.parentElement.querySelector('input').focus();
+            });
+        });
+
+        // Payment checkbox visual toggle
+        document.querySelectorAll('.payment-option input').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const box = this.nextElementSibling;
+                if (this.checked) {
+                    box.classList.add('selected');
+                } else {
+                    box.classList.remove('selected');
+                }
+            });
+            // Set initial state
+            if (checkbox.checked) {
+                checkbox.nextElementSibling.classList.add('selected');
+            }
+        });
+    </script>
+
+</body>
+</html>
