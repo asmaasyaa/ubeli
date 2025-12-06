@@ -1,12 +1,19 @@
 package com.ubeli.controller;
 
+import com.ubeli.service.AuthService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
 
 @Controller
 public class AuthController {
+
+    private final AuthService authService;
+
+    // Constructor injection
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @GetMapping("/login")
     public String loginPage() {
@@ -16,22 +23,16 @@ public class AuthController {
     @PostMapping("/login")
     public String loginProcess(
             @RequestParam String email,
-            @RequestParam String password
+            @RequestParam String password,
+            Model model
     ) {
-        // nanti dicek database
-        System.out.println("Login: " + email + " - " + password);
+        boolean success = authService.login(email, password);
 
-        return "redirect:/home";
-    }
+        if(success) {
+            return "redirect:/home";
+        }
 
-    // Method Login (sementara tidak dipakai)
-    public String validasiLogin(String email, String password) {
-        System.out.println("Mengecek login user: " + email);
-        return "redirect:/home";
-    }
-
-    public String registrasiUser(String nama, String email, String pass) {
-        System.out.println("Mendaftarkan user baru: " + nama);
-        return "redirect:/login";
+        model.addAttribute("error", "Email atau password salah");
+        return "general/login";
     }
 }

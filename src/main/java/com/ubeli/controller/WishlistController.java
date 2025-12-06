@@ -10,32 +10,13 @@ import com.ubeli.entity.*;
 @Controller
 public class WishlistController {
 
-    // @Autowired
-    // private WishlistRepository wishlistRepository;
-    // @Autowired
-    // private ProdukRepository produkRepository;
-    // @Autowired
-    // private PembeliRepository pembeliRepository;
-
     // USE CASE: TAMBAH KE WISHLIST
     @PostMapping("/wishlist/tambah")
     public String tambahWishlist(@RequestParam Long pembeliId, @RequestParam Long produkId) {
         
-        // 1. Ambil Data
-        // Pembeli pembeli = pembeliRepository.findById(pembeliId).orElse(null);
-        // Produk produk = produkRepository.findById(produkId).orElse(null);
+        System.out.println("Produk " + produkId + " masuk ke wishlist pembeli " + pembeliId);
 
-        // 2. Simpan ke Database Wishlist
-        // if (pembeli != null && produk != null) {
-        //     Wishlist wishlistBaru = new Wishlist();
-        //     wishlistBaru.setPembeli(pembeli);
-        //     wishlistBaru.setProduk(produk);
-             
-        //     wishlistRepository.save(wishlistBaru);
-             System.out.println("Produk " + produkId + " masuk ke wishlist pembeli " + pembeliId);
-        // }
-
-        return "redirect:/katalog"; // Balik lagi belanja
+        return "redirect:/katalog"; 
     }
 
     // USE CASE: HAPUS DARI WISHLIST

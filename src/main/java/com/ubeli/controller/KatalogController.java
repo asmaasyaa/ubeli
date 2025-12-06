@@ -19,17 +19,24 @@ public class KatalogController {
 
     // 1. HALAMAN UTAMA (HOME)
     // Menampilkan semua produk yang ada di database
-    @GetMapping("/")
+    // @GetMapping("/")
+    // public String home(Model model) {
+    //     // Ambil semua data produk dari SQL Server
+    //     List<Produk> listProduk = produkRepository.findAll();
+        
+    //     // Kirim data ke HTML dengan nama variabel 'produkList'
+    //     model.addAttribute("produkList", listProduk);
+        
+    //     // Buka file: src/main/resources/templates/general/home.html
+    //     return "general/home";
+    // }
+    @GetMapping({"/", "/home"})
     public String home(Model model) {
-        // Ambil semua data produk dari SQL Server
         List<Produk> listProduk = produkRepository.findAll();
-        
-        // Kirim data ke HTML dengan nama variabel 'produkList'
         model.addAttribute("produkList", listProduk);
-        
-        // Buka file: src/main/resources/templates/general/home.html
         return "general/home";
     }
+
 
     // 2. HALAMAN DETAIL PRODUK
     // Menampilkan info lengkap saat produk diklik

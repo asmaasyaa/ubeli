@@ -1,8 +1,7 @@
 package com.ubeli.controller;
 
 import org.springframework.stereotype.Controller;
-// import com.ubeli.repository.PembeliRepository;
-// import com.ubeli.repository.PenjualRepository;
+
 
 @Controller
 public class BlokirUserController {

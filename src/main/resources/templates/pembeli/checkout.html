@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran | UBeli</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/checkout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="/" class="logo">UBeli</a>
+            <div class="search-bar">
+                <span class="search-icon"><i class="fas fa-search"></i></span>
+                <input type="text" placeholder="Cari Barang...">
+            </div>
+            <div class="header-actions">
+                <a href="/penjual/tambah-produk" class="btn-jual">+ Jual Barang</a>
+                <div class="icon-group">
+                    <a href="/wishlist" class="icon-link"><i class="far fa-heart"></i></a>
+                    <a href="#" class="icon-link"><i class="far fa-bell"></i></a>
+                    <a href="#" class="icon-link"><i class="far fa-comment"></i></a>
+                    <a href="/login" class="icon-link"><i class="far fa-user"></i></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CHECKOUT -->
+    <main class="container checkout-page">
+
+        <!-- KIRI -->
+        <section class="checkout-left">
+
+            <!-- Item yang dipesan -->
+            <div class="box item-box">
+                <h3 class="box-title">Item yang dipesan</h3>
+
+                <div class="item-card">
+                    <div class="item-thumb"></div>
+
+                    <div class="item-info">
+                        <h4 class="item-name">
+                            <span th:text="${produk.namaProduk}">
+                                iPhone 17 256GB Like New
+                            </span>
+                        </h4>
+
+                        <div class="item-meta">
+                            <span class="qty">Qty: <b>1</b></span>
+                            <span class="price" th:text="'Rp' + ${#numbers.formatDecimal(produk.harga,0,'COMMA',0,'POINT')}">Rp20.000.000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detail Pengambilan -->
+            <div class="box pickup-box">
+                <h3 class="box-title">Detail Pengambilan</h3>
+
+                <div class="pickup-card">
+                    <div class="pickup-icon">📦</div>
+
+                    <div class="pickup-info">
+                        <strong>Cash on Delivery (COD)</strong>
+                        <p>Pembayaran di Tempat – FILKOM UB</p>
+                        <span class="est">Estimasi: 27 Oktober 2025</span>
+                    </div>
+
+                    <div class="pickup-next">›</div>
+                </div>
+            </div>
+
+            <!-- Pesan untuk Penjual -->
+            <div class="box">
+                <h3 class="box-title">Pesan untuk Penjual</h3>
+                <textarea class="note" placeholder="Tulis catatan di sini..."></textarea>
+            </div>
+        </section>
+
+        <!-- KANAN -->
+        <section class="checkout-right">
+
+            <!-- Rincian Pembayaran -->
+            <div class="box">
+                <h3 class="box-title">Rincian Pembayaran</h3>
+
+                <div class="payment-row">
+                    <span>Subtotal produk</span>
+                    <span class="val" th:text="'Rp' + ${#numbers.formatDecimal(produk.harga,0,'COMMA',0,'POINT')}">Rp20.000.000</span>
+                </div>
+
+                <div class="payment-row">
+                    <span>Biaya pengiriman</span>
+                    <span class="val green">Gratis</span>
+                </div>
+
+                <div class="payment-total">
+                    <span>Total pembayaran</span>
+                    <span class="val total">Rp20.000.000</span>
+                </div>
+            </div>
+
+            <!-- Metode Pembayaran -->
+            <div class="box">
+                <h3 class="box-title">Metode Pembayaran</h3>
+
+                <div class="method-card active">
+                    <div class="method-icon">📦</div>
+                    <div>
+                        <strong>Cash on Delivery (COD)</strong>
+                        <p>Bayar saat barang tiba.</p>
+                    </div>
+                    <div class="method-check">✔</div>
+                </div>
+
+                <div class="method-card">
+                    <div class="method-icon">💳</div>
+                    <div>
+                        <strong>QRIS</strong>
+                        <p>Mendukung semua bank dan e-wallet.</p>
+                    </div>
+                    <div class="method-check off">○</div>
+                </div>
+
+            </div>
+
+            <!-- Info Aman -->
+            <div class="alert-safe">
+                <strong>Transaksi Aman</strong>
+                <p>Semua pembayaran dienkripsi dan diproses melalui sistem terverifikasi.</p>
+            </div>
+
+            <!-- Button -->
+            <div class="btn-row">
+                <a href="/katalog" class="btn-light">Kembali</a>
+                <a href="#" class="btn-primary">Bayar Sekarang</a>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>

@@ -6,11 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class ProdukController {
-
-    // Nanti autowired repository di sini
     
-    // Contoh method
     public void simpanProduk() {
-        // Logic simpan
     }
 }

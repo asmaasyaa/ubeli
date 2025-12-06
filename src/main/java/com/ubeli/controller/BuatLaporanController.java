@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Controller
 public class BuatLaporanController {
 
-    // @Autowired
-    // private LaporanRepository laporanRepository;
-
     // Method untuk Pembeli mengirim laporan
     public void kirimLaporan(String alasan, String buktiUrl, Long produkId) {
         // Logika simpan laporan baru ke database

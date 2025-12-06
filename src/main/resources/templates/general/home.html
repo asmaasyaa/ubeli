@@ -57,7 +57,7 @@
             </a>
             <a href="#" class="cat-item">
                 <div class="cat-icon">🏠</div>
-                <span>Properti</span>
+                <span>Furnitur</span>
             </a>
             <a href="#" class="cat-item">
                 <div class="cat-icon">📚</div>
@@ -74,7 +74,6 @@
             <div class="product-grid">
                 
                 <div th:each="p : ${produkList}" class="product-card">
-                    <div class="badge-verified">✓</div>
                     
                     <div class="product-image-placeholder">
                         <span>Foto Produk</span>
@@ -97,7 +96,6 @@
                     <button class="btn-wishlist-card">❤️</button>
                 </div>
                  <div class="product-card" th:if="${produkList == null or produkList.empty}">
-                     <div class="badge-verified">✓</div>
                      <div class="product-image-placeholder" style="background: #e1e5ea;">Dummy 1</div>
                      <div class="product-details">
                          <span class="product-cat">Elektronik</span>

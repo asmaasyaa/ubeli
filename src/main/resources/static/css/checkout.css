@@ -1,0 +1,229 @@
+/* ============ RESET ============ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #F9FAFD;
+    color: #333;
+}
+
+.checkout-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 25px;
+}
+
+/* ============ CHECKOUT LAYOUT ============ */
+.checkout-page {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+    margin-top: 20px;
+}
+
+/* ============ LEFT COLUMN ============ */
+.box {
+    background: #FFFFFF;
+    padding: 20px 22px;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    margin-bottom: 20px;
+}
+
+.box-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+/* Item card */
+.item-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.item-thumb {
+    width: 70px;
+    height: 70px;
+    background: #2F4A93;
+    border-radius: 10px;
+}
+
+.item-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.item-meta {
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    color: #E95C4B;
+    font-weight: 600;
+    width: 100%;
+}
+
+/* Pickup box */
+.pickup-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px;
+    background: #E9EFFA;
+    border-radius: 12px;
+}
+
+.pickup-icon {
+    font-size: 30px;
+}
+
+.pickup-info strong {
+    font-size: 15px;
+}
+
+.pickup-info p {
+    font-size: 13px;
+    margin: 3px 0;
+}
+
+.pickup-info .est {
+    font-size: 13px;
+    color: #E95C4B;
+    font-weight: 600;
+}
+
+.pickup-next {
+    margin-left: auto;
+    font-size: 22px;
+}
+
+/* Message Box */
+.note {
+    width: 100%;
+    height: 110px;
+    padding: 12px;
+    border: 2px solid #344FA0;
+    border-radius: 12px;
+    resize: none;
+    font-size: 14px;
+}
+
+/* ============ RIGHT COLUMN ============ */
+.payment-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.payment-row .green {
+    color: #4CAF50;
+}
+
+.payment-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #DDD;
+}
+
+.payment-total .total {
+    font-size: 18px;
+    font-weight: 700;
+    color: #E95C4B;
+}
+
+/* Payment Methods */
+.method-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    background: #EEF3FF;
+    margin-bottom: 14px;
+    cursor: pointer;
+}
+
+.method-card.active {
+    border: 2px solid #344FA0;
+    background: #E2E9FF;
+}
+
+.method-icon {
+    font-size: 30px;
+}
+
+.method-card p {
+    font-size: 13px;
+    color: #444;
+}
+
+.method-check {
+    margin-left: auto;
+    font-size: 20px;
+    color: #344FA0;
+}
+
+.method-check.off {
+    color: #BBB;
+}
+
+/* Safe alert */
+.alert-safe {
+    background: #FBEAEA;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.alert-safe strong {
+    color: #E95C4B;
+    font-size: 15px;
+}
+
+/* Buttons */
+.btn-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.btn-light,
+.btn-primary {
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    font-size: 15px;
+}
+
+.btn-light {
+    background: #E9EFFA;
+    color: #344FA0;
+}
+
+.btn-primary {
+    background: #344FA0;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2a3e84;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .checkout-page {
+        grid-template-columns: 1fr;
+    }
+}
