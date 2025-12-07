@@ -32,7 +32,7 @@ public class BuatLaporanController {
     @Autowired
     private PembeliRepository pembeliRepository;
 
-    @GetMapping("/buat")
+    @GetMapping("/laporan")
     public String buatLaporanPage() {
         return "pembeli/buat-laporan";
     }
