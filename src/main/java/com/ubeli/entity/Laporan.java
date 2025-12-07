@@ -2,6 +2,7 @@ package com.ubeli.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -14,8 +15,10 @@ public class Laporan {
 
     // ALASAN & BUKTI
     private String alasan;
+    private String deskripsi;
     private String buktiFotoUrl;
     private String status; // Pending, Selesai, Ditolak
+    private LocalDate tanggalKejadian;
 
     // RELASI 1: PELAPOR (Pembeli yang melapor)
     // Menggantikan 'private int pelaporId'
