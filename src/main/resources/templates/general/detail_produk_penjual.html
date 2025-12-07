@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Produk - UBeli</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="/" class="logo">UBeli</a>
+            <div class="search-bar">
+                <span class="search-icon"><i class="fas fa-search"></i></span>
+                <input type="text" placeholder="Cari Barang...">
+            </div>
+            <div class="header-actions">
+                <a href="/penjual/tambah-produk" class="btn-jual">+ Jual Barang</a>
+                <div class="icon-group">
+                    <a href="/wishlist" class="icon-link"><i class="far fa-heart"></i></a>
+                    <a href="#" class="icon-link"><i class="far fa-bell"></i></a>
+                    <a href="#" class="icon-link"><i class="far fa-comment"></i></a>
+                    <a href="/profil" class="icon-link"><i class="far fa-user"></i></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container detail-page">
+        
+        <!-- KOLOM KIRI: GALERI -->
+        <div class="gallery-column">
+            <div class="main-image-container">
+                <button class="nav-arrow left"><i class="fas fa-arrow-left"></i></button>
+                <div class="main-image" id="mainImage" style="background-color: #3B5998;"></div>
+                <button class="nav-arrow right"><i class="fas fa-arrow-right"></i></button>
+            </div>
+
+            <div class="thumbnail-row">
+                <div class="thumb active" style="background-color: #3B5998;"></div>
+                <div class="thumb" style="background-color: #2c4275;"></div>
+                <div class="thumb" style="background-color: #3B5998;"></div>
+                <div class="thumb" style="background-color: #2c4275;"></div>
+                <div class="thumb" style="background-color: #3B5998;"></div>
+                <div class="thumb" style="background-color: #2c4275;"></div>
+            </div>
+        </div>
+
+        <!-- KOLOM TENGAH: INFO PRODUK -->
+        <div class="info-column">
+            <h1 class="product-title-large" th:text="${p.namaProduk}">iPhone 17 256GB Like New Pemakaian Dua Bulan</h1>
+            
+            <div class="price-container">
+                <span class="price-large">Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">20.000.000</span></span>
+                <span class="price-original">Rp 24.000.000</span>
+            </div>
+
+            <!-- Detail Box -->
+            <div class="spec-box">
+                <h3 class="spec-header">Detail</h3>
+                <div class="spec-row">
+                    <span class="spec-label">Merk</span>
+                    <span class="spec-value">Apple</span>
+                </div>
+                <div class="spec-row">
+                    <span class="spec-label">Kondisi</span>
+                    <span class="spec-value">Like New</span>
+                </div>
+            </div>
+
+            <!-- Deskripsi Box -->
+            <div class="description-box">
+                <h3 class="spec-header">Deskripsi</h3>
+                <p class="desc-text" th:text="${p.deskripsi}">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse congue dolor sit amet pretium tristique. Praesent arcu ligula, venenatis id velit ut, congue. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse congue dolor sit amet pretium tristique. Praesent arcu ligula, venenatis id velit ut, congue.
+                </p>
+            </div>
+
+            <!-- Lokasi & Waktu -->
+            <div class="seller-meta">
+                <span class="seller-location">
+                    <i class="fas fa-map-marker-alt"></i> Lowokwaru, Malang
+                </span>
+                <span class="post-time">2 Hari Lalu</span>
+            </div>
+        </div>
+
+        <!-- KOLOM KANAN: TOMBOL AKSI PENJUAL -->
+        <div class="action-column">
+            <div class="action-card seller-actions">
+                
+                <!-- Promosikan Produk -->
+                <a th:href="@{/penjual/pengajuan-iklan(produkId=${p.produkId})}" class="btn-action btn-dark">
+                    Promosikan Produk
+                </a>
+
+                <!-- Edit Detail Produk -->
+                <a th:href="@{/penjual/edit-produk/{id}(id=${p.produkId})}" class="btn-action btn-light">
+                    Edit Detail Produk
+                </a>
+
+                <!-- Hapus Produk -->
+                <button type="button" class="btn-action btn-danger-outline" onclick="openDeleteModal()">
+                    Hapus Produk
+                </button>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Hapus -->
+    <div id="deleteModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h2>Hapus Produk</h2>
+                <button type="button" class="modal-close" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus produk ini?</p>
+                <p class="text-muted">Tindakan ini tidak dapat dibatalkan.</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-action btn-light" onclick="closeDeleteModal()">Batal</button>
+                <form th:action="@{/penjual/hapus-produk/{id}(id=${p.produkId})}" method="post" style="flex: 1;">
+                    <button type="submit" class="btn-action btn-danger-soft" style="width: 100%;">Hapus</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Thumbnail click
+        document.querySelectorAll('.thumb').forEach((thumb, index) => {
+            thumb.addEventListener('click', function() {
+                document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Modal functions
+        function openDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDeleteModal();
+        });
+    </script>
+
+</body>
+</html>
