@@ -12,24 +12,7 @@
 <body>
 
     <!-- HEADER -->
-    <header class="header">
-        <div class="container header-content">
-            <a href="/" class="logo">UBeli</a>
-            <div class="search-bar">
-                <span class="search-icon"><i class="fas fa-search"></i></span>
-                <input type="text" placeholder="Cari Barang...">
-            </div>
-            <div class="header-actions">
-                <a href="/penjual/tambah-produk" class="btn-jual">+ Jual Barang</a>
-                <div class="icon-group">
-                    <a href="/wishlist" class="icon-link"><i class="far fa-heart"></i></a>
-                    <a href="#" class="icon-link"><i class="far fa-bell"></i></a>
-                    <a href="#" class="icon-link"><i class="far fa-comment"></i></a>
-                    <a href="/profil" class="icon-link"><i class="far fa-user"></i></a>
-                </div>
-            </div>
-        </div>
-    </header>
+    <div th:replace="fragments/navbar :: navbar"></div>
 
     <main class="container">
 
@@ -42,14 +25,15 @@
                 <h1 class="profile-name" th:text="${penjual.namaLengkap}">Fajar</h1>
                 <div class="profile-location">
                     <i class="fas fa-map-marker-alt"></i>
-                    <span>Lowokwaru, Malang</span>
+                    <span th:text="${penjual.lokasiToko}">Lokasi Toko</span>
                 </div>
-                <p class="profile-bio">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse congue dolor sit amet pretium tristique. Praesent arcu ligula, venenatis id velit ut, congue aliquam justo.
+
+                <p class="profile-bio" th:text="${penjual.deskripsiToko}">
+                    Bio toko...
                 </p>
             </div>
             <div class="profile-join">
-                <span>Bergabung sejak 2022</span>
+                <span th:text="'Bergabung sejak ' + ${#temporals.format(penjual.createdAt, 'dd MMMM yyyy')}"></span>
             </div>
         </section>
 

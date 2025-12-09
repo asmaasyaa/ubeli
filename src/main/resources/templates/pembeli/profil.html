@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Pembeli - UBeli</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/profil.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<main class="container">
+
+    <!-- HEADER PROFIL -->
+    <section class="profile-header">
+        <div class="profile-avatar-large">
+            <i class="fas fa-user"></i>
+        </div>
+
+        <div class="profile-info">
+            <h1 class="profile-name" th:text="${pembeli.namaLengkap}">Nama Pembeli</h1>
+
+            <div class="profile-location">
+                <i class="fas fa-envelope"></i>
+                <span th:text="${pembeli.email}">email@example.com</span>
+            </div>
+
+            <p class="profile-bio">
+                Akun pembeli — tidak memiliki toko.
+            </p>
+        </div>
+
+        <div class="profile-join">
+            <span th:text="'Bergabung sejak ' + ${#dates.format(pembeli.createdAt, 'yyyy')}">
+                Bergabung sejak 2023
+            </span>
+        </div>
+    </section>
+
+    <!-- GRID UTAMA -->
+    <div class="profile-content-grid pembeli-grid">
+
+        <!-- SIDEBAR (kiri) -->
+        <aside class="account-sidebar">
+            <h3>Pengaturan Akun</h3>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-receipt"></i>
+                    <span>Riwayat Transaksi</span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Pengaturan</span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Pusat Bantuan</span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </nav>
+
+            <a href="/pembeli/edit-profil" class="btn-edit-profil">
+                <i class="fas fa-pen"></i> Edit Profil
+            </a>
+        </aside>
+
+        <!-- AREA KOSONG KANAN -->
+        <div class="empty-info-box">
+            <p>Halo <b th:text="${pembeli.namaLengkap}">User</b>!  
+            Kamu belum memiliki toko. Gunakan akun ini untuk berbelanja.</p>
+        </div>
+
+    </div>
+
+</main>
+
+<footer style="text-align: center; padding: 20px; margin-top: 50px; background: #fff;">
+    © 2023 UBeli. All rights reserved.
+</footer>
+
+</body>
+</html>

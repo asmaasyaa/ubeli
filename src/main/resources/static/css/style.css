@@ -6,8 +6,8 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif; /* Pakai font yang mirip desain */
-    background-color: #F5F6FA; /* Latar belakang abu muda */
+    font-family: 'Inter', sans-serif;
+    background-color: #F5F6FA;
     color: #333;
 }
 
@@ -17,81 +17,15 @@ body {
     padding: 0 20px;
 }
 
-a { text-decoration: none; color: inherit; }
-
-/* ================= HEADER ================= */
-.header {
-    background: #fff;
-    padding: 15px 0;
-    border-bottom: 1px solid #e0e0e0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+a {
+    text-decoration: none;
+    color: inherit;
 }
 
-.header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
+main.container {
+    padding-bottom: 80px;
 }
 
-.logo {
-    font-size: 24px;
-    font-weight: 700;
-    color: #E74C3C; /* Warna Merah Logo */
-}
-
-.search-bar {
-    flex-grow: 1;
-    max-width: 600px;
-    position: relative;
-}
-
-.search-bar input {
-    width: 100%;
-    padding: 12px 20px 12px 45px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #F0F2F5;
-    font-size: 14px;
-}
-
-.search-icon {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #888;
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
-.btn-jual {
-    background-color: #E74C3C;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    white-space: nowrap;
-}
-
-.icon-group {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    font-size: 20px;
-    color: #555;
-}
-
-.icon-link {
-    cursor: pointer;
-}
 
 /* ================= HERO BANNER ================= */
 .hero-banner {
@@ -100,7 +34,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .banner-placeholder {
-    background-color: #3B5998; /* Warna biru placeholder */
+    background-color: #3B5998;
     height: 300px;
     border-radius: 16px;
     display: flex;
@@ -196,15 +130,14 @@ a { text-decoration: none; color: inherit; }
     font-size: 14px;
 }
 
-/* GRID SYSTEM UNTUK KARTU PRODUK */
+/* GRID SYSTEM PRODUK */
 .product-grid {
     display: grid;
-    /* Membuat kolom otomatis menyesuaikan lebar, minimal 200px */
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 25px;
 }
 
-/* DESAIN KARTU PRODUK (PENTING!) */
+/* KARTU PRODUK */
 .product-card {
     background: #fff;
     border-radius: 12px;
@@ -233,25 +166,16 @@ a { text-decoration: none; color: inherit; }
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    z-index: 2;
 }
 
-/* Placeholder Gambar */
 .product-image-placeholder {
     height: 180px;
-    background-color: #3B5998; /* Biru sesuai desain */
+    background-color: #3B5998;
     display: flex;
     align-items: center;
     justify-content: center;
     color: rgba(255,255,255,0.5);
     font-weight: 600;
-}
-
-/* Kalau nanti pakai gambar beneran */
-.product-image-placeholder img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
 }
 
 .product-details {
@@ -271,13 +195,11 @@ a { text-decoration: none; color: inherit; }
     font-size: 15px;
     margin: 5px 0 10px;
     line-height: 1.4;
-    /* Membatasi teks cuma 2 baris lalu ... */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
-    height: 42px; /* Sesuaikan tinggi 2 baris */
+    height: 42px;
 }
 
 .price {
@@ -303,23 +225,21 @@ a { text-decoration: none; color: inherit; }
     color: #ccc;
     cursor: pointer;
 }
+
 .btn-wishlist-card:hover {
     color: #E74C3C;
 }
 
-/* ================= DETAIL PAGE LAYOUT ================= */
+/* ================= DETAIL PAGE ================= */
 .detail-page {
     display: grid;
-    grid-template-columns: 1.2fr 1fr 0.8fr; /* Pembagian kolom: Kiri (Gambar), Tengah (Info), Kanan (Tombol) */
+    grid-template-columns: 1.2fr 1fr 0.8fr;
     gap: 40px;
     margin-top: 40px;
     margin-bottom: 60px;
 }
 
-/* --- KOLOM KIRI: GALERI --- */
 .main-image-container {
-    position: relative;
-    width: 100%;
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 15px;
@@ -327,8 +247,8 @@ a { text-decoration: none; color: inherit; }
 
 .main-image {
     width: 100%;
-    height: 400px; /* Tinggi gambar utama */
-    background-color: #3B5998; /* Placeholder color */
+    height: 400px;
+    background-color: #3B5998;
     background-size: cover;
     background-position: center;
 }
@@ -343,15 +263,7 @@ a { text-decoration: none; color: inherit; }
     height: 40px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 16px;
-    color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-.nav-arrow.left { left: 15px; }
-.nav-arrow.right { right: 15px; }
 
 .thumbnail-row {
     display: flex;
@@ -365,16 +277,13 @@ a { text-decoration: none; color: inherit; }
     border-radius: 8px;
     background-color: #ccc;
     cursor: pointer;
-    flex-shrink: 0;
 }
-.thumb.active { border: 2px solid #2c3e50; }
 
-/* --- KOLOM TENGAH: INFO --- */
+/* INFO PRODUK */
 .product-title-large {
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 10px;
-    line-height: 1.3;
 }
 
 .price-container {
@@ -390,172 +299,34 @@ a { text-decoration: none; color: inherit; }
     color: #E74C3C;
 }
 
-.price-original {
-    font-size: 14px;
-    color: #aaa;
-    text-decoration: line-through;
-}
-
-/* Box Spesifikasi (Abu-abu) */
 .spec-box {
-    background-color: #E8EDF5; /* Warna background box detail */
+    background-color: #E8EDF5;
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 25px;
 }
 
-.spec-header {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 15px;
-}
-
-.spec-row {
-    display: flex;
-    margin-bottom: 8px;
-    font-size: 14px;
-}
-
-.spec-label {
-    width: 100px;
-    color: #666;
-}
-
-.spec-value {
-    font-weight: 500;
-    color: #333;
-}
-
-/* Deskripsi Box (Putih Border) */
 .description-box {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 20px;
-    margin-bottom: 25px;
 }
 
-.desc-text {
-    font-size: 14px;
-    line-height: 1.6;
-    color: #444;
-}
-
-/* Seller Info */
-.seller-info {
-    margin-top: 20px;
-}
-
-.seller-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: #777;
-    margin-bottom: 10px;
-}
-
+/* SELLER CARD */
 .seller-card {
     background-color: #E8EDF5;
     padding: 15px;
     border-radius: 8px;
     display: flex;
-    align-items: center;
     gap: 15px;
 }
 
-.seller-avatar {
-    width: 50px;
-    height: 50px;
-    background-color: #fff;
-    border-radius: 50%;
-}
-
-.seller-name {
-    font-weight: 700;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.verified-icon { color: #E74C3C; font-size: 14px; }
-
-.seller-stats { font-size: 12px; color: #666; margin-top: 3px; }
-
-
-/* --- KOLOM KANAN: TOMBOL AKSI --- */
-.action-card {
-    /* Bisa dibikin sticky kalau mau */
-    /* position: sticky; top: 100px; */
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.btn-action {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    text-align: center;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    border: none;
-}
-
-.btn-dark {
-    background-color: #2C3E50; /* Biru Tua Gelap */
-    color: white;
-}
-.btn-dark:hover { background-color: #1a252f; }
-
-.btn-light {
-    background-color: #DDE3EE; /* Abu kebiruan */
-    color: #333;
-}
-.btn-light:hover { background-color: #ced6e4; }
-
-.btn-danger-soft {
-    background-color: #FDECEC; /* Merah muda banget */
-    color: #E74C3C;
-}
-.btn-danger-soft:hover { background-color: #fadada; }
-
-.wishlist-action {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end; /* Rata kanan */
-    gap: 10px;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #555;
-}
-
-.btn-wishlist-circle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: #E8EDF5;
-    color: #3B5998;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    cursor: pointer;
-}
-.btn-wishlist-circle:hover {
-    background-color: #d0d8e8;
-}
-
-/* RESPONSIVE: Tablet/HP */
+/* ================= RESPONSIVE ================= */
 @media (max-width: 900px) {
     .detail-page {
-        grid-template-columns: 1fr; /* Jadi 1 kolom ke bawah */
+        grid-template-columns: 1fr;
         gap: 20px;
     }
-    
-    .action-column {
-        order: 3; /* Tombol pindah ke paling bawah */
-    }
 }
+
+

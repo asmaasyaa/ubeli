@@ -19,7 +19,7 @@ import com.ubeli.repository.FotoProdukRepository;
 import java.math.BigDecimal;
 
 @Controller
-@RequestMapping("/produk")
+@RequestMapping("/penjual")
 public class ProdukController {
 
     @Autowired

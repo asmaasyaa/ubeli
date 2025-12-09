@@ -19,23 +19,7 @@
     </script>
 </div>
 
-<header class="header">
-    <div class="container header-content">
-        <a href="/" class="logo">UBeli</a>
-        <div class="search-bar">
-            <span class="search-icon"><i class="fas fa-search"></i></span>
-            <input type="text" placeholder="Cari Barang...">
-        </div>
-        <div class="header-actions">
-            <div class="icon-group">
-                <a href="/wishlist" class="icon-link"><i class="far fa-heart"></i></a>
-                <a href="#" class="icon-link"><i class="far fa-bell"></i></a>
-                <a href="#" class="icon-link"><i class="far fa-comment"></i></a>
-                <a href="/login" class="icon-link"><i class="far fa-user"></i></a>
-            </div>
-        </div>
-    </div>
-</header>
+<div th:replace="fragments/navbar :: navbar"></div>
 
 <main class="container jual-wrapper">
 
