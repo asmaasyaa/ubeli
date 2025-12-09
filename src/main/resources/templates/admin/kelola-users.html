@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Kelola User - Admin UBeli</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-logo">U</div>
+            <h2>UBeli <span class="badge-admin">Admin</span></h2>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-header">UTAMA</li>
+            <li><a href="/admin/dashboard" class="active"><i class="fas fa-th-large"></i> Dashboard</a></li>
+            
+            <li class="menu-header">TRANSAKSI & IKLAN</li>
+            <li><a href="/admin/verifikasi-bayar"><i class="fas fa-wallet"></i> Verifikasi Pembayaran</a></li>
+            <li><a href="/admin/validasi-iklan"><i class="fas fa-bullhorn"></i> Validasi Iklan</a></li>
+            
+            <li class="menu-header">MODERASI</li>
+            <li><a href="/admin/kelola-users"><i class="fas fa-users-cog"></i> Kelola Pengguna</a></li>
+            <li><a href="/admin/tinjau-laporan"><i class="fas fa-shield-alt"></i> Tinjau Laporan</a></li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <a href="/logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-navbar">
+            <div class="page-header" style="margin-bottom:0;">
+                <h1 class="page-title">Kelola Pengguna</h1>
+                <p class="page-subtitle">Pantau dan blokir akun yang melanggar aturan.</p>
+            </div>
+            <div class="profile-dropdown"><div class="avatar">A</div><div class="profile-info"><span class="name">Administrator</span>
+                <span class="role">Super Admin</span></div></div>
+        </header>
+
+        <div class="content-wrapper">
+            
+            <div class="admin-search-container" style="margin-bottom: 20px;">
+                <form action="/admin/kelola-users" method="get" style="display:flex; gap:10px;">
+                    <input type="text" name="keyword" th:value="${keyword}" placeholder="Cari nama user..." class="admin-input" style="flex:1;">
+                    <button type="submit" class="btn-primary-admin">Cari</button>
+                    <a href="/admin/kelola-users" class="btn-secondary" style="padding:10px; text-decoration:none; display:flex; align-items:center;">Reset</a>
+                </form>
+            </div>
+
+            <h3 class="section-heading" style="margin-top:0;">Daftar Pembeli</h3>
+            <div class="table-container" style="margin-bottom: 30px;">
+                <table th:if="${listPembeli.totalElements > 0}">
+                    <thead>
+                        <tr><th>Nama</th><th>Email</th><th>Status</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${listPembeli.content}">
+                            <td style="font-weight:600;" th:text="${u.namaLengkap}"></td>
+                            <td th:text="${u.email}"></td>
+                            <td><span class="badge-status" th:classappend="${u.status == 'Active' ? 'badge-success' : 'badge-danger'}" th:text="${u.status}"></span></td>
+                            <td>
+                                <form action="/admin/kelola-users/blokir" method="post">
+                                    <input type="hidden" name="userId" th:value="${u.pembeliId}">
+                                    <input type="hidden" name="role" value="PEMBELI">
+                                    <button th:if="${u.status == 'Active'}" type="submit" name="status" value="BANNED" class="btn-text-danger"><i class="fas fa-ban"></i> Blokir</button>
+                                    <button th:if="${u.status == 'BANNED'}" type="submit" name="status" value="Active" class="btn-text-success"><i class="fas fa-unlock"></i> Buka Blokir</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p th:if="${listPembeli.totalElements == 0}" style="color:#888; padding:10px;">User tidak ditemukan.</p>
+
+                <div class="pagination-container" th:if="${listPembeli.totalPages > 1}">
+                    <a th:href="@{/admin/kelola-users(keyword=${keyword}, pagePembeli=${currentPagePembeli - 1}, pagePenjual=${currentPagePenjual})}"
+                       class="page-link" th:classappend="${currentPagePembeli == 0} ? 'disabled' : ''"><i class="fas fa-chevron-left"></i></a>
+                    <span th:each="i : ${#numbers.sequence(0, listPembeli.totalPages - 1)}">
+                        <a th:href="@{/admin/kelola-users(keyword=${keyword}, pagePembeli=${i}, pagePenjual=${currentPagePenjual})}"
+                           th:text="${i + 1}" class="page-link" th:classappend="${currentPagePembeli == i} ? 'active' : ''">1</a>
+                    </span>
+                    <a th:href="@{/admin/kelola-users(keyword=${keyword}, pagePembeli=${currentPagePembeli + 1}, pagePenjual=${currentPagePenjual})}"
+                       class="page-link" th:classappend="${currentPagePembeli + 1 == listPembeli.totalPages} ? 'disabled' : ''"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+
+            <h3 class="section-heading">Daftar Penjual</h3>
+            <div class="table-container">
+                <table th:if="${listPenjual.totalElements > 0}">
+                    <thead>
+                        <tr><th>Nama Toko</th><th>Email</th><th>Status</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${listPenjual.content}">
+                            <td style="font-weight:600;" th:text="${p.namaLengkap}"></td>
+                            <td th:text="${p.email}"></td>
+                            <td><span class="badge-status" th:classappend="${p.status == 'Active' ? 'badge-success' : 'badge-danger'}" th:text="${p.status}"></span></td>
+                            <td>
+                                <form action="/admin/kelola-users/blokir" method="post">
+                                    <input type="hidden" name="userId" th:value="${p.penjualId}">
+                                    <input type="hidden" name="role" value="PENJUAL">
+                                    <button th:if="${p.status == 'Active'}" type="submit" name="status" value="BANNED" class="btn-text-danger"><i class="fas fa-ban"></i> Blokir</button>
+                                    <button th:if="${p.status == 'BANNED'}" type="submit" name="status" value="Active" class="btn-text-success"><i class="fas fa-unlock"></i> Buka Blokir</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p th:if="${listPenjual.totalElements == 0}" style="color:#888; padding:10px;">Toko tidak ditemukan.</p>
+
+                <div class="pagination-container" th:if="${listPenjual.totalPages > 1}">
+                    <a th:href="@{/admin/kelola-users(keyword=${keyword}, pagePembeli=${currentPagePembeli}, pagePenjual=${currentPagePenjual - 1})}"
+                       class="page-link" th:classappend="${currentPagePenjual == 0} ? 'disabled' : ''"><i class="fas fa-chevron-left"></i></a>
+                    <span th:each="i : ${#numbers.sequence(0, listPenjual.totalPages - 1)}">
+                        <a th:href="@{/admin/kelola-users(keyword=${keyword}, pagePembeli=${currentPagePembeli}, pagePenjual=${i})}"
+                           th:text="${i + 1}" class="page-link" th:classappend="${currentPagePenjual == i} ? 'active' : ''">1</a>
+                    </span>
+                    <a th:href="@{/admin/kelola-users(keyword=${keyword}, pagePembeli=${currentPagePembeli}, pagePenjual=${currentPagePenjual + 1})}"
+                       class="page-link" th:classappend="${currentPagePenjual + 1 == listPenjual.totalPages} ? 'disabled' : ''"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div th:if="${msgTitle}" class="modal-overlay" id="notifModal">
+        <div class="modal-content">
+            <div class="modal-icon" th:classappend="${msgType == 'danger' ? 'icon-danger' : 'icon-success'}">
+                <i class="fas" th:classappend="${msgType == 'danger' ? 'fa-ban' : 'fa-check'}"></i>
+            </div>
+            <h3 th:text="${msgTitle}">Judul Notif</h3>
+            <p th:utext="${msgBody}">Isi pesan...</p>
+            <button onclick="closeModal()" class="btn-modal-ok">Mengerti</button>
+        </div>
+    </div>
+
+    <script>
+        function closeModal() {
+            var modal = document.getElementById("notifModal");
+            modal.style.opacity = '0'; 
+            setTimeout(function(){ modal.style.display = "none"; }, 300);
+        }
+    </script>
+
+</body>
+</html>

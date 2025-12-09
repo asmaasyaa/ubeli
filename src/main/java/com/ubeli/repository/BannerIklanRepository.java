@@ -9,4 +9,7 @@ public interface BannerIklanRepository extends JpaRepository<BannerIklan, Long> 
 
     // Cari iklan yang statusnya masih PENDING (Buat Admin ACC)
     List<BannerIklan> findByStatus(StatusIklan status);
+    
+    // Hitung iklan yang statusnya PENDING
+    long countByStatus(StatusIklan status);
 }
