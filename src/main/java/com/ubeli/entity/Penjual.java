@@ -27,6 +27,7 @@ public class Penjual {
     private String bank;
     private String noRekening;
     private String status; // Active, Banned
+    
     @Column(nullable = false, updatable = false)
     private LocalDate createdAt = LocalDate.now();
 

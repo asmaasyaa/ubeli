@@ -1,5 +1,5 @@
 /* =====================
-   PROFIL – GENERAL LAYOUT
+   PROFIL – GENERAL LAYOUT (Penjual default)
    ===================== */
 .profile-header {
     display: flex;
@@ -51,30 +51,7 @@
 }
 
 /* =====================
-   FILTER TAB
-   ===================== */
-.filter-tabs {
-    display: flex;
-    gap: 12px;
-    margin: 30px 0 20px;
-}
-
-.filter-tab {
-    padding: 8px 18px;
-    background: #f3f4f6;
-    border-radius: 999px;
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
-}
-
-.filter-tab.active {
-    background: #1e3a8a;
-    color: white;
-}
-
-/* =====================
-   GRID — PRODUCTS
+   GRID (Penjual)
    ===================== */
 .profile-content-grid {
     display: grid;
@@ -141,16 +118,8 @@
     font-weight: 700;
 }
 
-.btn-wishlist-card {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-    color: #6b7280;
-}
-
 /* =====================
-   SIDEBAR
+   SIDEBAR SETTINGS (Penjual & Pembeli)
    ===================== */
 .account-sidebar h3 {
     font-size: 18px;
@@ -174,12 +143,14 @@
     color: #1f2937;
     text-decoration: none;
     transition: 0.2s;
+    font-size: 15px;
 }
 
 .sidebar-link:hover {
     background: #d1d5db;
 }
 
+/* Tombol edit profil (Penjual) */
 .btn-edit-profil {
     margin-top: 20px;
     display: inline-block;
@@ -194,4 +165,140 @@
 
 .btn-edit-profil:hover {
     background: #162f6b;
+}
+
+/* ===============================
+   WRAPPER AGAR FOOTER TIDAK NAIK
+   =============================== */
+.profile-page-wrapper {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-page-wrapper main.container {
+    flex-grow: 1;
+}
+
+/* =======================================================
+   🎯 PEMBELI VERSION — CENTERED PROFILE (EXCLUSIVE)
+   ======================================================= */
+
+.profile-header.profile-center {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 12px !important;
+}
+
+/* Avatar lebih rapi */
+.profile-header.profile-center .profile-avatar-large {
+    margin-bottom: 10px;
+}
+
+/* Nama */
+.profile-header.profile-center .profile-name {
+    font-size: 30px;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* Status / bio */
+.profile-header.profile-center .profile-bio {
+    max-width: 420px;
+    font-size: 16px;
+    color: #4b5563;
+}
+
+/* Tombol Edit Profil di Pembeli */
+.profile-edit-btn {
+    margin-top: 12px;
+    background: #1e3a8a;
+    color: white;
+    padding: 10px 22px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.profile-edit-btn:hover {
+    background: #162f6b;
+}
+
+/* =======================
+   1 Kolom Khusus Pembeli
+   ======================= */
+.profile-content-single {
+    width: 100%;
+    max-width: 700px;
+    margin: 40px auto;
+}
+
+/* ==========================
+   OVERRIDE KHUSUS PROFIL PEMBELI
+   ========================== */
+
+/* Lebarkan wrapper sidebar */
+.profile-content-single .account-sidebar {
+    max-width: 700px; /* opsional */
+}
+
+/* Lebarkan tombol-tombol di sidebar */
+.profile-content-single .sidebar-link {
+    width: 100%;
+    padding: 16px 18px;    /* lebih besar */
+    font-size: 16px;
+    border-radius: 12px;
+}
+
+/* Hilangkan pengaruh grid lama */
+.profile-content-single {
+    display: block !important;
+}
+
+.profile-content-grid {
+    display: block !important;
+}
+
+/* ================================
+   FIX ALIGNMENT PROFIL PEMBELI
+   ================================ */
+
+/* Samakan lebar header dengan isi konten */
+
+
+/* Sidebar sudah max-width 500px -> aman
+   Jika ingin 700px juga, ubah dan sesuaikan: */
+
+
+/* ==========================================
+   FIX PROFIL PEMBELI — HEADER KECIL, BAWAH LEBAR
+   ========================================== */
+
+/* Wrapper header agar independent dari container */
+.profile-header-wrapper {
+    max-width: 700px;
+    margin: 0 auto;      /* center */
+    padding-top: 40px;   /* biar ada ruang */
+}
+
+/* Layout header tetap vertical & center */
+.profile-header.profile-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+}
+
+/* Sidebar tetap lebar 1200px sesuai container */
+.profile-content-single {
+    max-width: 700px; /* atau tetap seperti sebelumnya */
+}
+
+/* Hapus override kecil yang menyebabkan shrink */
+main.container {
+    max-width: 1200px !important;
 }
