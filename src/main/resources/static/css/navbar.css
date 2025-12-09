@@ -1,0 +1,79 @@
+/* ========================== */
+/*     NAVBAR CLEAN VERSION   */
+/* ========================== */
+
+.header {
+    background: #fff;
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e5e5;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #E74C3C;
+}
+
+/* SEARCH */
+.search-box {
+    flex: 1;
+    max-width: 600px;
+    position: relative;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 11px 18px 11px 40px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f2f3f5;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #777;
+}
+
+/* RIGHT SIDE */
+.right-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+/* TOMBOL JUAL */
+.btn-jual {
+    background: #E74C3C;
+    padding: 10px 18px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* ICON BUTTONS */
+.icons-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.icon-link {
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+}

@@ -3,6 +3,7 @@ package com.ubeli.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.List;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 @Entity
@@ -31,4 +32,8 @@ public class Pembeli {
     // RELASI 3: LAPORAN (Satu pembeli bisa melapor berkali-kali)
     @OneToMany(mappedBy = "pelapor")
     private List<Laporan> laporans = new ArrayList<>();
+
+    @Column(nullable = false, updatable = false)
+    private LocalDate createdAt = LocalDate.now();
+
 }

@@ -1,0 +1,304 @@
+/* =====================
+   PROFIL – GENERAL LAYOUT (Penjual default)
+   ===================== */
+.profile-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    padding: 35px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.profile-avatar-large {
+    width: 120px;
+    height: 120px;
+    background: #4f65b8;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 42px;
+    color: white;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.profile-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    margin: 4px 0 10px;
+}
+
+.profile-bio {
+    max-width: 600px;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.profile-join {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* =====================
+   GRID (Penjual)
+   ===================== */
+.profile-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.product-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding-bottom: 12px;
+    overflow: hidden;
+    transition: 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+}
+
+.product-image-placeholder {
+    height: 160px;
+    background: #d1d5db;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: #4b5563;
+}
+
+.product-details {
+    padding: 12px 14px;
+}
+
+.product-cat {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.product-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    margin: 4px 0;
+    display: block;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price-row .price {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+/* =====================
+   SIDEBAR SETTINGS (Penjual & Pembeli)
+   ===================== */
+.account-sidebar h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-link {
+    background: #e5e7eb;
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #1f2937;
+    text-decoration: none;
+    transition: 0.2s;
+    font-size: 15px;
+}
+
+.sidebar-link:hover {
+    background: #d1d5db;
+}
+
+/* Tombol edit profil (Penjual) */
+.btn-edit-profil {
+    margin-top: 20px;
+    display: inline-block;
+    background: #1e3a8a;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+}
+
+.btn-edit-profil:hover {
+    background: #162f6b;
+}
+
+/* ===============================
+   WRAPPER AGAR FOOTER TIDAK NAIK
+   =============================== */
+.profile-page-wrapper {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-page-wrapper main.container {
+    flex-grow: 1;
+}
+
+/* =======================================================
+   🎯 PEMBELI VERSION — CENTERED PROFILE (EXCLUSIVE)
+   ======================================================= */
+
+.profile-header.profile-center {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 12px !important;
+}
+
+/* Avatar lebih rapi */
+.profile-header.profile-center .profile-avatar-large {
+    margin-bottom: 10px;
+}
+
+/* Nama */
+.profile-header.profile-center .profile-name {
+    font-size: 30px;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* Status / bio */
+.profile-header.profile-center .profile-bio {
+    max-width: 420px;
+    font-size: 16px;
+    color: #4b5563;
+}
+
+/* Tombol Edit Profil di Pembeli */
+.profile-edit-btn {
+    margin-top: 12px;
+    background: #1e3a8a;
+    color: white;
+    padding: 10px 22px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.profile-edit-btn:hover {
+    background: #162f6b;
+}
+
+/* =======================
+   1 Kolom Khusus Pembeli
+   ======================= */
+.profile-content-single {
+    width: 100%;
+    max-width: 700px;
+    margin: 40px auto;
+}
+
+/* ==========================
+   OVERRIDE KHUSUS PROFIL PEMBELI
+   ========================== */
+
+/* Lebarkan wrapper sidebar */
+.profile-content-single .account-sidebar {
+    max-width: 700px; /* opsional */
+}
+
+/* Lebarkan tombol-tombol di sidebar */
+.profile-content-single .sidebar-link {
+    width: 100%;
+    padding: 16px 18px;    /* lebih besar */
+    font-size: 16px;
+    border-radius: 12px;
+}
+
+/* Hilangkan pengaruh grid lama */
+.profile-content-single {
+    display: block !important;
+}
+
+.profile-content-grid {
+    display: block !important;
+}
+
+/* ================================
+   FIX ALIGNMENT PROFIL PEMBELI
+   ================================ */
+
+/* Samakan lebar header dengan isi konten */
+
+
+/* Sidebar sudah max-width 500px -> aman
+   Jika ingin 700px juga, ubah dan sesuaikan: */
+
+
+/* ==========================================
+   FIX PROFIL PEMBELI — HEADER KECIL, BAWAH LEBAR
+   ========================================== */
+
+/* Wrapper header agar independent dari container */
+.profile-header-wrapper {
+    max-width: 700px;
+    margin: 0 auto;      /* center */
+    padding-top: 40px;   /* biar ada ruang */
+}
+
+/* Layout header tetap vertical & center */
+.profile-header.profile-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+}
+
+/* Sidebar tetap lebar 1200px sesuai container */
+.profile-content-single {
+    max-width: 700px; /* atau tetap seperti sebelumnya */
+}
+
+/* Hapus override kecil yang menyebabkan shrink */
+main.container {
+    max-width: 1200px !important;
+}

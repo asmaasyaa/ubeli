@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UBeli - Buat Laporan</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="container header-content">
+        <a href="/" class="logo">UBeli</a>
+
+        <div class="search-bar">
+            <span class="search-icon"><i class="fas fa-search"></i></span>
+            <input type="text" placeholder="Cari Barang...">
+        </div>
+
+        <div class="header-actions">
+            <a th:href="@{/produk/tambah-produk}" class="btn-jual">+ Jual Barang</a>
+            <div class="icon-group">
+                <a href="/wishlist" class="icon-link"><i class="far fa-heart"></i></a>
+                <a href="/notifikasi" class="icon-link"><i class="far fa-bell"></i></a>
+                <a href="#" class="icon-link"><i class="far fa-comment"></i></a>
+                <a href="/login" class="icon-link"><i class="far fa-user"></i></a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container" style="margin-top: 50px; padding-bottom: 60px;">
+
+    <h1 style="font-size: 30px; font-weight: 600; margin-bottom: 25px;">
+        Buat Laporan
+    </h1>
+
+    <div class="form-box"
+         style="
+            background: #fff;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+         ">
+
+        <h3 style="margin-bottom: 20px; font-weight: 600; font-size: 16px; color:#1e2742;">
+            Formulir Pelaporan Masalah
+        </h3>
+
+        <form th:action="@{/laporan/kirim}" method="post" enctype="multipart/form-data"
+              style="display: flex; flex-direction: column; gap: 18px;">
+
+            <!-- KATEGORI (mapped to: alasan) -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size:14px;">Kategori Laporan</label>
+                <select name="alasan" required
+                        style="padding: 12px; border-radius: 10px; border:1px solid #d0d4da;">
+                    <option value="">Pilih Kategori</option>
+                    <option value="Penipuan">Penipuan</option>
+                    <option value="Barang Tidak Sesuai">Barang Tidak Sesuai</option>
+                    <option value="Penyalahgunaan">Penyalahgunaan</option>
+                    <option value="Perilaku Buruk">Perilaku Buruk Penjual</option>
+                </select>
+            </div>
+
+            <!-- TANGGAL KEJADIAN -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size:14px;">Tanggal Kejadian</label>
+                <input type="date" name="tanggalKejadian"
+                       th:value="${#temporals.format(T(java.time.LocalDate).now(), 'yyyy-MM-dd')}"
+                       required
+                       style="padding: 12px; border-radius: 10px; border:1px solid #d0d4da;">
+            </div>
+
+            <!-- NAMA PENJUAL (terlapor) -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size:14px;">Nama Penjual</label>
+                <input type="text" name="namaPenjual" placeholder="Nama penjual terkait"
+                       required
+                       style="padding: 12px; border-radius: 10px; border:1px solid #d0d4da;">
+            </div>
+
+            <!-- TAUTAN PRODUK -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size:14px;">Tautan Produk</label>
+
+                <!-- For example: /produk/detail/5 -->
+                <input type="text" name="tautanProduk" placeholder="Masukkan tautan ke produk"
+                       required
+                       style="padding: 12px; border-radius: 10px; border:1px solid #d0d4da;">
+            </div>
+
+            <!-- DESKRIPSI -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size:14px;">Deskripsi Laporan</label>
+                <textarea name="deskripsi" rows="6"
+                          placeholder="Ceritakan masalah yang terjadi secara lengkap..."
+                          required
+                          style="padding: 12px; border-radius: 10px; border:1px solid #d0d4da;"></textarea>
+            </div>
+
+            <!-- UPLOAD BUKTI -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size:14px;">Unggah Bukti (Foto/Video)</label>
+
+                <div class="upload-box"
+                     style="
+                        border: 2px dashed #d8dad0;
+                        padding: 35px;
+                        text-align: center;
+                        border-radius: 12px;
+                     ">
+                    <label for="fileInput"
+                           style="
+                                background: #e63946;
+                                color: white;
+                                padding: 12px 20px;
+                                border-radius: 10px;
+                                font-size: 14px;
+                                cursor: pointer;
+                                display: inline-block;
+                                margin-bottom: 10px;
+                           ">
+                        Pilih File
+                    </label>
+
+                    <input id="fileInput" type="file" name="bukti" style="display:none;" required>
+
+                    <p id="fileName"
+                       style="font-size: 13px; color: #777; margin-top: 8px; font-style: italic;">
+                        Tidak ada file yang dipilih
+                    </p>
+                </div>
+            </div>
+
+            <!-- BUTTON -->
+            <div style="display: flex; gap: 15px; margin-top: 15px;">
+                <button type="submit"
+                        style="
+                            padding: 12px 24px;
+                            background: #1e3a8a;
+                            color: #fff;
+                            border-radius: 10px;
+                            font-weight: 600;
+                            border:none;
+                        ">
+                    Kirim Laporan
+                </button>
+
+                <a href="/notifikasi"
+                   style="
+                        padding: 12px 24px;
+                        background: #e2e8f0;
+                        border-radius: 10px;
+                        font-weight: 600;
+                        color:#1e2742;
+                   ">
+                    Batal
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+</main>
+
+<script>
+    // Menampilkan nama file terpilih
+    document.getElementById("fileInput").addEventListener("change", function () {
+        document.getElementById("fileName").innerText =
+            this.files.length > 0 ? this.files[0].name : "Tidak ada file yang dipilih";
+    });
+</script>
+
+</body>
+</html>

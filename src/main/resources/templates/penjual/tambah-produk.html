@@ -4,163 +4,190 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UBeli - Jual Barang</title>
+
     <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/jual.css">
 </head>
 
 <body>
-<header class="header">
-    <div class="container header-content">
-        <a href="/" class="logo">UBeli</a>
-        <div class="search-bar">
-            <span class="search-icon"><i class="fas fa-search"></i></span>
-            <input type="text" placeholder="Cari Barang...">
-        </div>
-        <div class="header-actions">
-            <div class="icon-group">
-                <a href="/wishlist" class="icon-link"><i class="far fa-heart"></i></a>
-                <a href="#" class="icon-link"><i class="far fa-bell"></i></a>
-                <a href="#" class="icon-link"><i class="far fa-comment"></i></a>
-                <a href="/login" class="icon-link"><i class="far fa-user"></i></a>
-            </div>
-        </div>
-    </div>
-</header>
 
-<main class="container" style="margin-top: 50px; padding-bottom: 60px;">
+<!-- 🔥 POPUP SUKSES SETELAH SUBMIT BERHASIL -->
+<div th:if="${success}">
+    <script>
+        alert("Produk berhasil ditambahkan!");
+        window.location.href = "/";
+    </script>
+</div>
 
-    <h1 style="font-size: 30px; font-weight: 600; margin-bottom: 25px;">Jual Barang</h1>
+<div th:replace="fragments/navbar :: navbar"></div>
 
-    <div class="form-box" 
-         style="
-            background: #fff;
-            padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-        ">
-        <h3 style="margin-bottom: 20px; font-weight: 600; font-size: 16px; color:#1e2742;">
-            Informasi Dasar
-        </h3>
+<main class="container jual-wrapper">
 
-        <form th:action="@{/penjual/tambah-produk}" method="post" enctype="multipart/form-data" 
-              class="form-jual"
-              style="display: flex; flex-direction: column; gap: 18px;">
+    <h1 class="jual-title">Jual Barang</h1>
 
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <label style="font-size:14px;">Kategori</label>
-                <select name="kategoriId" required 
-                        style="padding: 12px; border-radius: 10px; border:1px solid #d0d4da;">
+    <div class="form-box">
+
+        <form th:action="@{/produk/tambah-produk}" method="post" enctype="multipart/form-data" class="form-jual">
+
+            <h3 class="form-section-title">Informasi Dasar</h3>
+
+            <!-- KATEGORI -->
+            <div class="form-group">
+                <label>Kategori</label>
+                <select name="kategoriId" required class="input-field">
                     <option value="">Pilih Kategori</option>
-                    <option value="Furnitur">Furnitur</option>
-                    <option value="Buku">Buku</option>
-                    <option value="Elektronik">Elektronik</option>
-                    <option value="Pakaian">Pakaian</option>
+                    <option value="1">Furnitur</option>
+                    <option value="2">Buku</option>
+                    <option value="3">Elektronik</option>
+                    <option value="4">Pakaian</option>
                 </select>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <label style="font-size:14px;">Merk</label>
-                <input type="text" name="merk" placeholder="Merk" required
-                       style="padding: 12px; border-radius: 10px; border:1px solid #d0d4da;">
+            <!-- MERK -->
+            <div class="form-group">
+                <label>Merk</label>
+                <input type="text" name="merk" placeholder="Merk" required class="input-field">
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <label style="font-size:14px;">Nama Produk</label>
-                <input type="text" name="namaProduk" placeholder="Nama Produk" required
-                       style="padding: 12px; border-radius: 10px; border:1px solid #d0d4da;">
+            <!-- NAMA PRODUK -->
+            <div class="form-group">
+                <label>Nama Produk</label>
+                <input type="text" name="namaProduk" placeholder="Nama Produk" required class="input-field">
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <label style="font-size:14px;">Kondisi</label>
-                <select name="kondisi" required
-                        style="padding: 12px; border-radius: 10px; border:1px solid #d0d4da;">
+            <!-- KONDISI -->
+            <div class="form-group">
+                <label>Kondisi</label>
+                <select name="kondisi" required class="input-field">
                     <option value="">Pilih Kondisi</option>
                     <option value="Baru">Baru</option>
                     <option value="Bekas">Bekas</option>
                 </select>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <label style="font-size:14px;">Harga</label>
-                <input type="number" name="harga" placeholder="Rp xxx.xxx.xxx" required
-                       style="padding: 12px; border-radius: 10px; border:1px solid #d0d4da;">
+            <!-- HARGA -->
+            <div class="form-group">
+                <label>Harga</label>
+                <input type="text" id="hargaInput" placeholder="Rp 0" class="input-field">
+                <input type="hidden" id="hargaReal" name="harga">
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <label style="font-size:14px;">Deskripsi</label>
-                <textarea name="deskripsi" rows="6" placeholder="Tambahkan deskripsi produk..."
-                          style="padding: 12px; border-radius: 10px; border:1px solid #d0d4da;"></textarea>
+            <!-- DESKRIPSI -->
+            <div class="form-group">
+                <label>Deskripsi</label>
+                <textarea name="deskripsi" placeholder="Tambahkan deskripsi produk..." class="input-field"></textarea>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <label style="font-size:14px;">Tambahkan Foto atau Video</label>
+            <!-- FOTO -->
+            <div class="form-group">
+                <label>Foto Produk</label>
+                <div class="upload-box">
+                    <label for="fileInput" class="upload-btn">Choose File</label>
+                    <input id="fileInput" type="file" name="file" multiple class="file-input">
 
-                <div class="upload-box"
-                     style="
-                        border: 2px dashed #d8dad0;
-                        padding: 35px;
-                        text-align: center;
-                        border-radius: 12px;
-                     ">
-                    <label for="fileInput"
-           style="
-                background: #e63946;
-                color: white;
-                padding: 12px 20px;
-                border-radius: 10px;
-                font-size: 14px;
-                font-family: 'Inter', sans-serif;
-                cursor: pointer;
-                display: inline-block;
-                margin-bottom: 10px;
-                transition: 0.2s;
-           "
-           onmouseover="this.style.background='#d62839'"
-           onmouseout="this.style.background='#e63946'">
-        Choose File
-    </label>
-                <!-- Input hidden -->
-                <input id="fileInput"
-                    type="file" name="file" required
-                    style="display:none;">
-
-                <!-- Tempat muncul nama file -->
-                <p id="fileName" style="font-size: 13px; color: #777; margin-top: 8px; font-style: italic;">
-                    Tidak ada file yang dipilih
-                </p>
+                    <p id="fileName" class="file-name">Tidak ada file yang dipilih</p>
+                    <div id="previewContainer" class="preview-container"></div>
                 </div>
             </div>
 
-            <div style="display: flex; gap: 15px; margin-top: 15px;">
-                <button type="submit" 
-            style="
-                padding: 12px 24px;
-                background: #1e3a8a;
-                color: #fff;
-                border-radius: 10px;
-                font-weight: 600;
-                border:none;
-            ">
-                Jual
-                </button>
-
-                <a href="/" 
-                style="
-                    padding: 12px 24px;
-                    background: #e2e8f0;
-                    border-radius: 10px;
-                    font-weight: 600;
-                    color:#1e2742;
-                ">
-                    Cancel
-                </a>
+            <!-- BUTTON -->
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">Jual</button>
+                <a href="/" class="btn-cancel">Cancel</a>
             </div>
 
         </form>
+
     </div>
 
 </main>
+
+
+<!-- FORMAT HARGA -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const hargaInput = document.getElementById("hargaInput");
+    const hargaReal = document.getElementById("hargaReal");
+
+    hargaInput.addEventListener("input", function () {
+        let raw = this.value.replace(/[^0-9]/g, "");
+
+        if (raw === "") {
+            hargaInput.value = "";
+            hargaReal.value = "";
+            return;
+        }
+
+        hargaInput.value = "Rp " + new Intl.NumberFormat("id-ID").format(raw);
+        hargaReal.value = raw;
+    });
+
+});
+</script>
+
+<!-- MULTIPLE PREVIEW + DELETE -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const fileInput = document.getElementById("fileInput");
+    const fileName = document.getElementById("fileName");
+    const previewContainer = document.getElementById("previewContainer");
+
+    let filesArray = [];
+
+    fileInput.addEventListener("change", function () {
+
+        filesArray = filesArray.concat(Array.from(this.files));
+        renderPreviews();
+        fileInput.value = "";
+    });
+
+    function renderPreviews() {
+        previewContainer.innerHTML = "";
+
+        fileName.textContent = filesArray.length + " file dipilih";
+
+        filesArray.forEach((file, index) => {
+
+            if (!file.type.startsWith("image/")) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+
+                const item = document.createElement("div");
+                item.classList.add("preview-item");
+
+                item.innerHTML = `
+                    <img src="${e.target.result}" class="preview-img">
+                    <button class="delete-btn" data-index="${index}">×</button>
+                `;
+
+                previewContainer.appendChild(item);
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        updateInputFiles();
+    }
+
+    previewContainer.addEventListener("click", function (e) {
+        if (e.target.classList.contains("delete-btn")) {
+            const index = e.target.dataset.index;
+            filesArray.splice(index, 1);
+            renderPreviews();
+        }
+    });
+
+    function updateInputFiles() {
+        const dataTransfer = new DataTransfer();
+        filesArray.forEach(f => dataTransfer.items.add(f));
+        fileInput.files = dataTransfer.files;
+    }
+
+});
+</script>
 
 </body>
 </html>

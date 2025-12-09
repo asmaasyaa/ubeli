@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrasi UBeli</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/registration.css">
+</head>
+<body>
+
+<div class="register-container">
+
+    <h2>Daftar Akun UBeli</h2>
+
+    <form th:action="@{/register}" method="post">
+
+        <h3>Data Pembeli</h3>
+
+        <label>Nama Lengkap</label>
+        <input type="text" name="namaLengkap" required>
+
+        <label>Email</label>
+        <input type="email" name="email" required>
+
+        <label>Password</label>
+        <input type="password" name="password" required>
+
+        <label>No HP</label>
+        <input type="text" name="noHp" required>
+
+
+        <h3>Data Toko</h3>
+
+        <label>Alamat</label>
+        <input type="text" name="lokasiToko" required>
+
+        <label>Deskripsi</label>
+        <textarea name="deskripsiToko"></textarea>
+
+
+        <button type="submit" class="btn-primary">Daftar</button>
+
+        <p th:if="${error}" style="color:red;" th:text="${error}"></p>

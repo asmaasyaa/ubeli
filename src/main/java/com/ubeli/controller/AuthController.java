@@ -1,38 +1,137 @@
 package com.ubeli.controller;
 
-import com.ubeli.service.AuthService;
+import com.ubeli.entity.Pembeli;
+import com.ubeli.entity.Penjual;
+import com.ubeli.repository.PembeliRepository;
+import com.ubeli.repository.PenjualRepository;
+
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
 
 @Controller
 public class AuthController {
 
-    private final AuthService authService;
+    @Autowired
+    private PembeliRepository pembeliRepo;
 
-    // Constructor injection
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
+    @Autowired
+    private PenjualRepository penjualRepo;
 
+
+    // ============================
+    // LOGIN PAGE
+    // ============================
     @GetMapping("/login")
     public String loginPage() {
         return "general/login";
     }
 
+
+    // ============================
+    // LOGIN PROCESS
+    // ============================
     @PostMapping("/login")
-    public String loginProcess(
+    public String doLogin(
             @RequestParam String email,
             @RequestParam String password,
-            Model model
+            @RequestParam String role,
+            HttpSession session
     ) {
-        boolean success = authService.login(email, password);
 
-        if(success) {
-            return "redirect:/home";
+        // ================= LOGIN PEMBELI =================
+        if (role.equals("PEMBELI")) {
+
+            Pembeli pembeli = pembeliRepo.findByEmail(email).orElse(null);
+
+            if (pembeli == null || !pembeli.getPasswordHash().equals(password)) {
+                return "redirect:/login?error";
+            }
+
+            session.setAttribute("pembeli", pembeli);
+            session.setAttribute("role", "PEMBELI");
+            session.removeAttribute("penjual");
         }
 
-        model.addAttribute("error", "Email atau password salah");
-        return "general/login";
+        // ================= LOGIN PENJUAL =================
+        else if (role.equals("PENJUAL")) {
+
+            Penjual penjual = penjualRepo.findByEmail(email).orElse(null);
+
+            if (penjual == null || !penjual.getPasswordHash().equals(password)) {
+                return "redirect:/login?error";
+            }
+
+            session.setAttribute("penjual", penjual);
+            session.setAttribute("role", "PENJUAL");
+            session.removeAttribute("pembeli");
+        }
+
+        return "redirect:/";
+    }
+
+
+    // ============================
+    // REGISTER PAGE
+    // ============================
+    @GetMapping("/register")
+    public String registerPage() {
+        return "general/registration";
+    }
+
+
+    // ============================
+    // REGISTER PROCESS
+    // ============================
+    @PostMapping("/register")
+    public String doRegister(
+            @RequestParam String namaLengkap,
+            @RequestParam String email,
+            @RequestParam String password,
+            @RequestParam String noHp,
+
+            @RequestParam String lokasiToko,
+            @RequestParam(required = false) String deskripsiToko
+    ) {
+
+        // Cek kalau pembeli sudah terdaftar
+        if (pembeliRepo.existsByEmail(email)) {
+            return "redirect:/register?error=email";
+        }
+
+        // ========== BUAT PEMBELI ==========
+        Pembeli pembeli = new Pembeli();
+        pembeli.setNamaLengkap(namaLengkap);
+        pembeli.setEmail(email);
+        pembeli.setPasswordHash(password);
+        pembeli.setNoHp(noHp);
+
+        pembeliRepo.save(pembeli);
+
+
+        // ========== BUAT PENJUAL ==========
+        Penjual penjual = new Penjual();
+        penjual.setNamaLengkap(namaLengkap);
+        penjual.setEmail(email);
+        penjual.setPasswordHash(password);
+        penjual.setNoHp(noHp);
+        penjual.setLokasiToko(lokasiToko);
+        penjual.setDeskripsiToko(deskripsiToko);
+
+        penjualRepo.save(penjual);
+
+        // selesai -> menuju login
+        return "redirect:/login?registered";
+    }
+
+
+    // ============================
+    // LOGOUT
+    // ============================
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
     }
 }

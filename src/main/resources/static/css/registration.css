@@ -1,0 +1,61 @@
+.register-container {
+    width: 420px;
+    margin: 60px auto;
+    background: #ffffff;
+    padding: 30px 35px;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    font-family: 'Inter', sans-serif;
+}
+
+.register-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 700;
+    color: #1e2742;
+}
+
+.register-container h3 {
+    margin-top: 20px;
+    font-weight: 600;
+    color: #1e2742;
+}
+
+.register-container label {
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.register-container input,
+.register-container textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    margin-top: 5px;
+    border: 1px solid #d0d4da;
+    border-radius: 10px;
+    outline: none;
+}
+
+.register-container textarea {
+    resize: none;
+    height: 80px;
+}
+
+.btn-primary {
+    width: 100%;
+    background: #1e3a8a;
+    color: white;
+    border: none;
+    padding: 12px 0;
+    margin-top: 20px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: #162f6b;
+}
