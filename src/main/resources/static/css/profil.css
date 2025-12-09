@@ -1,0 +1,197 @@
+/* =====================
+   PROFIL – GENERAL LAYOUT
+   ===================== */
+.profile-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    padding: 35px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.profile-avatar-large {
+    width: 120px;
+    height: 120px;
+    background: #4f65b8;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 42px;
+    color: white;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.profile-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    margin: 4px 0 10px;
+}
+
+.profile-bio {
+    max-width: 600px;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.profile-join {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* =====================
+   FILTER TAB
+   ===================== */
+.filter-tabs {
+    display: flex;
+    gap: 12px;
+    margin: 30px 0 20px;
+}
+
+.filter-tab {
+    padding: 8px 18px;
+    background: #f3f4f6;
+    border-radius: 999px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+}
+
+.filter-tab.active {
+    background: #1e3a8a;
+    color: white;
+}
+
+/* =====================
+   GRID — PRODUCTS
+   ===================== */
+.profile-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.product-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding-bottom: 12px;
+    overflow: hidden;
+    transition: 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+}
+
+.product-image-placeholder {
+    height: 160px;
+    background: #d1d5db;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: #4b5563;
+}
+
+.product-details {
+    padding: 12px 14px;
+}
+
+.product-cat {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.product-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    margin: 4px 0;
+    display: block;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price-row .price {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.btn-wishlist-card {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #6b7280;
+}
+
+/* =====================
+   SIDEBAR
+   ===================== */
+.account-sidebar h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-link {
+    background: #e5e7eb;
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #1f2937;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.sidebar-link:hover {
+    background: #d1d5db;
+}
+
+.btn-edit-profil {
+    margin-top: 20px;
+    display: inline-block;
+    background: #1e3a8a;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+}
+
+.btn-edit-profil:hover {
+    background: #162f6b;
+}

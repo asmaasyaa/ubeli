@@ -1,55 +1,88 @@
 package com.ubeli.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import com.ubeli.repository.ProdukRepository;
-// import com.ubeli.entity.Produk;
-// import com.ubeli.entity.Kategori;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.ubeli.entity.Produk;
+import com.ubeli.entity.Kategori;
+import com.ubeli.entity.Penjual;
+import com.ubeli.entity.FotoProduk;
+
+import com.ubeli.repository.ProdukRepository;
+import com.ubeli.repository.KategoriRepository;
+import com.ubeli.repository.PenjualRepository;
+import com.ubeli.repository.FotoProdukRepository;
+
+import java.math.BigDecimal;
 
 @Controller
-@RequestMapping("/produk") 
+@RequestMapping("/produk")
 public class ProdukController {
 
-    // -----------------------------------------
-    // @Autowired
-    // private ProdukRepository produkRepository;
+    @Autowired
+    private ProdukRepository produkRepo;
 
-    // @Autowired
-    // private KategoriRepository kategoriRepository; 
-    // -----------------------------------------
+    @Autowired
+    private KategoriRepository kategoriRepo;
 
-    // ==== HALAMAN TAMBAH PRODUK (Jual Barang) ====
+    @Autowired
+    private PenjualRepository penjualRepo;
+
+    @Autowired
+    private FotoProdukRepository fotoRepo;
+
     @GetMapping("/tambah-produk")
-    public String halamanTambahProduk(Model model) {
-
-        // Jika kamu sudah punya kategori di database → tampilkan di dropdown
-        // model.addAttribute("kategoriList", kategoriRepository.findAll());
-
-        return "penjual/tambah-produk"; 
+    public String halamanTambahProduk() {
+        return "penjual/tambah-produk";
     }
+
     @PostMapping("/tambah-produk")
     public String prosesTambahProduk(
+            @RequestParam("kategoriId") Long kategoriId,
+            @RequestParam("merk") String merk,
             @RequestParam("namaProduk") String namaProduk,
-            @RequestParam("harga") Long harga,
-            @RequestParam("kategori") String kategori,
             @RequestParam("kondisi") String kondisi,
-            @RequestParam("deskripsi") String deskripsi
-            // @RequestParam("file") MultipartFile file
+            @RequestParam("harga") BigDecimal harga,
+            @RequestParam("deskripsi") String deskripsi,
+            @RequestParam("file") MultipartFile[] files,
+            RedirectAttributes ra
     ) {
 
-        // Contoh struktur penyimpanan nanti:
-        /*
+        // ========== SIMPAN PRODUK ==========
         Produk p = new Produk();
         p.setNamaProduk(namaProduk);
-        p.setHarga(harga);
-        p.setKondisi(kondisi);
         p.setDeskripsi(deskripsi);
-        p.setKategori(kategoriRepository.findById(kategori).get());
+        p.setHarga(harga);
+        p.setStatus("Available");
+        p.setDiiklankan(false);
 
-        produkRepository.save(p);
-        */
-        return "redirect:/"; // balik ke homepage setelah submit
+        // kategori
+        Kategori kategori = kategoriRepo.findById(kategoriId).orElse(null);
+        p.setKategori(kategori);
+
+        // penjual (sementara dummy ID = 1)
+        Penjual penjual = penjualRepo.findById(1L).orElse(null);
+        p.setPenjual(penjual);
+
+        Produk savedProduk = produkRepo.save(p);
+
+        // ========== SIMPAN FOTO PRODUK ==========
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                FotoProduk foto = new FotoProduk();
+                foto.setProduk(savedProduk);
+                foto.setUrlFoto(file.getOriginalFilename()); // nanti diganti stored filename
+                fotoRepo.save(foto);
+            }
+        }
+
+        // ========== KIRIM SINYAL SUKSES KE HTML ==========
+        ra.addFlashAttribute("success", true);
+
+        return "redirect:/produk/tambah-produk";
     }
+
 }
