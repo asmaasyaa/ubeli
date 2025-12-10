@@ -12,146 +12,112 @@
 <body>
 
     <!-- HEADER -->
-    <div th:replace="fragments/navbar :: navbar"></div>
+    <div th:replace="fragments/navbar-penjual :: navbar-penjual"></div>
 
     <div class="profile-page-wrapper">
-    <main class="container">
-
-        <!-- PROFILE HEADER -->
-        <section class="profile-header">
-            <div class="profile-avatar-large">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="profile-info">
-                <h1 class="profile-name" th:text="${penjual.namaLengkap}">Fajar</h1>
-                <div class="profile-location">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span th:text="${penjual.lokasiToko}">Lokasi Toko</span>
+        <main class="container">
+            <!-- PROFILE HEADER -->
+            <section class="profile-header">
+                <div class="profile-avatar-large">
+                    <i class="fas fa-user"></i>
                 </div>
+                <div class="profile-info">
+                    <h1 class="profile-name" th:text="${penjual.namaLengkap}">Fajar</h1>
+                    <div class="profile-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span th:text="${penjual.lokasiToko}">Lokasi Toko</span>
+                    </div>
 
-                <p class="profile-bio" th:text="${penjual.deskripsiToko}">
-                    Bio toko...
-                </p>
-            </div>
-            <div class="profile-join">
-                <span th:text="'Bergabung sejak ' + ${#temporals.format(penjual.createdAt, 'dd MMMM yyyy')}"></span>
-            </div>
-        </section>
-
-        <!-- MAIN CONTENT GRID -->
-        <div class="profile-content-grid">
-            
-            <!-- LEFT: PRODUCTS -->
-            <div class="profile-products-area">
-                
-                <!-- Filter Tabs -->
-                <div class="filter-tabs">
-                    <button class="filter-tab active" data-filter="dijual">Dijual</button>
-                    <button class="filter-tab" data-filter="menunggu">Menunggu Konfirmasi</button>
-                    <button class="filter-tab" data-filter="terjual">Terjual</button>
+                    <p class="profile-bio" th:text="${penjual.deskripsiToko}">
+                        Bio toko...
+                    </p>
                 </div>
-
-                <!-- Product Grid -->
-                <div class="product-grid">
-                    
-                    <!-- Loop produk dari database -->
-                    <div th:each="p : ${produkList}" class="product-card">
-                        <a th:href="@{/produk/{id}(id=${p.produkId})}">
-                            <div class="product-image-placeholder">
-                                <span>Foto Produk</span>
-                            </div>
-                        </a>
-                        <div class="product-details">
-                            <span class="product-cat" th:text="${p.kategori.namaKategori}">Gadget</span>
-                            <a th:href="@{/produk/{id}(id=${p.produkId})}" class="product-title" th:text="${p.namaProduk}">
-                                iPhone 17 256GB Like New...
-                            </a>
-                            <div class="price-row">
-                                <span class="price">Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">20.000.000</span></span>
-                                <button class="btn-wishlist-card"><i class="far fa-heart"></i></button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Dummy products jika kosong -->
-                    <div class="product-card" th:if="${produkList == null or produkList.empty}">
-                        <div class="product-image-placeholder"><span>Foto</span></div>
-                        <div class="product-details">
-                            <span class="product-cat">Gadget</span>
-                            <a href="#" class="product-title">iPhone 17 256GB Like New...</a>
-                            <div class="price-row">
-                                <span class="price">Rp 20.000.000</span>
-                                <button class="btn-wishlist-card"><i class="far fa-heart"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card" th:if="${produkList == null or produkList.empty}">
-                        <div class="product-image-placeholder"><span>Foto</span></div>
-                        <div class="product-details">
-                            <span class="product-cat">Gadget</span>
-                            <a href="#" class="product-title">iPhone 17 256GB Like New...</a>
-                            <div class="price-row">
-                                <span class="price">Rp 20.000.000</span>
-                                <button class="btn-wishlist-card"><i class="far fa-heart"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card" th:if="${produkList == null or produkList.empty}">
-                        <div class="product-image-placeholder"><span>Foto</span></div>
-                        <div class="product-details">
-                            <span class="product-cat">Gadget</span>
-                            <a href="#" class="product-title">iPhone 17 256GB Like New...</a>
-                            <div class="price-row">
-                                <span class="price">Rp 20.000.000</span>
-                                <button class="btn-wishlist-card"><i class="far fa-heart"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-card" th:if="${produkList == null or produkList.empty}">
-                        <div class="product-image-placeholder"><span>Foto</span></div>
-                        <div class="product-details">
-                            <span class="product-cat">Gadget</span>
-                            <a href="#" class="product-title">iPhone 17 256GB Like New...</a>
-                            <div class="price-row">
-                                <span class="price">Rp 20.000.000</span>
-                                <button class="btn-wishlist-card"><i class="far fa-heart"></i></button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- RIGHT: PENGATURAN AKUN -->
-            <aside class="account-sidebar">
-                <h3>Pengaturan Akun</h3>
-                <nav class="sidebar-nav">
-                    <a href="#" class="sidebar-link">
-                        <i class="fas fa-receipt"></i>
-                        <span>Riwayat Transaksi</span>
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                    <a href="#" class="sidebar-link">
-                        <i class="fas fa-cog"></i>
-                        <span>Pengaturan</span>
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                    <a href="#" class="sidebar-link">
-                        <i class="fas fa-question-circle"></i>
-                        <span>Pusat Bantuan</span>
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </nav>
-                
-                <!-- Tombol Edit Profil -->
+                <!-- <div class="profile-join">
+                    <span th:text="'Bergabung sejak ' + ${#temporals.format(penjual.createdAt, 'dd MMMM yyyy')}"></span>
+                </div> -->
                 <a href="/penjual/edit-profil" class="btn-edit-profil">
-                    <i class="fas fa-pen"></i> Edit Profil
+                        <i class="fas fa-pen"></i> Edit Profil
                 </a>
-            </aside>
+            </section>
 
-        </div>
+            <!-- MAIN CONTENT GRID -->
+            <div class="profile-content-grid">
+                
+                <!-- LEFT: PRODUCTS -->
+                <div class="profile-products-area">
+                    
+                    <!-- Filter Tabs -->
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="dijual">Dijual</button>
+                        <button class="filter-tab" data-filter="menunggu">Menunggu Konfirmasi</button>
+                        <button class="filter-tab" data-filter="terjual">Terjual</button>
+                    </div>
 
-    </main>
+                    <!-- Product Grid -->
+                    <div class="product-grid">
+                        
+                        <!-- Loop produk dari database -->
+                        <div th:each="p : ${produkList}" class="product-card">
+                            <a th:href="@{/produk/{id}(id=${p.produkId})}">
+                                <div class="product-image-placeholder">
+                                    <span>Foto Produk</span>
+                                </div>
+                            </a>
+                            <div class="product-details">
+                                <span class="product-cat" th:text="${p.kategori.namaKategori}">Gadget</span>
+                                <a th:href="@{/produk/{id}(id=${p.produkId})}" class="product-title" th:text="${p.namaProduk}">
+                                    iPhone 17 256GB Like New...
+                                </a>
+                                <div class="price-row">
+                                    <span class="price">Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">20.000.000</span></span>
+                                    <button class="btn-wishlist-card"><i class="far fa-heart"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dummy products jika kosong -->
+                        <div class="product-card" th:if="${produkList == null or produkList.empty}">
+                            <div class="product-image-placeholder"><span>Foto</span></div>
+                            <div class="product-details">
+                                <span class="product-cat">Kategori</span>
+                                <a href="#" class="product-title">Produk terbaikmu nanti ada di sini...</a>
+                                <div class="price-row">
+                                    <span class="price">Rp xx.xxx.xxx</span>
+                                    <button class="btn-wishlist-card"><i class="far fa-heart"></i></button>
+                                </div>
+                            </div>
+                        </div> <!-- TUTUP product-grid -->
+                    </div>
+                </div>
+
+                <!-- RIGHT: PENGATURAN AKUN -->
+                <aside class="account-sidebar">
+                    <h3>Pengaturan Akun</h3>
+                    <nav class="sidebar-nav">
+                        <a href="#" class="sidebar-link">
+                            <i class="fas fa-receipt"></i>
+                            <span>Riwayat Transaksi</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                        <a href="#" class="sidebar-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Pengaturan</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                        <a href="#" class="sidebar-link">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Pusat Bantuan</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </nav>
+                    
+                    <!-- Tombol Edit Profil -->
+                    
+                </aside>
+
+            </div>
+
+        </main>
     </div>
     <footer style="text-align: center; padding: 20px; margin-top: 40px; background: #fff;">
         &copy; 2023 UBeli. All rights reserved.

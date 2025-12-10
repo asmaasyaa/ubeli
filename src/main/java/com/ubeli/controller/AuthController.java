@@ -68,7 +68,11 @@ public class AuthController {
             session.removeAttribute("pembeli");
         }
 
-        return "redirect:/";
+        if (role.equals("PEMBELI")) {
+            return "redirect:/";
+        } else {
+            return "redirect:/penjual/profil";
+        }
     }
 
 

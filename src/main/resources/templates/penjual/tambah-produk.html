@@ -11,15 +11,7 @@
 
 <body>
 
-<!-- 🔥 POPUP SUKSES SETELAH SUBMIT BERHASIL -->
-<div th:if="${success}">
-    <script>
-        alert("Produk berhasil ditambahkan!");
-        window.location.href = "/";
-    </script>
-</div>
-
-<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="fragments/navbar-penjual :: navbar-penjual"></div>
 
 <main class="container jual-wrapper">
 
@@ -27,7 +19,7 @@
 
     <div class="form-box">
 
-        <form th:action="@{/produk/tambah-produk}" method="post" enctype="multipart/form-data" class="form-jual">
+        <form th:action="@{/penjual/tambah-produk}" method="post" enctype="multipart/form-data" class="form-jual">
 
             <h3 class="form-section-title">Informasi Dasar</h3>
 
@@ -68,8 +60,9 @@
             <!-- HARGA -->
             <div class="form-group">
                 <label>Harga</label>
-                <input type="text" id="hargaInput" placeholder="Rp 0" class="input-field">
-                <input type="hidden" id="hargaReal" name="harga">
+                <input type="text" id="hargaInput" name="hargaDisplay" placeholder="Rp 0" class="input-field">
+                <input type="hidden" id="hargaReal" name="harga" value="" required>
+
             </div>
 
             <!-- DESKRIPSI -->
@@ -93,11 +86,15 @@
             <!-- BUTTON -->
             <div class="form-actions">
                 <button type="submit" class="btn-submit">Jual</button>
-                <a href="/" class="btn-cancel">Cancel</a>
+                <a href="/penjual/profil" class="btn-cancel">Cancel</a>
             </div>
-
         </form>
+    </div>
 
+    <div th:if="${error}">
+    <script>
+        alert("[GAGAL] Data tidak valid: [[${error}]]");
+    </script>
     </div>
 
 </main>
@@ -114,13 +111,12 @@ document.addEventListener("DOMContentLoaded", function () {
         let raw = this.value.replace(/[^0-9]/g, "");
 
         if (raw === "") {
-            hargaInput.value = "";
-            hargaReal.value = "";
-            return;
-        }
-
+    hargaReal.value = "";
+    } else {
+    hargaReal.value = raw;
+    }
         hargaInput.value = "Rp " + new Intl.NumberFormat("id-ID").format(raw);
-        hargaReal.value = raw;
+        hargaReal.value = raw;  
     });
 
 });

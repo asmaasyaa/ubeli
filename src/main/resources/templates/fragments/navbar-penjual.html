@@ -1,0 +1,62 @@
+<div th:fragment="navbar-penjual">
+<header class="header">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <div class="container header-content">
+
+        <!-- LOGO -->
+        <a href="/penjual/profil" class="logo">UBeli</a>
+
+        <!-- SEARCH -->
+        <!-- <div class="search-box">
+            <span class="search-icon"><i class="fas fa-search"></i></span>
+            <input type="text" placeholder="Cari Barang...">
+        </div> -->
+
+        <!-- RIGHT -->
+        <div class="right-actions">
+
+            <!-- TOMBOL JUAL -->
+            <a th:if="${session.role == 'PENJUAL'}"
+               href="/penjual/tambah-produk"
+               class="btn-jual">+ Jual Barang</a>
+
+            <!-- BELUM LOGIN -->
+            <a th:if="${session.role == null}"
+               href="/login" class="icon-link">
+               <i class="far fa-user"></i>
+            </a>
+
+            <!-- LOGIN (ICON GROUP) -->
+            <div th:if="${session.role != null}" class="icons-group">
+
+                <!-- Wishlist -->
+                <a th:if="${session.role == 'PEMBELI'}"
+                   href="/wishlist"
+                   class="icon-link"><i class="far fa-heart"></i></a>
+
+                <!-- Notifikasi -->
+                <a href="/notifikasi/jual" class="icon-link">
+                    <i class="far fa-bell"></i>
+                </a>
+
+                <!-- Profil Pembeli -->
+                <a th:if="${session.role == 'PEMBELI'}"
+                   href="/pembeli/profil"
+                   class="icon-link"><i class="far fa-user"></i></a>
+
+                <!-- Profil Penjual -->
+                <a th:if="${session.role == 'PENJUAL'}"
+                   href="/penjual/profil"
+                   class="icon-link"><i class="far fa-user"></i></a>
+
+                <!-- Logout -->
+                <a href="/logout" class="icon-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+</header>
+</div>

@@ -17,6 +17,7 @@ import com.ubeli.repository.PenjualRepository;
 import com.ubeli.repository.FotoProdukRepository;
 
 import java.math.BigDecimal;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/penjual")
@@ -48,6 +49,7 @@ public class ProdukController {
             @RequestParam("harga") BigDecimal harga,
             @RequestParam("deskripsi") String deskripsi,
             @RequestParam("file") MultipartFile[] files,
+            HttpSession session,
             RedirectAttributes ra
     ) {
 
@@ -58,14 +60,20 @@ public class ProdukController {
         p.setHarga(harga);
         p.setStatus("Available");
         p.setDiiklankan(false);
+        p.setMerk(merk);
+        p.setKondisi(kondisi);
 
         // kategori
         Kategori kategori = kategoriRepo.findById(kategoriId).orElse(null);
         p.setKategori(kategori);
 
-        // penjual (sementara dummy ID = 1)
-        Penjual penjual = penjualRepo.findById(1L).orElse(null);
+        Penjual penjual = (Penjual) session.getAttribute("penjual");
+        if (penjual == null) {
+            return "redirect:/login";
+        }
         p.setPenjual(penjual);
+
+        
 
         Produk savedProduk = produkRepo.save(p);
 
@@ -82,7 +90,7 @@ public class ProdukController {
         // ========== KIRIM SINYAL SUKSES KE HTML ==========
         ra.addFlashAttribute("success", true);
 
-        return "redirect:/produk/tambah-produk";
+        return "redirect:/penjual/profil";
     }
 
 }

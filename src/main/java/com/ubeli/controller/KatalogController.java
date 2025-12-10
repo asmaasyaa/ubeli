@@ -6,8 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.ubeli.entity.Penjual;
 import com.ubeli.entity.Produk;
 import com.ubeli.repository.ProdukRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
 
@@ -41,14 +44,34 @@ public class KatalogController {
     // 2. HALAMAN DETAIL PRODUK
     // Menampilkan info lengkap saat produk diklik
     @GetMapping("/produk/{id}")
-    public String detailProduk(@PathVariable Long id, Model model) {
-        // Cari produk berdasarkan ID, kalau gak ada return null
+    public String detailProduk(
+            @PathVariable Long id,
+            HttpSession session,
+            Model model
+    ) {
         Produk produk = produkRepository.findById(id).orElse(null);
-        
-        // Kirim data ke HTML
+        if (produk == null) {
+            return "redirect:/?notfound";
+        }
+
         model.addAttribute("p", produk);
-        
-        // Buka file: src/main/resources/templates/general/detail_produk.html
-        return "general/detail_produk";
+
+        // CEK ROLE
+        String role = (String) session.getAttribute("role");
+
+        // Jika PENJUAL & pemilik produk
+        if ("PENJUAL".equals(role)) {
+            Penjual penjual = (Penjual) session.getAttribute("penjual");
+
+            if (penjual != null && produk.getPenjual().getPenjualId().equals(penjual.getPenjualId())) {
+
+                // tampilkan halaman detail versi penjual
+                return "penjual/detail-produk-penjual";
+            }
+        }
+
+        // Jika bukan pemilik produk → tampilan umum
+        return "general/detail-produk";
     }
+
 }

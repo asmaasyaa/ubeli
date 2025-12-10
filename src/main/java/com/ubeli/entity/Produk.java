@@ -22,6 +22,9 @@ public class Produk {
     private String status; // Available/Sold
     private boolean diiklankan;
     private LocalDate periodeIklan;
+    private String merk;
+    private String kondisi;
+
 
     // RELASI KE PENJUAL (Many Products -> One Seller)
     @ManyToOne
