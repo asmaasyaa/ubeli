@@ -1,7 +1,7 @@
 /* =====================
    PROFIL – GENERAL LAYOUT (Penjual default)
    ===================== */
-.profile-header {
+   .profile-header {
     display: flex;
     align-items: flex-start;
     gap: 30px;

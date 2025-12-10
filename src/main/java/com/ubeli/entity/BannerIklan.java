@@ -22,7 +22,7 @@ public class BannerIklan {
     private Produk produk;
 
     // ENUM STATUS (Ini yang kamu tanyakan)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) 
     private StatusIklan status; 
 
     // ENUM PAKET (Biar harga & durasi otomatis)

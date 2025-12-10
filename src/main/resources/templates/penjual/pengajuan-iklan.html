@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UBeli - Tingkatkan Jangkauan</title>
+    
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/ajukan-iklan.css}"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS KHUSUS HALAMAN INI */
+        .boosting-options { display: flex; flex-direction: column; gap: 15px; }
+        
+        .option-card {
+            display: flex; align-items: center; justify-content: space-between;
+            background-color: #dbe4ef; padding: 20px; border-radius: 12px;
+            cursor: pointer; position: relative; transition: 0.2s; border: 2px solid transparent;
+        }
+        .option-card:hover { background-color: #d1dceb; }
+        
+        /* Style saat dipilih */
+        .option-card:has(input:checked) {
+            border-color: #3b5998; background-color: #e8f0fe;
+        }
+        .option-card input[type="radio"] { display: none; }
+
+        .card-content { display: flex; align-items: center; gap: 20px; }
+        .img-placeholder { width: 50px; height: 50px; background-color: #3b5998; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;}
+        .price { font-size: 18px; font-weight: 600; color: #1f2937; display: block; }
+        .duration { color: #eb5757; font-size: 14px; margin-top: 4px; }
+
+        .check-icon { width: 24px; height: 24px; background-color: #f56040; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 12px; }
+        .radio-circle { width: 24px; height: 24px; border: 2px solid #f56040; border-radius: 50%; display: block; }
+        
+        .option-card input:checked ~ .check-icon { display: flex; }
+        .option-card input:checked ~ .radio-circle { display: none; }
+
+        /* --- STYLE MODAL QRIS --- */
+        .qris-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 9999;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .qris-content {
+            background: white; padding: 30px; border-radius: 16px;
+            text-align: center; max-width: 400px; width: 90%; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-close-qris {
+            position: absolute; top: 15px; right: 15px;
+            background: #eee; border: none; width: 30px; height: 30px;
+            border-radius: 50%; cursor: pointer; font-size: 18px; color: #666;
+        }
+        .qris-img { width: 250px; height: 250px; margin: 20px 0; border: 1px solid #eee; padding: 10px; border-radius: 8px;}
+        
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .btn-view-qris {
+            background: none; border: 1px solid #3b5998; color: #3b5998;
+            padding: 5px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 600; margin-top: 5px;
+        }
+        .btn-view-qris:hover { background: #3b5998; color: white; }
+
+        /* --- STYLE UPLOAD BOX --- */
+        .upload-box-custom {
+            border: 2px dashed #CBD5E1;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #F8FAFC;
+            min-height: 120px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .upload-box-custom:hover { border-color: #4F46E5; background-color: #EEF2FF; }
+        .upload-box-custom p { margin: 0; }
+    </style>
+</head>
+<body>
+
+    <div th:replace="fragments/navbar-penjual :: navbar-penjual"></div>
+
+    <form th:action="@{/penjual/iklan/proses}" method="post" enctype="multipart/form-data">
+        
+        <input type="hidden" name="produkId" th:value="${p.produkId}">
+
+        <main class="container checkout-page">
+            
+            <section class="checkout-left">
+                <h1>Tingkatkan Jangkauan Iklan Anda</h1>
+                <p class="subtitle">Produk: <b th:text="${p.namaProduk}">Produk</b>. Pilih paket boosting di bawah.</p>
+
+                <div class="boosting-options">
+                    <label class="option-card" th:each="paket, iterStat : ${listPaket}">
+                        <input type="radio" 
+                               name="paketDipilih" 
+                               th:value="${paket}" 
+                               th:data-price="${paket.harga}" 
+                               th:checked="${iterStat.index == 0}"
+                               onchange="updateSummary(this)"
+                               required>
+                        
+                        <div class="card-content">
+                            <div class="img-placeholder"><i class="fas fa-rocket"></i></div>
+                            <div class="text-info">
+                                <span class="price" th:text="'Rp ' + ${#numbers.formatDecimal(paket.harga, 0, 'COMMA', 0, 'POINT')}">Rp 20.000</span>
+                                <span class="duration" th:text="${paket.label}">1 Hari</span>
+                            </div>
+                        </div>
+                        <div class="check-icon"><i class="fa-solid fa-check"></i></div>
+                        <div class="radio-circle"></div>
+                    </label>
+                </div>
+            </section>
+
+            <section class="checkout-right">
+                
+                <div class="summary-section box">
+                    <h2>Rincian Pembayaran</h2>
+                    <div class="summary-row">
+                        <span>Subtotal produk</span>
+                        <span id="summarySubtotal">Rp 0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Biaya layanan</span>
+                        <span class="free">Gratis</span>
+                    </div>
+                    <hr>
+                    <div class="summary-row total">
+                        <span>Total pembayaran</span>
+                        <span class="orange-text" id="summaryTotal">Rp 0</span>
+                    </div>
+                </div>
+
+                <div class="payment-method box">
+                    <h2>Metode Pembayaran</h2>
+                    <div class="method-card selected" style="align-items: flex-start;">
+                        <div class="qr-icon"><i class="fa-solid fa-qrcode"></i></div>
+                        <div style="flex: 1;">
+                            <div class="method-info">
+                                <strong>QRIS</strong>
+                                <p style="margin-bottom: 5px;">Mendukung semua bank dan e-wallet.</p>
+                            </div>
+                            <button type="button" class="btn-view-qris" onclick="openQrisModal()">
+                                <i class="fas fa-eye"></i> Lihat Kode QR
+                            </button>
+                        </div>
+                        <div class="check-icon-small"><i class="fa-solid fa-check"></i></div>
+                    </div>
+                </div>
+
+                <div class="upload-section box">
+                    <h2>Upload Bukti Transfer</h2>
+                    
+                    <div class="upload-box-custom" onclick="document.getElementById('fileInput').click()">
+                        <input type="file" id="fileInput" name="fileBukti" accept="image/*" hidden onchange="previewFile()" required>
+                        
+                        <div id="uploadPlaceholder">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: #3B5998; margin-bottom: 8px;"></i>
+                            <p style="font-size: 13px; color: #666; font-weight: 500;">Klik untuk upload bukti</p>
+                            <span style="font-size: 11px; color: #999;">(Format: JPG, PNG)</span>
+                        </div>
+
+                        <div id="previewContainer" style="display: none; width: 100%; text-align: center;">
+                            <img id="imgPreview" src="" style="max-height: 150px; max-width: 100%; border-radius: 8px; border: 1px solid #ddd; object-fit: contain;">
+                            <p id="fileName" style="font-size: 12px; color: #333; margin-top: 8px; font-weight: 600; word-break: break-all;"></p>
+                            <span style="font-size: 11px; color: #3B5998; cursor: pointer;">Ganti File</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="security-badge">
+                    <div class="shield-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="security-text">
+                        <strong>Transaksi Aman</strong>
+                        <p>Pembayaran manual diverifikasi oleh Admin.</p>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="/penjual/dashboard" class="btn-cancel" style="text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center;">Batalkan</a>
+                    <button type="submit" class="btn-order">Bayar & Aktifkan</button>
+                </div>
+
+            </section>
+        </main>
+    </form>
+
+    <div id="qrisModal" class="qris-overlay">
+        <div class="qris-content">
+            <button class="btn-close-qris" onclick="closeQrisModal()">&times;</button>
+            <h3 style="color:#1F2937; margin-bottom:5px;">Scan untuk Membayar</h3>
+            <p style="color:#666; font-size:14px;">PT. UBeli Sejahtera</p>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=UBeliPaymentGateway&color=2C3E50" alt="QRIS Code" class="qris-img">
+            <p style="font-size:12px; color:#888;">Setelah transfer, silakan upload bukti dan klik tombol <b>"Bayar & Aktifkan"</b>.</p>
+        </div>
+    </div>
+
+    <script>
+        // 1. Logic Format Rupiah
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID').format(angka);
+        }
+
+        function updateSummary(radio) {
+            var harga = radio.getAttribute('data-price');
+            var textHarga = 'Rp ' + formatRupiah(harga);
+            
+            if(document.getElementById('summarySubtotal')) 
+                document.getElementById('summarySubtotal').innerText = textHarga;
+            
+            if(document.getElementById('summaryTotal')) 
+                document.getElementById('summaryTotal').innerText = textHarga;
+        }
+
+        // 2. Logic Popup QRIS
+        function openQrisModal() {
+            document.getElementById('qrisModal').style.display = 'flex';
+        }
+        function closeQrisModal() {
+            document.getElementById('qrisModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('qrisModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // 3. Logic Preview Gambar Upload
+        function previewFile() {
+            const fileInput = document.getElementById('fileInput');
+            const previewContainer = document.getElementById('previewContainer');
+            const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+            const imgPreview = document.getElementById('imgPreview');
+            const fileName = document.getElementById('fileName');
+
+            const file = fileInput.files[0];
+
+            if (file) {
+                // Sembunyikan instruksi upload
+                uploadPlaceholder.style.display = 'none';
+                // Munculkan preview
+                previewContainer.style.display = 'block';
+                
+                // Set nama file
+                fileName.innerText = file.name;
+
+                // Baca file gambar buat preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imgPreview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                // Kalau batal, balikin ke awal
+                uploadPlaceholder.style.display = 'flex';
+                previewContainer.style.display = 'none';
+            }
+        }
+
+        // Jalankan saat load
+        document.addEventListener("DOMContentLoaded", function() {
+            var checkedRadio = document.querySelector('input[name="paketDipilih"]:checked');
+            if (checkedRadio) {
+                updateSummary(checkedRadio);
+            }
+        });
+    </script>
+
+</body>
+</html>
