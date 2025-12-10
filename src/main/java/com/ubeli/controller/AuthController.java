@@ -94,9 +94,11 @@ public class AuthController {
             @RequestParam String email,
             @RequestParam String password,
             @RequestParam String noHp,
-
+            @RequestParam String noRekening,
+            @RequestParam String bank,
             @RequestParam String lokasiToko,
             @RequestParam(required = false) String deskripsiToko
+            
     ) {
 
         // Cek kalau pembeli sudah terdaftar
@@ -122,6 +124,8 @@ public class AuthController {
         penjual.setPasswordHash(password);
         penjual.setNoHp(noHp);
         penjual.setLokasiToko(lokasiToko);
+        penjual.setBank(bank);
+        penjual.setNoRekening(noRekening);
         penjual.setDeskripsiToko(deskripsiToko);
         penjual.setStatus("Active");
 

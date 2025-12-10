@@ -20,7 +20,6 @@ public class Penjual {
     private String passwordHash;
     private String noHp;
 
-    // ⭐ Tambahan yang kamu minta
     private String lokasiToko;       // contoh: Lowokwaru, Malang
     private String deskripsiToko;    // bio/deskripsi toko
 
