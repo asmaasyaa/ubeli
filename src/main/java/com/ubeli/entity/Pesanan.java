@@ -3,9 +3,11 @@ package com.ubeli.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.ArrayList;
-import com.ubeli.enums.StatusPesanan; // Pastikan Enum sudah dibuat
+import java.util.List;
+
+import com.ubeli.enums.StatusPesanan;
+import com.ubeli.enums.StatusPengajuan;
 
 @Entity
 @Data
@@ -19,21 +21,42 @@ public class Pesanan {
     private BigDecimal totalHarga;
     private String buktiTransferUrl;
 
-    // ENUM STATUS
+    // =============================
+    // STATUS PENGAJUAN (Baru Ditambah)
+    // =============================
     @Enumerated(EnumType.STRING)
-    private StatusPesanan statusPesanan;
+    private StatusPengajuan statusPengajuan;
 
-    // PEMBELI (Yang beli)
+    // =============================
+    // STATUS PESANAN (Transaksi setelah diterima)
+    // =============================
+    @Enumerated(EnumType.STRING)
+    private StatusPesanan statusPesanan; // boleh null sampai pengajuan diterima
+
+    // =============================
+    // RELASI PRODUK
+    // =============================
+    @ManyToOne
+    @JoinColumn(name = "produk_id")
+    private Produk produk;
+
+    // =============================
+    // RELASI PEMBELI (pengaju)
+    // =============================
     @ManyToOne
     @JoinColumn(name = "pembeli_id")
     private Pembeli pembeli;
 
-    // PENJUAL (Yang jual)
+    // =============================
+    // RELASI PENJUAL
+    // =============================
     @ManyToOne
     @JoinColumn(name = "penjual_id")
     private Penjual penjual;
 
-    // ITEM BELANJAAN (Composition)
+    // =============================
+    // ITEM (kalau transaksi multi produk)
+    // =============================
     @OneToMany(mappedBy = "pesanan", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();
 }
