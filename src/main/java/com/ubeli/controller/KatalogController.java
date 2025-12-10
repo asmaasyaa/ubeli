@@ -6,9 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.ubeli.entity.Pembeli;
 import com.ubeli.entity.Penjual;
 import com.ubeli.entity.Produk;
+import com.ubeli.entity.Wishlist;
+import com.ubeli.repository.PembeliRepository;
 import com.ubeli.repository.ProdukRepository;
+import com.ubeli.repository.WishlistRepository;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -16,6 +20,12 @@ import java.util.List;
 
 @Controller
 public class KatalogController {
+
+    @Autowired
+    private WishlistRepository wishlistRepository;
+
+    @Autowired
+    private PembeliRepository pembeliRepository;
 
     @Autowired
     private ProdukRepository produkRepository;
@@ -50,28 +60,32 @@ public class KatalogController {
             Model model
     ) {
         Produk produk = produkRepository.findById(id).orElse(null);
-        if (produk == null) {
-            return "redirect:/?notfound";
-        }
 
         model.addAttribute("p", produk);
+        model.addAttribute("pemilik", produk.getPenjual()); // <-- FIX UTAMA
 
-        // CEK ROLE
+        Penjual penjual = (Penjual) session.getAttribute("penjual");
         String role = (String) session.getAttribute("role");
+        Long pembeliId = (Long) session.getAttribute("pembeliId");
+        boolean isWishlisted = false;
 
         // Jika PENJUAL & pemilik produk
         if ("PENJUAL".equals(role)) {
-            Penjual penjual = (Penjual) session.getAttribute("penjual");
-
             if (penjual != null && produk.getPenjual().getPenjualId().equals(penjual.getPenjualId())) {
-
-                // tampilkan halaman detail versi penjual
+                model.addAttribute("penjual", penjual);
                 return "penjual/detail-produk-penjual";
             }
         }
 
-        // Jika bukan pemilik produk → tampilan umum
+        // Jika PEMBELI & sudah login
+        if (pembeliId != null) {
+            Pembeli pembeli = pembeliRepository.findById(pembeliId).orElse(null);
+            Wishlist w = wishlistRepository.findByPembeliAndProduk(pembeli, produk);
+            isWishlisted = (w != null);
+        }
+        model.addAttribute("isWishlisted", isWishlisted);
+
+        // tampilan umum
         return "general/detail-produk";
     }
-
 }

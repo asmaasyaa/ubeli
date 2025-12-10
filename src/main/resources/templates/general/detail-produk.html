@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
     <header class="header">
-    <div th:replace="fragments/navbar :: navbar"></div>
+        <div th:replace="fragments/navbar :: navbar"></div>
+    </header>
 
     <main class="container detail-page">
         
@@ -86,7 +86,8 @@
             <div class="action-card">
                 <form action="/transaksi/checkout" method="post">
                     <input type="hidden" name="produkId" th:value="${p.produkId}">
-                    <input type="hidden" name="pembeliId" value="1"> <input type="hidden" name="jumlah" value="1">
+                    <input type="hidden" name="pembeliId" th:value="${session.pembeli.pembeliId}">
+                    <input type="hidden" name="jumlah" value="1">
                     
                     <button type="submit" class="btn-action btn-dark">Ajukan Pembelian</button>
                 </form>
@@ -96,12 +97,24 @@
 
                 <div class="wishlist-action">
                     <span>Wishlist</span>
-                    <button class="btn-wishlist-circle"><i class="far fa-heart"></i></button>
+
+                    <form action="/wishlist/tambah" method="POST" style="display:inline;">
+                        <input type="hidden" name="produkId" th:value="${p.produkId}">
+                        <input type="hidden" name="pembeliId" th:value="${session.pembeli.pembeliId}">
+                        <button type="submit" class="btn-wishlist-circle">
+                            <!-- HEART OUTLINE (belum wishlist) -->
+                            <i class="far fa-heart"
+                            th:if="${isWishlisted == false}"></i>
+
+                            <!-- HEART SOLID MERAH (sudah wishlist) -->
+                            <i class="fas fa-heart"
+                            th:if="${isWishlisted == true}"
+                            style="color:#e63946;"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
-
     </main>
-
 </body>
 </html>

@@ -27,32 +27,35 @@
 
         <!-- LIST WISHLIST -->
         <section class="wishlist-grid"
-             th:if="${!#lists.isEmpty(wishlistProducts)}">
+            th:if="${!#lists.isEmpty(wishlistProducts)}">
             <article class="wishlist-card" th:each="p : ${wishlistProducts}">
-                <div class="card-body">
-                    <span class="product-category">Gadget</span>
+                
+                <!-- GAMBAR PRODUK -->
+                <div class="card-image-wrapper">
+                    <img th:src="@{/img/produk/{id}.jpg(id=${p.produkId})}" class="card-image">
+                </div>
 
-                    <h2 class="product-name"
-                        th:text="${p.namaProduk}">
-                        Nama produk
+                <!-- INFO PRODUK -->
+                <div class="card-body">
+                    <span class="product-category" th:text="${p.kategori.namaKategori}">Gadget</span>
+
+                    <h2 class="product-name" th:text="${p.namaProduk}">
+                        Laptop ASUS ROG Bekas
                     </h2>
 
-                    <span class="product-price"
-                        th:text="${p.harga}">
-                        Rp 0
-                    </span>
+                    <div class="card-footer">
+                        <span class="product-price"
+                            th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">
+                        </span>
 
-                    <a th:href="@{/produk/{id}(id=${p.produkId})}" class="detail-circle">
-                        <span>&#8250;</span>
-                    </a>
-
+                        <a th:href="@{/produk/{id}(id=${p.produkId})}" class="detail-circle">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
                 </div>
             </article>
         </section>
 </main>
-
-<p>Total wishlist: <span th:text="${#lists.size(wishlistProducts)}"></span></p>
-
 
 </body>
 </html>

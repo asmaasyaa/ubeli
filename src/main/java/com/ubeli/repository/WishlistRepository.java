@@ -1,5 +1,7 @@
 package com.ubeli.repository;
 
+import com.ubeli.entity.Pembeli;
+import com.ubeli.entity.Produk;
 import com.ubeli.entity.Wishlist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
@@ -11,4 +13,7 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
     
     // Cek apakah produk X sudah ada di wishlist user (biar gak dobel)
     boolean existsByPembeli_PembeliIdAndProduk_ProdukId(Long pembeliId, Long produkId);
+
+    Wishlist findByPembeliAndProduk(Pembeli pembeli, Produk produk);
+
 }
