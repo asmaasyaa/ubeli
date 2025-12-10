@@ -52,24 +52,22 @@ public class KatalogController {
         Produk produk = produkRepository.findById(id).orElse(null);
 
         model.addAttribute("p", produk);
+        model.addAttribute("pemilik", produk.getPenjual()); // <-- FIX UTAMA
+
         Penjual penjual = (Penjual) session.getAttribute("penjual");
-        
-        // CEK ROLE
         String role = (String) session.getAttribute("role");
 
         // Jika PENJUAL & pemilik produk
         if ("PENJUAL".equals(role)) {
-
-            model.addAttribute("penjual", penjual);
             if (penjual != null && produk.getPenjual().getPenjualId().equals(penjual.getPenjualId())) {
-
-                // tampilkan halaman detail versi penjual
+                model.addAttribute("penjual", penjual);
                 return "penjual/detail-produk-penjual";
             }
         }
 
-        // Jika bukan pemilik produk → tampilan umum
+        // tampilan umum
         return "general/detail-produk";
     }
+
 
 }
