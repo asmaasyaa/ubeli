@@ -110,6 +110,7 @@ public class AuthController {
         pembeli.setEmail(email);
         pembeli.setPasswordHash(password);
         pembeli.setNoHp(noHp);
+        pembeli.setStatus("Active");
 
         pembeliRepo.save(pembeli);
 
@@ -122,6 +123,7 @@ public class AuthController {
         penjual.setNoHp(noHp);
         penjual.setLokasiToko(lokasiToko);
         penjual.setDeskripsiToko(deskripsiToko);
+        penjual.setStatus("Active");
 
         penjualRepo.save(penjual);
 
