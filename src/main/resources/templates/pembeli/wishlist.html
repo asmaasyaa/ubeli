@@ -26,29 +26,33 @@
         </div>
 
         <!-- LIST WISHLIST -->
-        <section class="wishlist-grid">
+        <section class="wishlist-grid"
+             th:if="${!#lists.isEmpty(wishlistProducts)}">
             <article class="wishlist-card" th:each="p : ${wishlistProducts}">
                 <div class="card-body">
                     <span class="product-category">Gadget</span>
 
                     <h2 class="product-name"
-                        th:text="${p.nama}">
+                        th:text="${p.namaProduk}">
                         Nama produk
                     </h2>
 
-                    <div class="card-footer">
-                        <span class="product-price"
-                              th:text="${p.harga}">
-                            Rp 0
-                        </span>
-                        <a href="#" class="detail-circle">
-                            <span>&#8250;</span>
-                        </a>
-                    </div>
+                    <span class="product-price"
+                        th:text="${p.harga}">
+                        Rp 0
+                    </span>
+
+                    <a th:href="@{/produk/{id}(id=${p.produkId})}" class="detail-circle">
+                        <span>&#8250;</span>
+                    </a>
+
                 </div>
             </article>
         </section>
 </main>
+
+<p>Total wishlist: <span th:text="${#lists.size(wishlistProducts)}"></span></p>
+
 
 </body>
 </html>

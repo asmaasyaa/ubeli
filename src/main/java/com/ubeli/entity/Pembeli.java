@@ -13,7 +13,8 @@ public class Pembeli {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long pembeliId; // Ubah int jadi Long
+    @Column(name = "pembeli_id")
+    private Long pembeliId;
 
     private String namaLengkap;
     private String email;

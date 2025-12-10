@@ -14,9 +14,12 @@ public class Produk {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "produk_id")
     private Long produkId;
 
+    @Column(name = "nama_produk")
     private String namaProduk;
+    
     private String deskripsi;
     private BigDecimal harga;
     private String status; // Available/Sold
