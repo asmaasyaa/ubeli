@@ -45,7 +45,7 @@
                 <div class="cat-icon">📚</div>
                 <span>Buku</span>
             </a>
-            </section>
+        </section>
 
         <section class="product-section">
             <div class="section-header">
@@ -62,7 +62,8 @@
                     </div>
 
                     <div class="product-details">
-                        <span class="product-cat" th:text="${p.kategori.namaKategori}">Kategori</span>
+                        <span class="product-cat" th:text="${p.kategori != null ? p.kategori.namaKategori : 'Tanpa Kategori'}"></span>
+                        
                         <a th:href="@{/produk/{id}(id=${p.produkId})}" class="product-title" th:text="${p.namaProduk}">
                             Contoh Nama Produk Yang Agak Panjang Sedikit
                         </a>

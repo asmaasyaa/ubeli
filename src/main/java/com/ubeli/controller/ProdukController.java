@@ -93,4 +93,38 @@ public class ProdukController {
         return "redirect:/penjual/profil";
     }
 
+    @PostMapping("/hapus-produk/{id}")
+public String hapusProduk(
+        @PathVariable Long id,
+        HttpSession session,
+        RedirectAttributes ra
+) {
+    // Pastikan penjual login
+    Penjual penjual = (Penjual) session.getAttribute("penjual");
+    if (penjual == null) {
+        return "redirect:/login";
+    }
+
+    // Ambil produk berdasarkan ID
+    Produk produk = produkRepo.findById(id).orElse(null);
+    if (produk == null) {
+        ra.addFlashAttribute("error", "Produk tidak ditemukan.");
+        return "redirect:/penjual/profil";
+    }
+
+    // Cek apakah produk milik penjual yang sedang login
+    if (!produk.getPenjual().getPenjualId().equals(penjual.getPenjualId())) {
+        ra.addFlashAttribute("error", "Anda tidak memiliki izin untuk menghapus produk ini.");
+        return "redirect:/penjual/profil";
+    }
+
+    // Hapus produk (otomatis hapus foto karena cascade = ALL)
+    produkRepo.delete(produk);
+
+    ra.addFlashAttribute("successDelete", "Produk berhasil dihapus!");
+
+    return "redirect:/penjual/profil"; // Setelah hapus balik ke profil penjual
+}
+
+
 }
