@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist Saya - UBeli</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/profil.css">
+    <link rel="stylesheet" href="/css/wishlist.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- NAVBAR REUSABLE -->
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<main class="wishlist-page">
+    <div class="container">
+        <h1 class="wishlist-title">Wishlist Saya</h1>
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state"
+            th:if="${#lists.isEmpty(wishlistProducts)}">
+            <p>Wishlist kamu masih kosong. Yuk mulai cari barang impianmu!</p>
+        </div>
+
+        <!-- LIST WISHLIST -->
+        <section class="wishlist-grid">
+            <article class="wishlist-card" th:each="p : ${wishlistProducts}">
+                <div class="card-body">
+                    <span class="product-category">Gadget</span>
+
+                    <h2 class="product-name"
+                        th:text="${p.nama}">
+                        Nama produk
+                    </h2>
+
+                    <div class="card-footer">
+                        <span class="product-price"
+                              th:text="${p.harga}">
+                            Rp 0
+                        </span>
+                        <a href="#" class="detail-circle">
+                            <span>&#8250;</span>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </section>
+</main>
+
+</body>
+</html>

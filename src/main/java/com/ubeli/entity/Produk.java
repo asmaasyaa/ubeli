@@ -40,4 +40,11 @@ public class Produk {
     // Cascade ALL: Hapus produk = Hapus fotonya
     @OneToMany(mappedBy = "produk", cascade = CascadeType.ALL)
     private List<FotoProduk> listFoto = new ArrayList<>();
+
+    public void tambahFoto(String url) {
+        FotoProduk foto = new FotoProduk();
+        foto.setUrlFoto(url);
+        foto.setProduk(this); // Sambungkan foto ke produk ini
+        this.listFoto.add(foto);
+    }
 }

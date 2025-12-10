@@ -4,7 +4,7 @@
     <div class="container header-content">
 
         <!-- LOGO -->
-        <a href="/" class="logo">UBeli</a>
+        <a href="/home" class="logo">UBeli</a>
 
         <!-- SEARCH -->
         <div class="search-box">
@@ -31,7 +31,7 @@
 
                 <!-- Wishlist -->
                 <a th:if="${session.role == 'PEMBELI'}"
-                   href="/wishlist"
+                   href="/wishlist-saya"
                    class="icon-link"><i class="far fa-heart"></i></a>
 
                 <!-- Notifikasi -->

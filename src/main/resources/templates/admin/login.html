@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Administrator | UBeli</title>
+
+  <link rel="stylesheet" th:href="@{/css/auth.css}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+  <style>
+    /* CSS Tambahan Khusus Badge Admin */
+    .admin-badge {
+        background-color: #2c3e50; /* Warna Gelap */
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+    .wrapper {
+        /* Sedikit adjustment biar badge muat enak */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="form-container" style="text-align: center;">
+      
+      <div class="admin-badge">Administrator Access</div>
+
+      <h2 class="title" style="margin-top: 0;">
+        Masuk ke Panel <span class="highlight">U</span><span class="secondary">Beli</span>
+      </h2>
+
+      <form th:action="@{/admin/proses-login}" method="POST" class="register-form" style="text-align: left;">
+
+        <div style="margin-bottom: 1rem;">
+            <label style="font-size: 12px; font-weight: 600; color: #555; margin-bottom: 5px; display: block;">Username Admin</label>
+            <input type="text" name="username" placeholder="Masukkan username" required style="width: 100%;">
+        </div>
+
+        <div class="password-field">
+          <label style="font-size: 12px; font-weight: 600; color: #555; margin-bottom: 5px; display: block;">Password</label>
+          <div style="position: relative;">
+              <input id="password" type="password" name="password" placeholder="Masukkan password" required style="width: 100%;">
+              
+              <button type="button" class="eye-toggle" aria-label="Toggle password visibility" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+                  <i data-lucide="eye" class="icon-eye"></i>
+                  <i data-lucide="eye-off" class="icon-eye-off hidden"></i>
+              </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn" style="background-color: #2c3e50; margin-top: 20px;">Masuk Dashboard</button>
+
+        <a href="/" class="btn2" style="text-align: center; display: block; margin-top: 15px;">Kembali ke Website Utama</a>
+      </form>
+
+      <p class="error" th:if="${error}" style="color: red; margin-top: 10px; font-size: 14px;">
+        <span th:text="${error}">Username atau password salah</span>
+      </p>
+
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    lucide.createIcons();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.querySelector('.eye-toggle');
+        const passwordInput = document.getElementById('password');
+        const iconEye = document.querySelector('.icon-eye');
+        const iconEyeOff = document.querySelector('.icon-eye-off');
+
+        toggleBtn.addEventListener('click', () => {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        iconEye.classList.toggle('hidden', !isPassword);
+        iconEyeOff.classList.toggle('hidden', isPassword);
+        });
+    });
+  </script>
+
+</body>
+</html>

@@ -8,4 +8,7 @@ public interface LaporanRepository extends JpaRepository<Laporan, Long> {
 
     // Cari semua laporan dengan status tertentu (misal: "Pending")
     List<Laporan> findByStatus(String status);
+
+    // Hitung laporan yang statusnya "Pending"
+    long countByStatus(String status);
 }
