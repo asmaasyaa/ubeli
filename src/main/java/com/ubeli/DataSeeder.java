@@ -26,13 +26,21 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         
-        // Cek dulu: Kalau database Produk masih kosong, baru kita isi.
-        // (Supaya data gak numpuk/dobel tiap kali aplikasi di-restart)
-        if (produkRepo.count() == 0) {
-            
-            System.out.println(">>> MEMULAI DATA SEEDING... <<<");
+        // 1. BUAT AKUN ADMIN (Cek dulu biar gak dobel)
+        if (adminRepo.count() == 0) {
+            Admin admin = new Admin();
+            admin.setUsername("superadmin");
+            admin.setPasswordHash("admin123");
+            adminRepo.save(admin);
+            System.out.println(">>> ADMIN DUMMY: superadmin / admin123 <<<");
+        }
 
-            // 1. BUAT KATEGORI
+        // 2. CEK APAKAH DATABASE PRODUK KOSONG? (Kalau kosong, isi semua data)
+        if (produkRepo.count() == 0) {
+            System.out.println(">>> MEMULAI DATA SEEDING LENGKAP... <<<");
+
+            // --- KATEGORI ---
+            // CARA BARU (Benar - Pakai Setter):
             Kategori elektronik = new Kategori();
             elektronik.setNamaKategori("Elektronik");
             kategoriRepo.save(elektronik);
@@ -45,11 +53,11 @@ public class DataSeeder implements CommandLineRunner {
             hobi.setNamaKategori("Hobi & Koleksi");
             kategoriRepo.save(hobi);
 
-            // 2. BUAT PENJUAL DUMMY (Akun Toko)
+            // --- PENJUAL ---
             Penjual tokoBudi = new Penjual();
             tokoBudi.setNamaLengkap("Toko Budi Jaya");
             tokoBudi.setEmail("budi@toko.com");
-            tokoBudi.setPasswordHash("123"); // Password dummy
+            tokoBudi.setPasswordHash("123");
             tokoBudi.setNoHp("08123456789");
             tokoBudi.setBank("BCA");
             tokoBudi.setNoRekening("1234567890");
@@ -66,41 +74,39 @@ public class DataSeeder implements CommandLineRunner {
             tokoSiti.setStatus("Active");
             penjualRepo.save(tokoSiti);
 
-            // 3. BUAT PEMBELI DUMMY (Buat Test Login)
+            // --- PEMBELI ---
             Pembeli userAndi = new Pembeli();
             userAndi.setNamaLengkap("Andi Pembeli");
-            userAndi.setEmail("andi@test.com"); // Nanti login pake ini
-            userAndi.setPasswordHash("123");     // Passwordnya ini
+            userAndi.setEmail("andi@test.com");
+            userAndi.setPasswordHash("123");
             userAndi.setNoHp("08111222333");
             userAndi.setStatus("Active");
             pembeliRepo.save(userAndi);
 
-            // 4. BUAT PRODUK DUMMY (Barang Dagangan)
-            
-            // Produk 1: Laptop
+            // --- PRODUK ---
             Produk p1 = new Produk();
             p1.setNamaProduk("Laptop ASUS ROG Bekas");
             p1.setHarga(new BigDecimal("8500000"));
-            p1.setDeskripsi("RAM 16GB, SSD 512GB, Minus lecet pemakaian wajar. Nego tipis.");
+            p1.setDeskripsi("RAM 16GB, SSD 512GB, Minus lecet pemakaian wajar.");
             p1.setStatus("Available");
-            p1.setDiiklankan(true); // Ceritanya lagi di-boost
+            p1.setDiiklankan(true);
             p1.setPeriodeIklan(LocalDate.now().plusDays(3));
             p1.setPenjual(tokoBudi);
             p1.setKategori(elektronik);
+            p1.tambahFoto("https://placehold.co/600x400/png?text=Laptop+ROG");
             produkRepo.save(p1);
 
-            // Produk 2: Sepatu
             Produk p2 = new Produk();
             p2.setNamaProduk("Sepatu Nike Air Jordan");
             p2.setHarga(new BigDecimal("1200000"));
-            p2.setDeskripsi("Size 42, Original, Box masih ada. Jarang dipakai.");
+            p2.setDeskripsi("Size 42, Original, Box masih ada.");
             p2.setStatus("Available");
             p2.setDiiklankan(false);
             p2.setPenjual(tokoSiti);
             p2.setKategori(fashion);
+            p2.tambahFoto("https://placehold.co/600x400/png?text=Sepatu+Nike");
             produkRepo.save(p2);
 
-            // Produk 3: Gitar
             Produk p3 = new Produk();
             p3.setNamaProduk("Gitar Akustik Yamaha");
             p3.setHarga(new BigDecimal("750000"));
@@ -109,9 +115,41 @@ public class DataSeeder implements CommandLineRunner {
             p3.setDiiklankan(false);
             p3.setPenjual(tokoBudi);
             p3.setKategori(hobi);
+            p3.tambahFoto("https://placehold.co/600x400/png?text=Gitar+Yamaha");
             produkRepo.save(p3);
 
-            System.out.println(">>> SUKSES! DATA DUMMY TELAH DITAMBAHKAN KE DATABASE <<<");
+            // ==========================================
+            // DATA DUMMY KHUSUS TESTING ADMIN
+            // ==========================================
+            // Karena variabel userAndi, tokoBudi, p2, p3 masih ada di scope ini,
+            // kita bisa pakai mereka langsung.
+
+            // 1. DATA VERIFIKASI PEMBAYARAN
+            Pesanan pVerif = new Pesanan();
+            pVerif.setPembeli(userAndi);
+            pVerif.setPenjual(tokoBudi);
+            pVerif.setTotalHarga(new BigDecimal("150000"));
+            pVerif.setStatusPesanan(StatusPesanan.VERIFIKASI_ADMIN); 
+            pVerif.setBuktiTransferUrl("https://placehold.co/400x600/png?text=Bukti+Transfer");
+            pesananRepo.save(pVerif);
+
+            // 2. DATA VALIDASI IKLAN (Boost Sepatu)
+            BannerIklan iklanBaru = new BannerIklan();
+            iklanBaru.setProduk(p2); // Sepatu Nike
+            iklanBaru.setJenisPaket(JenisPaket.PAKET_7_HARI);
+            iklanBaru.setStatus(StatusIklan.PENDING);
+            bannerRepo.save(iklanBaru);
+
+            // 3. DATA LAPORAN (Lapor Gitar Rusak)
+            Laporan lapor = new Laporan();
+            lapor.setPelapor(userAndi);
+            lapor.setTerlapor(tokoBudi); // Melaporkan Toko Budi (karena gitarnya dari dia)
+            lapor.setProduk(p3); // Gitar
+            lapor.setAlasan("Barang tidak sesuai deskripsi, lecet parah.");
+            lapor.setStatus("Pending");
+            laporanRepo.save(lapor);
+
+            System.out.println(">>> SUKSES! SEMUA DATA DUMMY (USER + PRODUK + ADMIN) SIAP! <<<");
         } else {
             System.out.println(">>> Database sudah ada isinya, skip seeding. <<<");
         }
