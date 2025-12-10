@@ -48,11 +48,12 @@
                 <h3 class="spec-header">Detail</h3>
                 <div class="spec-row">
                     <span class="spec-label">Merk</span>
-                    <span class="spec-value">Apple</span>
+                    <span class="spec-value" th:text="${p.merk}"></span>
                 </div>
+
                 <div class="spec-row">
                     <span class="spec-label">Kondisi</span>
-                    <span class="spec-value">Like New</span>
+                    <span class="spec-value" th:text="${p.kondisi}"></span>
                 </div>
             </div>
 
@@ -67,9 +68,10 @@
             <!-- Lokasi & Waktu -->
             <div class="seller-meta">
                 <span class="seller-location">
-                    <i class="fas fa-map-marker-alt"></i> Lowokwaru, Malang
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span th:text="${penjual.lokasiToko}">Malang</span>
                 </span>
-                <span class="post-time">2 Hari Lalu</span>
+                <span class="post-time" th:text="${p.createdAt}">2 Hari Lalu</span>
             </div>
         </div>
 
@@ -88,6 +90,7 @@
                 </a>
 
                 <!-- Hapus Produk -->
+
                 <button type="button" class="btn-action btn-danger-outline" onclick="openDeleteModal()">
                     Hapus Produk
                 </button>
@@ -96,26 +99,51 @@
         </div>
 
     </main>
-
+    
     <!-- Modal Hapus -->
     <div id="deleteModal" class="modal-overlay" style="display: none;">
+
         <div class="modal-content modal-sm">
+
             <div class="modal-header">
                 <h2>Hapus Produk</h2>
                 <button type="button" class="modal-close" onclick="closeDeleteModal()">&times;</button>
             </div>
+
             <div class="modal-body">
                 <p>Apakah Anda yakin ingin menghapus produk ini?</p>
                 <p class="text-muted">Tindakan ini tidak dapat dibatalkan.</p>
             </div>
+
+            <!-- MODAL ACTIONS (barusan kamu taruh DI LUAR, harus DIPINDAH KE SINI) -->
             <div class="modal-actions">
-                <button type="button" class="btn-action btn-light" onclick="closeDeleteModal()">Batal</button>
-                <form th:action="@{/penjual/hapus-produk/{id}(id=${p.produkId})}" method="post" style="flex: 1;">
-                    <button type="submit" class="btn-action btn-danger-soft" style="width: 100%;">Hapus</button>
+
+                <!-- TOMBOL BATAL -->
+                <button type="button" class="btn-action btn-light" onclick="closeDeleteModal()">
+                    Batal
+                </button>
+
+                <!-- FORM HAPUS -->
+                <form id="deleteForm"
+                    th:action="@{/penjual/hapus-produk/{id}(id=${p.produkId})}"
+                    method="post"
+                    style="flex: 1;">
                 </form>
+
+                <!-- TOMBOL HAPUS -->
+                <button type="button" 
+                        class="btn-action btn-danger-soft"
+                        style="width: 100%;"
+                        onclick="confirmDelete()">
+                    Hapus
+                </button>
+
             </div>
+
         </div>
+
     </div>
+
 
     <script>
         // Thumbnail click
@@ -127,10 +155,13 @@
         });
 
         // Modal functions
+
         function openDeleteModal() {
             document.getElementById('deleteModal').style.display = 'flex';
         }
-
+        function confirmDelete() {
+            document.getElementById("deleteForm").submit();
+        }
         function closeDeleteModal() {
             document.getElementById('deleteModal').style.display = 'none';
         }

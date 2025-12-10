@@ -16,6 +16,13 @@
 
     <div class="profile-page-wrapper">
         <main class="container">
+
+            <div th:if="${successDelete}">
+                <script>
+                    alert([[${successDelete}]]);
+                </script>
+            </div>
+
             <!-- PROFILE HEADER -->
             <section class="profile-header">
                 <div class="profile-avatar-large">
@@ -64,7 +71,7 @@
                                 </div>
                             </a>
                             <div class="product-details">
-                                <span class="product-cat" th:text="${p.kategori.namaKategori}">Gadget</span>
+                                <span class="product-cat" th:text="${p.kategori != null ? p.kategori.namaKategori : 'Tanpa Kategori'}"></span>
                                 <a th:href="@{/produk/{id}(id=${p.produkId})}" class="product-title" th:text="${p.namaProduk}">
                                     iPhone 17 256GB Like New...
                                 </a>

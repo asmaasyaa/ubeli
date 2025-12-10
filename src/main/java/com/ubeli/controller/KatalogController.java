@@ -50,19 +50,17 @@ public class KatalogController {
             Model model
     ) {
         Produk produk = produkRepository.findById(id).orElse(null);
-        if (produk == null) {
-            return "redirect:/?notfound";
-        }
 
         model.addAttribute("p", produk);
-
+        Penjual penjual = (Penjual) session.getAttribute("penjual");
+        
         // CEK ROLE
         String role = (String) session.getAttribute("role");
 
         // Jika PENJUAL & pemilik produk
         if ("PENJUAL".equals(role)) {
-            Penjual penjual = (Penjual) session.getAttribute("penjual");
 
+            model.addAttribute("penjual", penjual);
             if (penjual != null && produk.getPenjual().getPenjualId().equals(penjual.getPenjualId())) {
 
                 // tampilkan halaman detail versi penjual

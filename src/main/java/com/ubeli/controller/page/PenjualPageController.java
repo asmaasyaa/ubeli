@@ -26,4 +26,15 @@ public class PenjualPageController {
         return "penjual/profil";  
     }
 
+    @GetMapping("/penjual/edit-profil")
+    public String editProfilToko(Model model) {
+
+        // sementara pakai dummy penjual id = 1
+        Penjual penjual = penjualRepo.findById(1L).orElse(null);
+
+        model.addAttribute("penjual", penjual);
+
+        return "penjual/edit-profil";  
+    }
+
 }

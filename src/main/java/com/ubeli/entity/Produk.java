@@ -25,6 +25,8 @@ public class Produk {
     private String merk;
     private String kondisi;
 
+    @Column(nullable = false, updatable = false)
+    private LocalDate createdAt = LocalDate.now();
 
     // RELASI KE PENJUAL (Many Products -> One Seller)
     @ManyToOne
