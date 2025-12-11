@@ -7,6 +7,9 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
@@ -27,12 +30,73 @@ public class PembeliProfilController {
             return "redirect:/login";
         }
 
-        // 🚀 AMBIL ULANG DARI DATABASE BIAR RELASI WISHLIST KELOAD
+        // AMBIL ULANG DARI DATABASE BIAR RELASI WISHLIST KELOAD
         Pembeli pembeli = pembeliRepository.findById(pembeliSession.getPembeliId())
                 .orElseThrow(() -> new RuntimeException("Pembeli tidak ditemukan"));
 
         model.addAttribute("pembeli", pembeli);
 
         return "pembeli/profil";
+    }
+
+    @GetMapping("/pembeli/edit-profil")
+    public String editProfil(HttpSession session, Model model) {
+
+        // CEK ROLE
+        if (!"PEMBELI".equals(session.getAttribute("role"))) {
+            return "redirect:/login";
+        }
+
+        Pembeli pembeli = (Pembeli) session.getAttribute("pembeli");
+
+        if (pembeli == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+        model.addAttribute("pembeli", pembeli);
+
+        return "pembeli/edit-profil";
+    }
+
+    @PostMapping("/pembeli/update-profil")
+    public String updateProfil(
+            @RequestParam String namaLengkap,
+            @RequestParam String email,
+            @RequestParam String noHp,
+            // @RequestParam(required = false) MultipartFile foto,
+            HttpSession session
+    ) {
+
+        // AMBIL PEMBELI DARI SESSION
+        Pembeli pembeli = (Pembeli) session.getAttribute("pembeli");
+
+        if (pembeli == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+        // UPDATE DATA
+        pembeli.setNamaLengkap(namaLengkap);
+        pembeli.setEmail(email);
+        pembeli.setNoHp(noHp);
+
+        // UPDATE FOTO (OPSIONAL)
+        // try {
+        //     if (foto != null && !foto.isEmpty()) {
+        //         pembeli.setFoto(foto.getBytes()); 
+        //     }
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
+
+        // SIMPAN DATABASE
+        pembeliRepository.save(pembeli);
+
+        // UPDATE SESSION AGAR LANGSUNG TERLIHAT
+        session.setAttribute("pembeli", pembeli);
+
+        // REDIRECT DENGAN ALERT SUKSES
+        return "redirect:/pembeli/profil?success";
     }
 }
