@@ -17,6 +17,11 @@
 
 <div class="profile-header-wrapper">
     <main class="container">
+    
+    <div th:if="${param.success}" class="alert-success" id="alertSuccess">
+        <span>✔️ Perubahan profil berhasil disimpan!</span>
+        <button class="close-alert" onclick="closeAlert()">×</button>
+    </div>
 
     <!-- HEADER PROFIL -->
     <section class="profile-header profile-center">
@@ -26,8 +31,6 @@
     </div>
 
     <h1 class="profile-name" th:text="${pembeli.namaLengkap}">Nama Pembeli</h1>
-
-    <p class="profile-bio">Pembeli aktif di UBeli.</p>
 
     <a href="/pembeli/edit-profil" class="btn-edit-profil profile-edit-btn">
         <i class="fas fa-pen"></i> Edit Profil
@@ -67,9 +70,26 @@
 
     </main>
 
-<footer style="text-align:center; padding:20px; margin-top:40px; background:#fff;">
-    © 2023 UBeli. All rights reserved.
-</footer>
+    <footer style="text-align:center; padding:20px; margin-top:40px; background:#fff;">
+        © 2023 UBeli. All rights reserved.
+    </footer>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const alertBox = document.getElementById("alertSuccess");
+            if (!alertBox) return;
+
+            // auto fade
+            setTimeout(() => closeAlert(), 3000);
+        });
+
+        function closeAlert() {
+            const alertBox = document.getElementById("alertSuccess");
+            if(alertBox){
+                alertBox.style.animation = "fadeOut 0.3s forwards";
+                setTimeout(() => alertBox.remove(), 300);
+            }
+        }
+    </script>
 </body>
 </html>
