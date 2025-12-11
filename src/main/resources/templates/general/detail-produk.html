@@ -82,11 +82,24 @@
 
         <div class="action-column">
             <div class="action-card">
-                <form action="/transaksi/checkout" method="post">
-                    <input type="hidden" name="produkId" th:value="${p.produkId}">
+
+                <!-- ALERT BERHASIL AJUKAN -->
+                <div th:if="${param.success == 'ajuan-dikirim'}"
+                    class="alert alert-success"
+                    style="margin-bottom: 12px;">
+                    Pengajuan pembelian berhasil dikirim 🎉  
+                    Tunggu persetujuan penjual.
+                </div>
+
+                <!-- ALERT GAGAL AJUKAN -->
+                <div th:if="${param.error}"
+                    class="alert alert-danger"
+                    style="margin-bottom: 12px;">
+                    <span th:text="${param.error}"></span>
+                </div>
+
+                <form th:action="@{'/ajukan/' + ${p.produkId}}" method="post">
                     <input type="hidden" name="pembeliId" th:value="${session.pembeli.pembeliId}">
-                    <input type="hidden" name="jumlah" value="1">
-                    
                     <button type="submit" class="btn-action btn-dark">Ajukan Pembelian</button>
                 </form>
 

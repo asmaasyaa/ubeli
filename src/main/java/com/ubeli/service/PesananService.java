@@ -8,4 +8,6 @@ public interface PesananService {
 
     Pesanan terimaPengajuan(Long pesananId);
 
+    void tolakPengajuan(Long pesananId);
+
 }

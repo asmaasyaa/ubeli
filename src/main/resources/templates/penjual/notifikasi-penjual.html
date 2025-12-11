@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Notifikasi | UBeli</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/notifikasi.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar-penjual :: navbar-penjual"></div>
+
+<main class="container">
+
+    <h2 class="notif-title">Notifikasi</h2>
+
+    <!-- LIST NOTIFIKASI -->
+    <div th:each="n : ${listNotif}" class="notif-card">
+ 
+        <!-- Avatar -->
+        <div class="notif-avatar"></div>
+
+        <!-- Isi -->
+        <div class="notif-content">
+            <h4 th:text="${n.judul}">Judul</h4>
+            <p class="notif-sub" th:text="${n.subJudul}">Subjudul</p>
+            <span class="notif-time" th:text="${n.waktu}">Waktu</span>
+        </div>
+
+        <!-- Badge -->
+        <span class="notif-status diterima"  th:if="${n.status == 'DITERIMA'}">Diterima</span>
+        <span class="notif-status ditolak"   th:if="${n.status == 'DITOLAK'}">Ditolak</span>
+        <span class="notif-status menunggu"  th:if="${n.status == 'MENUNGGU'}">Menunggu</span>
+
+        <!-- ========================= -->
+        <!-- AKSI UNTUK PENJUAL -->
+        <!-- ========================= -->
+        <div class="notif-actions"
+            th:if="${role == 'PENJUAL' and n.status == 'MENUNGGU'}">
+
+
+            <button class="btn-tolak"
+                    th:attr="data-id=${n.pesanan.pesananId}">
+                Tolak
+            </button>
+
+            <button class="btn-terima"
+                    th:attr="data-id=${n.pesanan.pesananId}">
+                Terima
+            </button>
+        </div>
+
+        <!-- ========================= -->
+        <!-- AKSI UNTUK PEMBELI -->
+        <!-- ========================= -->
+        <div class="notif-actions"
+            th:if="${role == 'PEMBELI' and n.status == 'DITERIMA'}">
+
+            <a th:href="@{'/pesanan/' + ${n.pesananId} + '/lanjut'}"
+               class="btn-primary">
+                Lanjutkan Transaksi
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+<!-- ========================= -->
+<!-- JAVASCRIPT POPUP TERIMA/TOLAK -->
+<!-- ========================= -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    // tombol terima
+    document.querySelectorAll(".btn-terima").forEach(btn => {
+        btn.addEventListener("click", function () {
+            let id = this.dataset.id;
+            if (confirm("Yakin ingin MENERIMA pengajuan ini?")) {
+                window.location.href = "/terima/" + id;
+            }
+        });
+    });
+
+    // tombol tolak
+    document.querySelectorAll(".btn-tolak").forEach(btn => {
+        btn.addEventListener("click", function () {
+            let id = this.dataset.id;
+            if (confirm("Yakin ingin MENOLAK pengajuan ini?")) {
+                window.location.href = "/tolak/" + id;
+            }
+        });
+    });
+
+});
+</script>
+
+</body>
+</html>
