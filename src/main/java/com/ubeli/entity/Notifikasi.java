@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime; // <-- TAMBAHKAN IMPORT INI
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -13,13 +15,16 @@ public class Notifikasi {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;   // PRIMARY KEY wajib
+    private Long id; 
 
     private String judul;
 
     private String subJudul;
 
-    private String waktu;
+    // --- PERBAIKAN DI SINI ---
+    // Ganti String menjadi LocalDateTime dan set default value
+    private LocalDateTime waktu = LocalDateTime.now(); 
+    // ------------------------
 
     private String status;
 
