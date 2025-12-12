@@ -17,9 +17,12 @@
     <div class="profile-page-wrapper">
         <main class="container">
 
-            <!-- ALERT SUKSES -->
-            <div th:if="${param.success}" class="alert-success" id="alertSuccess">
-                <span>✔️ Perubahan profil berhasil disimpan!</span>
+            <div th:if="${param.success or successDelete}" class="alert-success" id="alertSuccess">
+    
+                <span th:if="${param.success}">✔️ Perubahan profil berhasil disimpan!</span>
+                
+                <span th:if="${successDelete}" th:text="${successDelete}"></span>
+                
                 <button class="close-alert" onclick="closeAlert()">×</button>
             </div>
 
