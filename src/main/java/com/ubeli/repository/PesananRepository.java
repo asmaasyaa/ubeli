@@ -33,4 +33,11 @@ public interface PesananRepository extends JpaRepository<Pesanan, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Pesanan p SET p.statusPengajuan = :status WHERE p.produk.produkId = :produkId AND p.pesananId <> :pesananDiterima")
     void updateStatusPengajuanForOthers(Long produkId, Long pesananDiterima, StatusPengajuan status);
+
+    List<Pesanan> findByPembeli_PembeliIdAndProduk_ProdukIdAndStatusPengajuan(
+        Long pembeliId,
+        Long produkId,
+        StatusPengajuan statusPengajuan
+    );
+
 }

@@ -83,21 +83,6 @@
         <div class="action-column">
             <div class="action-card">
 
-                <!-- ALERT BERHASIL AJUKAN -->
-                <div th:if="${param.success == 'ajuan-dikirim'}"
-                    class="alert alert-success"
-                    style="margin-bottom: 12px;">
-                    Pengajuan pembelian berhasil dikirim 🎉  
-                    Tunggu persetujuan penjual.
-                </div>
-
-                <!-- ALERT GAGAL AJUKAN -->
-                <div th:if="${param.error}"
-                    class="alert alert-danger"
-                    style="margin-bottom: 12px;">
-                    <span th:text="${param.error}"></span>
-                </div>
-
                 <form th:action="@{'/ajukan/' + ${p.produkId}}" method="post">
                     <input type="hidden" name="pembeliId" th:value="${session.pembeli.pembeliId}">
                     <button type="submit" class="btn-action btn-dark">Ajukan Pembelian</button>
@@ -127,5 +112,56 @@
             </div>
         </div>
     </main>
+
+    <script>
+    function showPopup(title, message) {
+        document.getElementById("popupTitle").innerText = title;
+        document.getElementById("popupMessage").innerText = message;
+        document.getElementById("popupOverlay").style.display = "flex";
+    }
+
+    function closePopup() {
+        document.getElementById("popupOverlay").style.display = "none";
+    }
+    </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const url = new URL(window.location.href);
+
+        if (url.searchParams.get("success") === "ajuan-dikirim") {
+            showPopup("Pengajuan Berhasil",
+                    "Pengajuan pembelian berhasil dikirim. Tunggu persetujuan penjual.");
+        }
+
+        if (url.searchParams.get("error")) {
+            const msg = url.searchParams.get("error");
+            showPopup("Gagal Mengajukan", msg);
+        }
+    });
+    </script>
+    
+    <!-- =============================== -->
+    <!-- POPUP MODAL GLOBAL -->
+    <!-- =============================== -->
+    <div id="popupOverlay" class="modal-overlay" style="display:none;">
+        <div class="modal-content-small">
+
+            <div class="modal-header">
+                <h2 id="popupTitle">Judul</h2>
+                <button class="modal-close" onclick="closePopup()">×</button>
+            </div>
+
+            <div class="modal-body" id="popupMessage">
+                Pesan pop-up
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-action btn-dark" onclick="closePopup()">OK</button>
+            </div>
+
+        </div>
+    </div>
+
 </body>
 </html>

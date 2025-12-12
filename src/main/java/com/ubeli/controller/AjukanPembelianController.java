@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 
-public class ResponPesananController {
+public class AjukanPembelianController {
 
     private final PesananService pesananService;
 

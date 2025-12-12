@@ -17,6 +17,7 @@ import jakarta.transaction.Transactional;
 import com.ubeli.repository.NotifikasiRepository;
 import com.ubeli.entity.Notifikasi;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -45,6 +46,17 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
 
         Pembeli pembeli = pembeliRepo.findById(pembeliId)
                 .orElseThrow(() -> new RuntimeException("Pembeli tidak ditemukan"));
+
+        List<Pesanan> existing = pesananRepo
+        .findByPembeli_PembeliIdAndProduk_ProdukIdAndStatusPengajuan(
+                pembeliId,
+                produkId,
+                StatusPengajuan.PENDING
+        );
+
+        if (!existing.isEmpty()) {
+            throw new RuntimeException("Anda sudah mengajukan pembelian produk ini sebelumnya.");
+        }
 
         Pesanan pesanan = new Pesanan();
         pesanan.setProduk(produk);
@@ -82,43 +94,75 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
         Pesanan pesanan = pesananRepo.findById(pesananId)
                 .orElseThrow(() -> new RuntimeException("Pesanan tidak ditemukan"));
 
+        // ===============================
+        // GUARD: Tidak boleh terima ulang
+        // ===============================
+        if (pesanan.getStatusPengajuan() != StatusPengajuan.PENDING) {
+            return pesanan; // langsung keluar
+        }
+
         Produk produk = pesanan.getProduk();
 
-        // Terima pengajuan ini
+        // ===============================
+        // 1) Terima pesanan ini
+        // ===============================
         pesanan.setStatusPengajuan(StatusPengajuan.DITERIMA);
         pesananRepo.save(pesanan);
 
-        // Tolak pengajuan lain
+        // ===============================
+        // 2) Update notifikasi lama (supaya tombol hilang di penjual)
+        // ===============================
+        notifRepo.findByPesanan_PesananId(pesananId).ifPresent(n -> {
+            n.setStatus("DITERIMA");
+            notifRepo.save(n);
+        });
+
+        // ===============================
+        // 3) Tolak pesanan lain di DB
+        // ===============================
         pesananRepo.updateStatusPengajuanForOthers(
                 produk.getProdukId(),
                 pesananId,
                 StatusPengajuan.DITOLAK
         );
 
-        // Kunci produk
+        // ===============================
+        // 4) Update notifikasi pembeli lain
+        // ===============================
+        List<Notifikasi> notifsOthers =
+                notifRepo.findByPesanan_Produk_ProdukIdAndPesanan_PesananIdNot(
+                        produk.getProdukId(),
+                        pesananId
+                );
+
+        for (Notifikasi n : notifsOthers) {
+            n.setStatus("DITOLAK");
+            notifRepo.save(n);
+        }
+
+        // ===============================
+        // 5) Kunci produk
+        // ===============================
         produk.setStatus("Locked");
         produkRepo.save(produk);
 
-        // =========================================
-        // NOTIFIKASI UNTUK PEMBELI YANG DITERIMA
-        // =========================================
+        // ===============================
+        // 6) Kirim notifikasi ke pembeli yang diterima 
+        // ===============================
         Notifikasi notif = new Notifikasi();
         notif.setJudul("Pengajuan Anda diterima");
         notif.setSubJudul(pesanan.getProduk().getNamaProduk());
         notif.setStatus("DITERIMA");
         notif.setWaktu(LocalDateTime.now().toString());
         notif.setPembeli(pesanan.getPembeli());
-        notif.setPenjual(null);
         notif.setPesanan(pesanan);
-
         notifRepo.save(notif);
 
         return pesanan;
     }
 
-
-    @Override
-    @Transactional
+        @Override
+        @Transactional
     public void tolakPengajuan(Long pesananId) {
 
         Pesanan pesanan = pesananRepo.findById(pesananId)
