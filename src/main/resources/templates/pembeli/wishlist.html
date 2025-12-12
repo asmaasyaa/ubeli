@@ -45,7 +45,7 @@
 
                     <div class="card-footer">
                         <span class="product-price"
-                            th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">
+                            th:text="'Rp ' + ${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">
                         </span>
 
                         <a th:href="@{/produk/{id}(id=${p.produkId})}" class="detail-circle">

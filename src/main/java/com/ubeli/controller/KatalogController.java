@@ -16,7 +16,8 @@ import com.ubeli.repository.WishlistRepository;
 
 import jakarta.servlet.http.HttpSession;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class KatalogController {
@@ -43,10 +44,26 @@ public class KatalogController {
     //     // Buka file: src/main/resources/templates/general/home.html
     //     return "general/home";
     // }
+
     @GetMapping({"/", "/home"})
-    public String home(Model model) {
+    public String home(Model model, HttpSession session) {
         List<Produk> listProduk = produkRepository.findAll();
         model.addAttribute("produkList", listProduk);
+
+        // default: tidak ada wishlist
+        Set<Long> wishlistProdukIds = new HashSet<>();
+
+        Pembeli pembeli = (Pembeli) session.getAttribute("pembeli");
+        if (pembeli != null) {
+            List<Wishlist> wishlist =
+                    wishlistRepository.findByPembeli_PembeliId(pembeli.getPembeliId());
+
+            wishlistProdukIds = wishlist.stream()
+                    .map(w -> w.getProduk().getProdukId())
+                    .collect(Collectors.toSet());
+        }
+
+        model.addAttribute("wishlistProdukIds", wishlistProdukIds);
         return "general/home";
     }
 
@@ -88,4 +105,12 @@ public class KatalogController {
         // tampilan umum
         return "general/detail-produk";
     }
+
+    @GetMapping("/laporan/buat/{produkId}")
+    public String buatLaporan(@PathVariable Long produkId, Model model) {
+        Produk produk = produkRepository.findById(produkId).orElse(null);
+        model.addAttribute("produk", produk);
+        return "laporan/buat-laporan";
+    }
+
 }

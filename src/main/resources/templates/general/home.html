@@ -70,7 +70,18 @@
                         <div class="price-row">
                             <span class="price">Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">20.000.000</span></span>
                             <div class="original-price">Rp 24.000.000</div>
-                            <button class="btn-wishlist-card"><i class="far fa-heart"></i></button>
+                            <button class="btn-wishlist-card" disabled
+                                    th:title="${wishlistProdukIds.contains(p.produkId) 
+                                            ? 'Ada di wishlist' 
+                                            : 'Tambahkan lewat halaman detail'}">
+
+                                <i class="fa-heart"
+                                th:classappend="${wishlistProdukIds.contains(p.produkId) 
+                                                    ? ' fas active' 
+                                                    : ' far'}">
+                                </i>
+
+                            </button>
                         </div>
                     </div>
                 </div>

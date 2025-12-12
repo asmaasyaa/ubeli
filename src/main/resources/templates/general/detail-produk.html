@@ -89,79 +89,121 @@
                 </form>
 
                 <a href="#" class="btn-action btn-light">Chat Penjual</a>
-                <a href="#" class="btn-action btn-danger-soft">Laporkan</a>
+                <a th:href="@{'/buat-laporan/' + ${p.produkId}}"
+                    class="btn-action btn-danger-soft"> Laporkan
+                </a>
 
                 <div class="wishlist-action">
                     <span>Wishlist</span>
-
-                    <form action="/wishlist/tambah" method="POST" style="display:inline;">
-                        <input type="hidden" name="produkId" th:value="${p.produkId}">
-                        <input type="hidden" name="pembeliId" th:value="${session.pembeli.pembeliId}">
-                        <button type="submit" class="btn-wishlist-circle">
-                            <!-- HEART OUTLINE (belum wishlist) -->
-                            <i class="far fa-heart"
-                            th:if="${isWishlisted == false}"></i>
-
-                            <!-- HEART SOLID MERAH (sudah wishlist) -->
-                            <i class="fas fa-heart"
-                            th:if="${isWishlisted == true}"
-                            style="color:#e63946;"></i>
-                        </button>
-                    </form>
+                    <button
+                        class="btn-wishlist-circle"
+                        id="wishlistBtn"
+                        th:classappend="${isWishlisted} ? ' active' : ''"
+                        th:data-produk-id="${p.produkId}">
+                        
+                        <i class="fa-heart"
+                        th:classappend="${isWishlisted} ? ' fas' : ' far'"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </main>
-
-    <script>
-    function showPopup(title, message) {
-        document.getElementById("popupTitle").innerText = title;
-        document.getElementById("popupMessage").innerText = message;
-        document.getElementById("popupOverlay").style.display = "flex";
-    }
-
-    function closePopup() {
-        document.getElementById("popupOverlay").style.display = "none";
-    }
-    </script>
-    <script>
-    document.addEventListener("DOMContentLoaded", () => {
-
-        const url = new URL(window.location.href);
-
-        if (url.searchParams.get("success") === "ajuan-dikirim") {
-            showPopup("Pengajuan Berhasil",
-                    "Pengajuan pembelian berhasil dikirim. Tunggu persetujuan penjual.");
-        }
-
-        if (url.searchParams.get("error")) {
-            const msg = url.searchParams.get("error");
-            showPopup("Gagal Mengajukan", msg);
-        }
-    });
-    </script>
     
     <!-- =============================== -->
     <!-- POPUP MODAL GLOBAL -->
     <!-- =============================== -->
     <div id="popupOverlay" class="modal-overlay" style="display:none;">
         <div class="modal-content-small">
-
+    
             <div class="modal-header">
                 <h2 id="popupTitle">Judul</h2>
                 <button class="modal-close" onclick="closePopup()">×</button>
             </div>
-
+    
             <div class="modal-body" id="popupMessage">
                 Pesan pop-up
             </div>
-
+    
             <div class="modal-actions">
                 <button class="btn-action btn-dark" onclick="closePopup()">OK</button>
             </div>
-
+    
         </div>
     </div>
+    
+    <script>
+        document.getElementById("wishlistBtn")?.addEventListener("click", function () {
+            const btn = this;
+            const produkId = btn.dataset.produkId;
+
+            fetch("/wishlist/toggle", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "produkId=" + produkId
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    if (data.message === "NOT_LOGIN") {
+                        window.location.href = "/login";
+                    }
+                    return;
+                }
+
+                const icon = btn.querySelector("i");
+
+                if (data.wishlisted) {
+                    btn.classList.add("active");
+                    icon.classList.remove("far");
+                    icon.classList.add("fas");
+                } else {
+                    btn.classList.remove("active");
+                    icon.classList.remove("fas");
+                    icon.classList.add("far");
+                }
+            });
+        });
+    
+        function showPopup(title, message) {
+            document.getElementById("popupTitle").innerText = title;
+            document.getElementById("popupMessage").innerText = message;
+            document.getElementById("popupOverlay").style.display = "flex";
+        }
+
+        function closePopup() {
+            document.getElementById("popupOverlay").style.display = "none";
+            window.location.href = window.location.pathname;
+        }
+        
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const url = new URL(window.location.href);
+
+            if (url.searchParams.get("success") === "ajuan-dikirim") {
+                showPopup("Pengajuan Berhasil",
+                        "Pengajuan pembelian berhasil dikirim. Tunggu persetujuan penjual.");
+            }
+
+            if (url.searchParams.get("error")) {
+                const msg = url.searchParams.get("error");
+                showPopup("Gagal Mengajukan", msg);
+            }
+        });
+    </script>
+
+    <script th:inline="javascript">
+        const laporanSuccess = /*[[${laporanSuccess}]]*/ false;
+
+        if (laporanSuccess) {
+            showPopup(
+                "Laporan Berhasil Dikirim ✅",
+                "Terima kasih, laporan kamu akan segera kami tindak lanjuti."
+            );
+        }
+    </script>
+    
 
 </body>
 </html>

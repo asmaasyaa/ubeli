@@ -246,8 +246,13 @@
     cursor: pointer;
 }
 
-.btn-wishlist-circle i.fas {
-    color: #e63946; /* warna ikon filled */
+.btn-wishlist-circle i {
+    font-size: 16px;
+    color: #6b7280;
+}
+
+.btn-wishlist-circle.active i {
+    color: #e63946;
 }
 
 .btn-wishlist-circle:hover i {

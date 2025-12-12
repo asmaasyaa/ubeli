@@ -222,12 +222,19 @@ main.container {
     background: none;
     border: none;
     font-size: 20px;
-    color: #ccc;
-    cursor: pointer;
+    cursor: default;
 }
 
-.btn-wishlist-card:hover {
-    color: #E74C3C;
+.btn-wishlist-card i {
+    color: white;
+}
+
+.btn-wishlist-card i.active {
+    color: #E74C3C; /* merah */
+}
+
+.btn-wishlist-card:disabled {
+    opacity: 1;
 }
 
 /* ================= DETAIL PAGE ================= */
