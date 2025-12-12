@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import jakarta.servlet.http.HttpSession;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -49,7 +50,8 @@ public class BuatLaporanController {
             @RequestParam("deskripsi") String deskripsi,
             @RequestParam("produkId") Long produkId,
             @RequestParam("bukti") MultipartFile bukti,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            HttpSession session
     ) {
 
         Produk produk = produkRepository.findById(produkId).orElse(null);
@@ -57,7 +59,11 @@ public class BuatLaporanController {
             return "redirect:/buat-laporan/" + produkId + "?error=produk";
         }
 
-        Pembeli pelapor = pembeliRepository.findById(1L).orElse(null);
+        Long pembeliId = (Long) session.getAttribute("userId");
+        Pembeli pelapor = pembeliRepository.findById(pembeliId)
+                .orElseThrow(() -> new RuntimeException("Pembeli tidak ditemukan"));
+
+
         Penjual terlapor = produk.getPenjual();
 
         String buktiUrl = "/uploads/" + bukti.getOriginalFilename();
