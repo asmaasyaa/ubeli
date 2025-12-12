@@ -50,6 +50,8 @@ public class AuthController {
             }
 
             session.setAttribute("pembeli", pembeli);
+            session.setAttribute("userId", pembeli.getPembeliId());
+            session.setAttribute("pembeliId", pembeli.getPembeliId());
             session.setAttribute("role", "PEMBELI");
             session.removeAttribute("penjual");
         }
@@ -64,11 +66,17 @@ public class AuthController {
             }
 
             session.setAttribute("penjual", penjual);
+            session.setAttribute("penjualId", penjual.getPenjualId());
+            session.setAttribute("userId", penjual.getPenjualId());
             session.setAttribute("role", "PENJUAL");
             session.removeAttribute("pembeli");
         }
 
-        return "redirect:/";
+        if (role.equals("PEMBELI")) {
+            return "redirect:/";
+        } else {
+            return "redirect:/penjual/profil";
+        }
     }
 
 
@@ -90,9 +98,11 @@ public class AuthController {
             @RequestParam String email,
             @RequestParam String password,
             @RequestParam String noHp,
-
+            @RequestParam String noRekening,
+            @RequestParam String bank,
             @RequestParam String lokasiToko,
             @RequestParam(required = false) String deskripsiToko
+            
     ) {
 
         // Cek kalau pembeli sudah terdaftar
@@ -106,6 +116,7 @@ public class AuthController {
         pembeli.setEmail(email);
         pembeli.setPasswordHash(password);
         pembeli.setNoHp(noHp);
+        pembeli.setStatus("Active");
 
         pembeliRepo.save(pembeli);
 
@@ -117,7 +128,10 @@ public class AuthController {
         penjual.setPasswordHash(password);
         penjual.setNoHp(noHp);
         penjual.setLokasiToko(lokasiToko);
+        penjual.setBank(bank);
+        penjual.setNoRekening(noRekening);
         penjual.setDeskripsiToko(deskripsiToko);
+        penjual.setStatus("Active");
 
         penjualRepo.save(penjual);
 

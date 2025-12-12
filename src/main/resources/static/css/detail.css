@@ -227,11 +227,16 @@
     margin-top: 6px;
     font-size: 14px;
     color: #666;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .btn-wishlist-circle {
     width: 28px;
     height: 28px;
+    font-size: 16px;
+    color: #555;
     border-radius: 50%;
     background: #E8ECF5;
     border: none;
@@ -239,6 +244,20 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+}
+
+.btn-wishlist-circle i {
+    font-size: 16px;
+    color: #6b7280;
+}
+
+.btn-wishlist-circle.active i {
+    color: #e63946;
+}
+
+.btn-wishlist-circle:hover i {
+    transform: scale(1.15);
+    transition: 0.15s ease;
 }
 
 /* =============================
@@ -258,4 +277,179 @@
     .detail-page {
         grid-template-columns: 1fr;
     }
+}
+
+
+/* ============================
+   MODAL OVERLAY (background gelap)
+   ============================ */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.55); /* gelap transparan */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; /* pastikan tampil di atas segalanya */
+}
+
+/* ============================
+   KOTAK MODAL
+   ============================ */
+.modal-content {
+    background: #ffffff;
+    border-radius: 12px;
+    width: 380px;
+    max-width: 90%;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+/* ANIMASI */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* HEADER MODAL */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    transition: 0.2s;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+/* BODY MODAL */
+.modal-body {
+    margin-bottom: 20px;
+    color: #4b5563;
+    font-size: 15px;
+}
+
+/* BUTTON AREA */
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.modal-actions .btn-action {
+    flex: 1;
+}
+
+/* BUTTON STYLE KHUSUS MODAL */
+.btn-danger-soft {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.btn-danger-soft:hover {
+    background: #fca5a5;
+    color: white;
+}
+
+.btn-light {
+    background: #e5e7eb;
+}
+
+.btn-light:hover {
+    background: #d1d5db;
+}
+
+/* OVERLAY GELAP */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+/* KOTAK MODAL */
+.modal-content-small {
+    background: #fff;
+    width: 360px;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity:0; transform:scale(0.9); }
+    to   { opacity:1; transform:scale(1); }
+}
+
+/* HEADER */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #777;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+/* BODY */
+.modal-body {
+    font-size: 15px;
+    color: #444;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+/* BUTTON AREA */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
 }

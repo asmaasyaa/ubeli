@@ -16,18 +16,45 @@ import jakarta.servlet.http.HttpSession;
 import com.ubeli.entity.*;
 // import com.ubeli.repository.*; 
 import com.ubeli.repository.PembeliRepository;
+import com.ubeli.repository.ProdukRepository;
 import com.ubeli.repository.WishlistRepository;
 
 @Controller
 public class WishlistController {
 
+    @Autowired
+    private WishlistRepository wishlistRepository;
+
+    @Autowired
+    private PembeliRepository pembeliRepository;
+
+    @Autowired
+    private ProdukRepository produkRepository;
+
     // USE CASE: TAMBAH KE WISHLIST
     @PostMapping("/wishlist/tambah")
     public String tambahWishlist(@RequestParam Long pembeliId, @RequestParam Long produkId) {
-        
-        System.out.println("Produk " + produkId + " masuk ke wishlist pembeli " + pembeliId);
+        Pembeli pembeli = pembeliRepository.findById(pembeliId).orElse(null);
+        Produk produk = produkRepository.findById(produkId).orElse(null);
 
-        return "redirect:/katalog"; 
+        if (pembeli == null || produk == null) {
+            return "redirect:/error";
+        }
+        
+        // Cek apakah produk sudah ada di wishlist user
+        Wishlist existing = wishlistRepository.findByPembeliAndProduk(pembeli, produk);
+        if (existing != null) {
+            return "redirect:/wishlist-saya";
+        }
+
+        // Simpan ke database
+        Wishlist w = new Wishlist();
+        w.setPembeli(pembeli);
+        w.setProduk(produk);
+
+        wishlistRepository.save(w);
+
+        return "redirect:/wishlist-saya";
     }
 
     // USE CASE: HAPUS DARI WISHLIST
@@ -41,9 +68,6 @@ public class WishlistController {
     }
 
     // USE CASE: LIHAT WISHLIST
-    @Autowired
-    private WishlistRepository wishlistRepository;
-
     @GetMapping("/wishlist-saya")
     public String lihatWishlist(Model model, HttpSession session) {
 
@@ -69,4 +93,47 @@ public class WishlistController {
 
         return "pembeli/wishlist";
     }
+
+    @PostMapping("/wishlist/toggle")
+    @ResponseBody
+    public Map<String, Object> toggleWishlist(
+            @RequestParam Long produkId,
+            HttpSession session) {
+
+        Map<String, Object> res = new HashMap<>();
+
+        Pembeli pembeli = (Pembeli) session.getAttribute("pembeli");
+        if (pembeli == null) {
+            res.put("success", false);
+            res.put("message", "NOT_LOGIN");
+            return res;
+        }
+
+        Produk produk = produkRepository.findById(produkId).orElse(null);
+        if (produk == null) {
+            res.put("success", false);
+            return res;
+        }
+
+        Wishlist existing =
+            wishlistRepository.findByPembeliAndProduk(pembeli, produk);
+
+        // JIKA SUDAH ADA → HAPUS
+        if (existing != null) {
+            wishlistRepository.delete(existing);
+            res.put("wishlisted", false);
+        }
+        // JIKA BELUM → TAMBAH
+        else {
+            Wishlist w = new Wishlist();
+            w.setPembeli(pembeli);
+            w.setProduk(produk);
+            wishlistRepository.save(w);
+            res.put("wishlisted", true);
+        }
+
+        res.put("success", true);
+        return res;
+    }
+
 }

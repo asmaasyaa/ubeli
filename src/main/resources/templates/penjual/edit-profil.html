@@ -5,30 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profil - UBeli</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/edit-profil.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
     <!-- HEADER -->
-    <header class="header">
-        <div class="container header-content">
-            <a href="/" class="logo">UBeli</a>
-            <div class="search-bar">
-                <span class="search-icon"><i class="fas fa-search"></i></span>
-                <input type="text" placeholder="Cari Barang...">
-            </div>
-            <div class="header-actions">
-                <a href="/penjual/tambah-produk" class="btn-jual">+ Jual Barang</a>
-                <div class="icon-group">
-                    <a href="/wishlist" class="icon-link"><i class="far fa-heart"></i></a>
-                    <a href="#" class="icon-link"><i class="far fa-bell"></i></a>
-                    <a href="#" class="icon-link"><i class="far fa-comment"></i></a>
-                    <a href="/profil" class="icon-link"><i class="far fa-user"></i></a>
-                </div>
-            </div>
-        </div>
-    </header>
+    <div th:replace="fragments/navbar-penjual :: navbar-penjual"></div>
 
     <main class="container">
 
@@ -51,6 +35,14 @@
                 <!-- Form Fields -->
                 <div class="edit-form-fields">
                     
+                    <!-- Nama Lengkap -->
+                    <div class="form-field">
+                        <div class="field-input-wrapper">
+                            <input type="text" name="namaLengkap" th:value="${penjual.namaLengkap}" placeholder="Nama Lengkap">
+                            <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
+                        </div>
+                    </div>
+
                     <!-- Email -->
                     <div class="form-field">
                         <div class="field-input-wrapper">
@@ -67,10 +59,18 @@
                         </div>
                     </div>
 
+                    <!-- lokasi toko -->
+                    <div class="form-field">
+                        <div class="field-input-wrapper">
+                            <input type="text" name="lokasiToko" th:value="${penjual.lokasiToko}" placeholder="Lokasi Toko">
+                            <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
+                        </div>
+                    </div>
+
                     <!-- Description -->
                     <div class="form-field">
                         <div class="field-input-wrapper">
-                            <input type="text" name="deskripsi" placeholder="Description">
+                            <input type="text" class="desc-field" name="deskripsi" placeholder="Description" th:value="${penjual.deskripsiToko}">
                             <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
                         </div>
                     </div>

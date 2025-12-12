@@ -5,30 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Produk - UBeli</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/detail.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
     <!-- HEADER -->
-    <header class="header">
-        <div class="container header-content">
-            <a href="/" class="logo">UBeli</a>
-            <div class="search-bar">
-                <span class="search-icon"><i class="fas fa-search"></i></span>
-                <input type="text" placeholder="Cari Barang...">
-            </div>
-            <div class="header-actions">
-                <a href="/penjual/tambah-produk" class="btn-jual">+ Jual Barang</a>
-                <div class="icon-group">
-                    <a href="/wishlist" class="icon-link"><i class="far fa-heart"></i></a>
-                    <a href="#" class="icon-link"><i class="far fa-bell"></i></a>
-                    <a href="#" class="icon-link"><i class="far fa-comment"></i></a>
-                    <a href="/profil" class="icon-link"><i class="far fa-user"></i></a>
-                </div>
-            </div>
-        </div>
-    </header>
+    <div th:replace="fragments/navbar-penjual :: navbar-penjual"></div>
 
     <main class="container detail-page">
         
@@ -56,7 +40,7 @@
             
             <div class="price-container">
                 <span class="price-large">Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">20.000.000</span></span>
-                <span class="price-original">Rp 24.000.000</span>
+                <!--<span class="price-original">Rp 24.000.000</span> -->
             </div>
 
             <!-- Detail Box -->
@@ -64,11 +48,12 @@
                 <h3 class="spec-header">Detail</h3>
                 <div class="spec-row">
                     <span class="spec-label">Merk</span>
-                    <span class="spec-value">Apple</span>
+                    <span class="spec-value" th:text="${p.merk}"></span>
                 </div>
+
                 <div class="spec-row">
                     <span class="spec-label">Kondisi</span>
-                    <span class="spec-value">Like New</span>
+                    <span class="spec-value" th:text="${p.kondisi}"></span>
                 </div>
             </div>
 
@@ -83,9 +68,10 @@
             <!-- Lokasi & Waktu -->
             <div class="seller-meta">
                 <span class="seller-location">
-                    <i class="fas fa-map-marker-alt"></i> Lowokwaru, Malang
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span th:text="${penjual.lokasiToko}">Malang</span>
                 </span>
-                <span class="post-time">2 Hari Lalu</span>
+                <span class="post-time" th:text="${p.createdAt}">2 Hari Lalu</span>
             </div>
         </div>
 
@@ -104,6 +90,7 @@
                 </a>
 
                 <!-- Hapus Produk -->
+
                 <button type="button" class="btn-action btn-danger-outline" onclick="openDeleteModal()">
                     Hapus Produk
                 </button>
@@ -112,26 +99,50 @@
         </div>
 
     </main>
-
+    
     <!-- Modal Hapus -->
     <div id="deleteModal" class="modal-overlay" style="display: none;">
+
         <div class="modal-content modal-sm">
+
             <div class="modal-header">
                 <h2>Hapus Produk</h2>
                 <button type="button" class="modal-close" onclick="closeDeleteModal()">&times;</button>
             </div>
+
             <div class="modal-body">
                 <p>Apakah Anda yakin ingin menghapus produk ini?</p>
-                <p class="text-muted">Tindakan ini tidak dapat dibatalkan.</p>
             </div>
+
+            <!-- MODAL ACTIONS (barusan kamu taruh DI LUAR, harus DIPINDAH KE SINI) -->
             <div class="modal-actions">
-                <button type="button" class="btn-action btn-light" onclick="closeDeleteModal()">Batal</button>
-                <form th:action="@{/penjual/hapus-produk/{id}(id=${p.produkId})}" method="post" style="flex: 1;">
-                    <button type="submit" class="btn-action btn-danger-soft" style="width: 100%;">Hapus</button>
+
+                <!-- TOMBOL BATAL -->
+                <button type="button" class="btn-action btn-light" onclick="closeDeleteModal()">
+                    Batal
+                </button>
+
+                <!-- FORM HAPUS -->
+                <form id="deleteForm"
+                    th:action="@{/penjual/hapus-produk/{id}(id=${p.produkId})}"
+                    method="post"
+                    style="flex: 1;">
                 </form>
+
+                <!-- TOMBOL HAPUS -->
+                <button type="button" 
+                        class="btn-action btn-danger-soft"
+                        style="width: 100%;"
+                        onclick="confirmDelete()">
+                    Hapus
+                </button>
+
             </div>
+
         </div>
+
     </div>
+
 
     <script>
         // Thumbnail click
@@ -143,10 +154,13 @@
         });
 
         // Modal functions
+
         function openDeleteModal() {
             document.getElementById('deleteModal').style.display = 'flex';
         }
-
+        function confirmDelete() {
+            document.getElementById("deleteForm").submit();
+        }
         function closeDeleteModal() {
             document.getElementById('deleteModal').style.display = 'none';
         }

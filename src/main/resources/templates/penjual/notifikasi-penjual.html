@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Notifikasi - UBeli</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/notifikasi.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar-penjual :: navbar-penjual"></div>
+
+<main class="container">
+
+    <h2 class="notif-title">Notifikasi</h2>
+
+    <!-- LIST PESANAN (untuk penjual) -->
+    <div th:each="p : ${listPesanan}" class="notif-card">
+
+        <!-- Avatar -->
+        <div class="notif-avatar"></div>
+
+        <!-- Isi -->
+        <div class="notif-content">
+            <h4 th:text="${p.pembeli != null ? p.pembeli.namaLengkap + ' mengajukan pembelian' : 'Pengajuan'}">Judul</h4>
+            <p class="notif-sub" th:text="${p.produk != null ? p.produk.namaProduk : '-'}">Subjudul</p>
+
+            <span class="notif-time"
+                  th:text="${mapNotif != null and mapNotif.containsKey(p.pesananId) ? mapNotif[p.pesananId].waktu : ''}">
+                Waktu
+            </span>
+        </div>
+
+        <!-- Badge STATUS (gunakan .name() untuk bandingkan) -->
+        <span class="notif-status diterima"
+              th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'DITERIMA'}">
+            Diterima
+        </span>
+
+        <span class="notif-status ditolak"
+              th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'DITOLAK'}">
+            Ditolak
+        </span>
+
+        <span class="notif-status menunggu"
+              th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'PENDING'}">
+            Menunggu
+        </span>
+
+        <!-- Aksi PENJUAL (hanya ketika PENDING) -->
+        <div class="notif-actions"
+             th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'PENDING'}">
+
+            <button class="btn-tolak" th:attr="data-id=${p.pesananId}">
+                Tolak
+            </button>
+
+            <button class="btn-terima" th:attr="data-id=${p.pesananId}">
+                Terima
+            </button>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    document.querySelectorAll(".btn-terima").forEach(btn => {
+        btn.addEventListener("click", function () {
+            let id = this.dataset.id;
+            if (confirm("Yakin ingin MENERIMA pengajuan ini?")) {
+                this.disabled = true;
+                window.location.href = "/terima/" + id;
+            }
+        });
+    });
+
+    document.querySelectorAll(".btn-tolak").forEach(btn => {
+        btn.addEventListener("click", function () {
+            let id = this.dataset.id;
+            if (confirm("Yakin ingin MENOLAK pengajuan ini?")) {
+                this.disabled = true;
+                window.location.href = "/tolak/" + id;
+            }
+        });
+    });
+
+});
+</script>
+
+</body>
+</html>

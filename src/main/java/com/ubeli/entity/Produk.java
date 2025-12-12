@@ -14,14 +14,22 @@ public class Produk {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "produk_id")
     private Long produkId;
 
+    @Column(name = "nama_produk")
     private String namaProduk;
+    
     private String deskripsi;
     private BigDecimal harga;
     private String status; // Available/Sold
     private boolean diiklankan;
     private LocalDate periodeIklan;
+    private String merk;
+    private String kondisi;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDate createdAt = LocalDate.now();
 
     // RELASI KE PENJUAL (Many Products -> One Seller)
     @ManyToOne

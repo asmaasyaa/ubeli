@@ -19,58 +19,22 @@ body {
     padding: 0 20px;
 }
 
-a { text-decoration: none; color: inherit; }
-
-/* Wrapper Main agar Footer tidak naik */
-main.container { padding-bottom: 80px; }
-
-
-/* ================= HEADER / NAVBAR ================= */
-.header {
-    background: #fff;
-    padding: 15px 0;
-    border-bottom: 1px solid #e0e0e0;
-    position: sticky; top: 0; z-index: 100;
+a {
+    text-decoration: none;
+    color: inherit;
 }
 
-.header-content {
-    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+main.container {
+    padding-bottom: 80px;
 }
 
-.logo {
-    font-size: 24px; font-weight: 700; color: #E74C3C;
-}
-
-.search-bar {
-    flex-grow: 1; max-width: 600px; position: relative;
-}
-
-.search-bar input {
-    width: 100%; padding: 12px 20px 12px 45px;
-    border: 1px solid #ddd; border-radius: 8px;
-    background: #F0F2F5; font-size: 14px;
-}
-
-.search-icon {
-    position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888;
-}
-
-.header-actions {
-    display: flex; align-items: center; gap: 25px;
-}
-
-.btn-jual {
-    background-color: #E74C3C; color: white;
-    padding: 10px 20px; border-radius: 8px;
-    font-weight: 600; font-size: 14px;
-}
-
-.icon-group {
-    display: flex; align-items: center; gap: 20px; font-size: 20px; color: #555;
+.katalog-container {
+    padding-bottom: 60px;
 }
 
 
-/* ================= HERO BANNER (CAROUSEL) ================= */
+/* ================= HERO BANNER ================= */
+/* ================= HERO BANNER (CAROUSEL) - BAGIAN PENTING ================= */
 .hero-banner {
     margin-top: 20px;
     position: relative;
@@ -193,9 +157,14 @@ main.container { padding-bottom: 80px; }
 }
 .cat-item:hover .cat-icon { border-color: #3B5998; transform: translateY(-3px); }
 
-
 /* ================= PRODUCT SECTION ================= */
-.product-section { margin-bottom: 50px; }
+.product-section {
+    margin-bottom: 50px;
+}
+
+.section-title {
+    padding: 18px 2px;   
+}
 
 .section-header {
     display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
@@ -244,11 +213,26 @@ main.container { padding-bottom: 80px; }
 .original-price { font-size: 12px; color: #aaa; text-decoration: line-through; }
 
 .btn-wishlist-card {
-    position: absolute; bottom: 15px; right: 15px;
-    background: none; border: none; font-size: 20px; color: #ccc; cursor: pointer;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: default;
 }
-.btn-wishlist-card:hover { color: #E74C3C; }
 
+.btn-wishlist-card i {
+    color: white;
+}
+
+.btn-wishlist-card i.active {
+    color: #E74C3C; /* merah */
+}
+
+.btn-wishlist-card:disabled {
+    opacity: 1;
+}
 
 /* ================= DETAIL PAGE ================= */
 .detail-page {

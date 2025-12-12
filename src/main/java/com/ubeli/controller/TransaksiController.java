@@ -8,6 +8,9 @@ import org.springframework.ui.Model;
 import com.ubeli.entity.*;
 import com.ubeli.enums.StatusPesanan;
 // import com.ubeli.repository.*; // Pastikan bikin repo-nya nanti
+import com.ubeli.repository.PesananRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,17 +18,8 @@ import java.util.List;
 @Controller
 public class TransaksiController {
 
-    // USE CASE: CHECKOUT / AJUKAN PEMBELIAN
-    // Skenario: Pembeli klik "Beli Sekarang" pada produk tertentu
-    @PostMapping("/transaksi/checkout")
-    public String prosesCheckout(@RequestParam Long pembeliId, 
-                                 @RequestParam Long produkId, 
-                                 @RequestParam int jumlah) {
-
-        System.out.println("Checkout Berhasil! Pesanan dibuat untuk produk ID: " + produkId);
-
-        return "redirect:/riwayat-pesanan"; // Arahkan ke halaman riwayat
-    }
+    @Autowired
+    private PesananRepository pesananRepo;
 
     // USE CASE: KONFIRMASI TERIMA BARANG
     // Skenario: Barang sampai, Pembeli klik "Pesanan Diterima"
@@ -36,4 +30,39 @@ public class TransaksiController {
 
         return "redirect:/riwayat-pesanan";
     }
+
+    @GetMapping("/riwayat-pesanan")
+public String halamanRiwayat(Model model, HttpSession session) {
+
+    // Ambil role
+    String role = (String) session.getAttribute("role");
+
+    // Jika belum login → login
+    if (role == null) {
+        return "redirect:/login";
+    }
+
+    // Hanya PEMBELI yang boleh buka halaman ini
+    if (!role.equals("PEMBELI")) {
+        return "redirect:/home";
+    }
+
+    // Ambil data pembeli dari session
+    Pembeli pembeli = (Pembeli) session.getAttribute("pembeli");
+
+    if (pembeli == null) {
+        return "redirect:/login";
+    }
+
+    // Ambil semua pesanan milik pembeli
+    List<Pesanan> listPesanan =
+            pesananRepo.findByPembeli_PembeliId(
+                    pembeli.getPembeliId()
+            );
+
+    model.addAttribute("listPesanan", listPesanan);
+    model.addAttribute("pembeli", pembeli);
+
+    return "pembeli/riwayat-pesanan";
+}   
 }

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${judulHalaman} ?: 'Katalog Produk'">Katalog Produk</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<main class="container katalog-container">
+
+    <!-- Judul Halaman -->
+    <h3 class="section-title" 
+        th:text="${judulHalaman != null ? judulHalaman : 'Katalog Produk'}">
+        Katalog Produk
+    </h3>
+
+    <!-- Jika produk kosong -->
+    <p th:if="${produkList == null or #lists.isEmpty(produkList)}"
+       style="margin-top:20px; color:#777;">
+       Tidak ada produk ditemukan.
+    </p>
+
+    <!-- GRID PRODUK -->
+    <div class="product-grid" th:if="${produkList != null and !produkList.isEmpty()}">
+
+        <div class="product-card" th:each="p : ${produkList}">
+
+            <!-- GAMBAR -->
+            <div class="product-image-placeholder">
+                <span>Foto Produk</span>
+            </div>
+
+            <!-- DETAIL PRODUK -->
+            <div class="product-details">
+
+                <span class="product-cat"
+                      th:text="${p.kategori != null ? p.kategori.namaKategori : 'Tanpa Kategori'}">
+                    Kategori
+                </span>
+
+                <a th:href="@{/produk/{id}(id=${p.produkId})}"
+                   class="product-title"
+                   th:text="${p.namaProduk}">
+                    Nama Produk
+                </a>
+
+                <div class="price-row">
+                    <span class="price">
+                        Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">
+                        </span>
+                    </span>
+
+                    <!-- ICON WISHLIST (READ ONLY) -->
+                    <button class="btn-wishlist-card" disabled
+                        th:title="${wishlistProdukIds.contains(p.produkId) 
+                                    ? 'Sudah di wishlist' 
+                                    : 'Tambah wishlist dari halaman detail'}">
+                        
+                        <i class="fa-heart"
+                           th:classappend="${wishlistProdukIds.contains(p.produkId) ? ' fas active' : ' far'}">
+                        </i>
+
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<footer style="text-align: center; padding: 20px; margin-top: 285px; background: #fff;">
+    &copy; 2023 UBeli. All rights reserved.
+</footer>
+
+</body>
+</html>

@@ -1,19 +1,16 @@
-<div th:fragment="navbar">
+<div th:fragment="navbar-penjual">
 <header class="header">
     <link rel="stylesheet" href="/css/navbar.css">
     <div class="container header-content">
 
         <!-- LOGO -->
-        <a href="/home" class="logo">UBeli</a>
+        <a href="/penjual/profil" class="logo">UBeli</a>
 
         <!-- SEARCH -->
-        <div class="search-box">
+        <!-- <div class="search-box">
             <span class="search-icon"><i class="fas fa-search"></i></span>
-
-            <form action="/katalog/search" method="get" style="flex:1;">
-                <input type="text" name="q" placeholder="Cari Barang..." style="width:100%;">
-            </form>
-        </div>
+            <input type="text" placeholder="Cari Barang...">
+        </div> -->
 
         <!-- RIGHT -->
         <div class="right-actions">
@@ -34,7 +31,7 @@
 
                 <!-- Wishlist -->
                 <a th:if="${session.role == 'PEMBELI'}"
-                   href="/wishlist-saya"
+                   href="/wishlist"
                    class="icon-link"><i class="far fa-heart"></i></a>
 
                 <!-- Notifikasi -->

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Produk - UBeli</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/detail.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div th:replace="fragments/navbar :: navbar"></div>
+    </header>
+
+    <main class="container detail-page">
+        
+        <div class="gallery-column">
+            <div class="main-image-container">
+                <button class="nav-arrow left"><i class="fas fa-arrow-left"></i></button>
+                <div class="main-image" style="background-color: #3B5998;">
+                    </div>
+                <button class="nav-arrow right"><i class="fas fa-arrow-right"></i></button>
+            </div>
+
+            <div class="thumbnail-row">
+                <div class="thumb active" style="background-color: #3B5998;"></div>
+                <div class="thumb" style="background-color: #2c4275;"></div>
+                <div class="thumb" style="background-color: #3B5998;"></div>
+                <div class="thumb" style="background-color: #2c4275;"></div>
+                <div class="thumb" style="background-color: #3B5998;"></div>
+                <div class="thumb" style="background-color: #2c4275;"></div>
+            </div>
+        </div>
+
+        <div class="info-column">
+            <h1 class="product-title-large" th:text="${p.namaProduk}">iPhone 17 256GB Like New Pemakaian Dua Bulan</h1>
+            
+            <div class="price-container">
+                <span class="price-large">Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">20.000.000</span></span>
+            </div>
+
+            <div class="spec-box">
+                <h3 class="spec-header">Detail</h3>
+                <div class="spec-row">
+                    <span class="spec-label">Merk</span>
+                    <span class="spec-value" th:text="${p.merk}"></span>
+                </div>
+
+                <div class="spec-row">
+                    <span class="spec-label">Kondisi</span>
+                    <span class="spec-value" th:text="${p.kondisi}"></span>
+                </div>
+            </div>
+
+            <div class="description-box">
+                <h3 class="spec-header">Deskripsi</h3>
+                <p class="desc-text" th:text="${p.deskripsi}">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse congue dolor sit amet pretium tristique.
+                </p>
+            </div>
+
+            <div class="seller-info">
+                <div class="seller-meta">
+                    <span class="seller-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span th:text="${pemilik.lokasiToko}">Malang</span>
+                    </span>
+                    <span class="post-time" th:text="${p.createdAt}">2 Hari Lalu</span>
+                </div>
+                <div class="seller-card">
+                    <div class="seller-avatar"></div>
+                    <div class="seller-details">
+                        <div class="seller-name">
+                            <span th:text="${pemilik.namaLengkap}">Fajar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-column">
+            <div class="action-card">
+
+                <form th:action="@{'/ajukan/' + ${p.produkId}}" method="post">
+                    <input type="hidden" name="pembeliId" th:value="${session.pembeli.pembeliId}">
+                    <button type="submit" class="btn-action btn-dark">Ajukan Pembelian</button>
+                </form>
+
+                <a href="#" class="btn-action btn-light">Chat Penjual</a>
+                <a th:href="@{'/buat-laporan/' + ${p.produkId}}"
+                    class="btn-action btn-danger-soft"> Laporkan
+                </a>
+
+                <div class="wishlist-action">
+                    <span>Wishlist</span>
+                    <button
+                        class="btn-wishlist-circle"
+                        id="wishlistBtn"
+                        th:classappend="${isWishlisted} ? ' active' : ''"
+                        th:data-produk-id="${p.produkId}">
+                        
+                        <i class="fa-heart"
+                        th:classappend="${isWishlisted} ? ' fas' : ' far'"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- =============================== -->
+    <!-- POPUP MODAL GLOBAL -->
+    <!-- =============================== -->
+    <div id="popupOverlay" class="modal-overlay" style="display:none;">
+        <div class="modal-content-small">
+    
+            <div class="modal-header">
+                <h2 id="popupTitle">Judul</h2>
+                <button class="modal-close" onclick="closePopup()">×</button>
+            </div>
+    
+            <div class="modal-body" id="popupMessage">
+                Pesan pop-up
+            </div>
+    
+            <div class="modal-actions">
+                <button class="btn-action btn-dark" onclick="closePopup()">OK</button>
+            </div>
+    
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById("wishlistBtn")?.addEventListener("click", function () {
+            const btn = this;
+            const produkId = btn.dataset.produkId;
+
+            fetch("/wishlist/toggle", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "produkId=" + produkId
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    if (data.message === "NOT_LOGIN") {
+                        window.location.href = "/login";
+                    }
+                    return;
+                }
+
+                const icon = btn.querySelector("i");
+
+                if (data.wishlisted) {
+                    btn.classList.add("active");
+                    icon.classList.remove("far");
+                    icon.classList.add("fas");
+                } else {
+                    btn.classList.remove("active");
+                    icon.classList.remove("fas");
+                    icon.classList.add("far");
+                }
+            });
+        });
+    
+        function showPopup(title, message) {
+            document.getElementById("popupTitle").innerText = title;
+            document.getElementById("popupMessage").innerText = message;
+            document.getElementById("popupOverlay").style.display = "flex";
+        }
+
+        function closePopup() {
+            document.getElementById("popupOverlay").style.display = "none";
+            window.location.href = window.location.pathname;
+        }
+        
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const url = new URL(window.location.href);
+
+            if (url.searchParams.get("success") === "ajuan-dikirim") {
+                showPopup("Pengajuan Berhasil",
+                        "Pengajuan pembelian berhasil dikirim. Tunggu persetujuan penjual.");
+            }
+
+            if (url.searchParams.get("error")) {
+                const msg = url.searchParams.get("error");
+                showPopup("Gagal Mengajukan", msg);
+            }
+        });
+    </script>
+
+    <script th:inline="javascript">
+        const laporanSuccess = /*[[${laporanSuccess}]]*/ false;
+
+        if (laporanSuccess) {
+            showPopup(
+                "Laporan Berhasil Dikirim ✅",
+                "Terima kasih, laporan kamu akan segera kami tindak lanjuti."
+            );
+        }
+    </script>
+    
+
+</body>
+</html>
