@@ -37,10 +37,8 @@ public class NotifikasiController {
             userId = (Long) session.getAttribute("pembeliId");
         } else if ("PENJUAL".equals(role)) {
             userId = (Long) session.getAttribute("penjualId");
-            // some code earlier used "userId" generic key — fallback:
             if (userId == null) userId = (Long) session.getAttribute("userId");
         } else {
-            // fallback generic
             userId = (Long) session.getAttribute("userId");
         }
 
@@ -50,14 +48,12 @@ public class NotifikasiController {
 
         model.addAttribute("role", role);
 
-        // PEMBELI → Notifikasi Pembeli
         if (role.equals("PEMBELI")) {
             model.addAttribute("listNotif",
                 notifRepo.findByPembeli_PembeliId(userId));
             return "pembeli/notifikasi-pembeli";
         }
 
-        // PENJUAL → Daftar Pesanan + Notifikasi (map)
         if (role.equals("PENJUAL")) {
 
             List<Pesanan> listPesanan = pesananRepo.findByPenjual_PenjualId(userId);

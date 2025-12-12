@@ -6,6 +6,5 @@ import java.util.Optional;
 
 public interface AdminRepository extends JpaRepository<Admin, Long> {
 
-    // Admin biasanya login pakai username
     Optional<Admin> findByUsername(String username);
 }

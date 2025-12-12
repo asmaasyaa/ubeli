@@ -14,7 +14,6 @@ import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpSession;
 
 import com.ubeli.entity.*;
-// import com.ubeli.repository.*; 
 import com.ubeli.repository.PembeliRepository;
 import com.ubeli.repository.ProdukRepository;
 import com.ubeli.repository.WishlistRepository;
@@ -41,13 +40,11 @@ public class WishlistController {
             return "redirect:/error";
         }
         
-        // Cek apakah produk sudah ada di wishlist user
         Wishlist existing = wishlistRepository.findByPembeliAndProduk(pembeli, produk);
         if (existing != null) {
             return "redirect:/wishlist-saya";
         }
 
-        // Simpan ke database
         Wishlist w = new Wishlist();
         w.setPembeli(pembeli);
         w.setProduk(produk);
@@ -61,7 +58,6 @@ public class WishlistController {
     @PostMapping("/wishlist/hapus")
     public String hapusWishlist(@RequestParam Long wishlistId) {
         
-        // wishlistRepository.deleteById(wishlistId);
         System.out.println("Wishlist ID " + wishlistId + " dihapus.");
 
         return "redirect:/wishlist-saya";
@@ -71,20 +67,16 @@ public class WishlistController {
     @GetMapping("/wishlist-saya")
     public String lihatWishlist(Model model, HttpSession session) {
 
-        // Ambil ID pembeli dari session
         Long pembeliId = (Long) session.getAttribute("pembeliId");
 
-        // Kalau belum login → redirect ke login
         if (pembeliId == null) {
             model.addAttribute("wishlistProducts", Collections.emptyList());
-            return "pembeli/wishlist";   // atau "redirect:/login";
+            return "pembeli/wishlist";   
         }
 
-        // Ambil semua wishlist berdasarkan id pembeli
         List<Wishlist> wishlistItems =
                 wishlistRepository.findByPembeli_PembeliId(pembeliId);
 
-        // Extract Produk dari wishlist
         List<Produk> produkWishlist = wishlistItems.stream()
                 .map(Wishlist::getProduk)
                 .toList();
@@ -118,12 +110,10 @@ public class WishlistController {
         Wishlist existing =
             wishlistRepository.findByPembeliAndProduk(pembeli, produk);
 
-        // JIKA SUDAH ADA → HAPUS
         if (existing != null) {
             wishlistRepository.delete(existing);
             res.put("wishlisted", false);
         }
-        // JIKA BELUM → TAMBAH
         else {
             Wishlist w = new Wishlist();
             w.setPembeli(pembeli);

@@ -27,9 +27,7 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
     private final PembeliRepository pembeliRepo;
     private final NotifikasiRepository notifRepo;
 
-    // ========================================
     // 1. AJUKAN PEMBELIAN
-    // ========================================
     @Override
     @Transactional
     public Pesanan ajukanPembelian(Long produkId, Long pembeliId) {
@@ -45,7 +43,7 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
         Pembeli pembeli = pembeliRepo.findById(pembeliId)
                 .orElseThrow(() -> new RuntimeException("Pembeli tidak ditemukan"));
 
-        // Cek apakah pembeli sudah mengajukan untuk produk ini (pending)
+        // Cek apakah pembeli sudah mengajukan 
         List<Pesanan> existing = pesananRepo.findByPembeli_PembeliIdAndProduk_ProdukIdAndStatusPengajuan(
                 pembeliId, produkId, StatusPengajuan.PENDING);
 
@@ -63,7 +61,7 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
 
         Pesanan saved = pesananRepo.save(pesanan);
 
-        // NOTIFIKASI UNTUK PENJUAL (satu notifikasi per pengajuan)
+        // NOTIFIKASI UNTUK PENJUAL 
         Notifikasi notif = new Notifikasi();
         notif.setJudul(pembeli.getNamaLengkap() + " mengajukan pembelian");
         notif.setSubJudul(produk.getNamaProduk());
@@ -77,9 +75,7 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
         return saved;
     }
 
-    // ========================================
     // 2. PENJUAL MENERIMA SALAH SATU PENGAJUAN
-    // ========================================
     @Override
     @Transactional
     public Pesanan terimaPengajuan(Long pesananId) {
@@ -87,32 +83,29 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
         Pesanan pesanan = pesananRepo.findById(pesananId)
                 .orElseThrow(() -> new RuntimeException("Pesanan tidak ditemukan"));
 
-        // Guard: jika bukan PENDING, skip
         if (pesanan.getStatusPengajuan() != StatusPengajuan.PENDING) {
             return pesanan;
         }
 
         Produk produk = pesanan.getProduk();
 
-        // Terima pesanan ini
+        // Terima pesanan 
         pesanan.setStatusPengajuan(StatusPengajuan.DITERIMA);
         pesananRepo.save(pesanan);
 
-        // Update any existing notifikasi untuk pesanan ini -> set status DITERIMA (jika ada)
         Optional<Notifikasi> maybeNotif = notifRepo.findFirstByPesanan_PesananIdOrderByIdDesc(pesananId);
         maybeNotif.ifPresent(n -> {
             n.setStatus("DITERIMA");
             notifRepo.save(n);
         });
 
-        // Tolak pengajuan lain di DB untuk produk yang sama
         pesananRepo.updateStatusPengajuanForOthers(
                 produk.getProdukId(),
                 pesananId,
                 StatusPengajuan.DITOLAK
         );
 
-        // Update notifikasi pembeli lain menjadi DITOLAK (supaya mereka lihat notif)
+        // Update notifikasi pembeli lain menjadi DITOLAK 
         List<Notifikasi> notifsOthers = notifRepo.findByPesanan_Produk_ProdukIdAndPesanan_PesananIdNot(
                 produk.getProdukId(), pesananId);
         for (Notifikasi n : notifsOthers) {
@@ -120,11 +113,10 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
             notifRepo.save(n);
         }
 
-        // Kunci produk agar tidak bisa diajukan lagi
         produk.setStatus("Locked");
         produkRepo.save(produk);
 
-        // Kirim notifikasi ke pembeli yang DITERIMA (opsional: bisa reuse one)
+        // Kirim notifikasi ke pembeli yang DITERIMA 
         Notifikasi notif = new Notifikasi();
         notif.setJudul("Pengajuan Anda diterima");
         notif.setSubJudul(pesanan.getProduk().getNamaProduk());
@@ -137,9 +129,7 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
         return pesanan;
     }
 
-    // ========================================
     // 3. PENJUAL MENOLAK PENGAJUAN
-    // ========================================
     @Override
     @Transactional
     public void tolakPengajuan(Long pesananId) {

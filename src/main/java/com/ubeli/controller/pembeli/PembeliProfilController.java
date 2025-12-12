@@ -30,7 +30,6 @@ public class PembeliProfilController {
             return "redirect:/login";
         }
 
-        // AMBIL ULANG DARI DATABASE BIAR RELASI WISHLIST KELOAD
         Pembeli pembeli = pembeliRepository.findById(pembeliSession.getPembeliId())
                 .orElseThrow(() -> new RuntimeException("Pembeli tidak ditemukan"));
 
@@ -64,7 +63,6 @@ public class PembeliProfilController {
             @RequestParam String namaLengkap,
             @RequestParam String email,
             @RequestParam String noHp,
-            // @RequestParam(required = false) MultipartFile foto,
             HttpSession session
     ) {
 
@@ -80,16 +78,7 @@ public class PembeliProfilController {
         pembeli.setNamaLengkap(namaLengkap);
         pembeli.setEmail(email);
         pembeli.setNoHp(noHp);
-
-        // UPDATE FOTO (OPSIONAL)
-        // try {
-        //     if (foto != null && !foto.isEmpty()) {
-        //         pembeli.setFoto(foto.getBytes()); 
-        //     }
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        // }
-
+        
         // SIMPAN DATABASE
         pembeliRepository.save(pembeli);
 

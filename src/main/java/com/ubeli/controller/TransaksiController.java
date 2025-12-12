@@ -22,7 +22,6 @@ public class TransaksiController {
     private PesananRepository pesananRepo;
 
     // USE CASE: KONFIRMASI TERIMA BARANG
-    // Skenario: Barang sampai, Pembeli klik "Pesanan Diterima"
     @PostMapping("/transaksi/konfirmasi-terima")
     public String konfirmasiTerima(@RequestParam Long pesananId) {
         
@@ -32,37 +31,32 @@ public class TransaksiController {
     }
 
     @GetMapping("/riwayat-pesanan")
-public String halamanRiwayat(Model model, HttpSession session) {
+    public String halamanRiwayat(Model model, HttpSession session) {
 
-    // Ambil role
-    String role = (String) session.getAttribute("role");
+        String role = (String) session.getAttribute("role");
 
-    // Jika belum login → login
-    if (role == null) {
-        return "redirect:/login";
-    }
+        if (role == null) {
+            return "redirect:/login";
+        }
 
-    // Hanya PEMBELI yang boleh buka halaman ini
-    if (!role.equals("PEMBELI")) {
-        return "redirect:/home";
-    }
+        if (!role.equals("PEMBELI")) {
+            return "redirect:/home";
+        }
 
-    // Ambil data pembeli dari session
-    Pembeli pembeli = (Pembeli) session.getAttribute("pembeli");
+        Pembeli pembeli = (Pembeli) session.getAttribute("pembeli");
 
-    if (pembeli == null) {
-        return "redirect:/login";
-    }
+        if (pembeli == null) {
+            return "redirect:/login";
+        }
 
-    // Ambil semua pesanan milik pembeli
-    List<Pesanan> listPesanan =
-            pesananRepo.findByPembeli_PembeliId(
-                    pembeli.getPembeliId()
-            );
+        List<Pesanan> listPesanan =
+                pesananRepo.findByPembeli_PembeliId(
+                        pembeli.getPembeliId()
+                );
 
-    model.addAttribute("listPesanan", listPesanan);
-    model.addAttribute("pembeli", pembeli);
+        model.addAttribute("listPesanan", listPesanan);
+        model.addAttribute("pembeli", pembeli);
 
-    return "pembeli/riwayat-pesanan";
-}   
+        return "pembeli/riwayat-pesanan";
+    }   
 }

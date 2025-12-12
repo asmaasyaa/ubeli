@@ -51,7 +51,7 @@ public class PenjualProfilController {
         return "penjual/profil";
     }
     
-    // == HALAMAN EDIT PROFIL ==
+    // HALAMAN EDIT PROFIL 
     @GetMapping("/penjual/edit-profil")
     public String editProfil(HttpSession session, Model model) {
 
@@ -104,17 +104,8 @@ public class PenjualProfilController {
         penjual.setDeskripsiToko(deskripsi); 
         penjual.setLokasiToko(lokasiToko);
 
-        // JIKA ADA FOTO BARU DIUPLOAD
-        // if (foto != null && !foto.isEmpty()) {
-        //     try {
-        //         penjual.setFoto(foto.getBytes()); // atau simpan nama file
-        //     } catch (Exception e) {
-        //         e.printStackTrace();
-        //     }
-        // }
-
         // SIMPAN KE DATABASE
-        penjualRepo.save(penjual); // pastikan repo sudah di-autowired
+        penjualRepo.save(penjual); 
 
         // UPDATE DATA DI SESSION AGAR PERUBAHAN LANGSUNG TERLIHAT
         session.setAttribute("penjual", penjual);

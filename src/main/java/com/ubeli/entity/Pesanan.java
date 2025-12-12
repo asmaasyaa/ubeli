@@ -21,42 +21,30 @@ public class Pesanan {
     private BigDecimal totalHarga;
     private String buktiTransferUrl;
 
-    // =============================
     // STATUS PENGAJUAN (Baru Ditambah)
-    // =============================
     @Enumerated(EnumType.STRING)
     private StatusPengajuan statusPengajuan;
 
-    // =============================
     // STATUS PESANAN (Transaksi setelah diterima)
-    // =============================
     @Enumerated(EnumType.STRING)
-    private StatusPesanan statusPesanan; // boleh null sampai pengajuan diterima
+    private StatusPesanan statusPesanan; 
 
-    // =============================
     // RELASI PRODUK
-    // =============================
     @ManyToOne
     @JoinColumn(name = "produk_id")
     private Produk produk;
 
-    // =============================
     // RELASI PEMBELI (pengaju)
-    // =============================
     @ManyToOne
     @JoinColumn(name = "pembeli_id")
     private Pembeli pembeli;
 
-    // =============================
     // RELASI PENJUAL
-    // =============================
     @ManyToOne
     @JoinColumn(name = "penjual_id")
     private Penjual penjual;
 
-    // =============================
-    // ITEM (kalau transaksi multi produk)
-    // =============================
+    // ITEM (untuk transaksi multi produk)
     @OneToMany(mappedBy = "pesanan", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();
 }

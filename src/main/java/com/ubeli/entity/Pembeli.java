@@ -20,13 +20,13 @@ public class Pembeli {
     private String email;
     private String passwordHash;
     private String noHp;
-    private String status; // Active, Banned (Buat fitur blokir)
+    private String status;
 
-    // RELASI 1: WISHLIST (Satu pembeli punya banyak wishlist)
+    // RELASI WISHLIST 
     @OneToMany(mappedBy = "pembeli", cascade = CascadeType.ALL)
     private List<Wishlist> wishlists = new ArrayList<>();
 
-    // RELASI 2: PESANAN (Satu pembeli punya banyak riwayat pesanan)
+    // RELASI PESANAN 
     @OneToMany(mappedBy = "pembeli")
     private List<Pesanan> pesanans = new ArrayList<>();
 

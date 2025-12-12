@@ -5,19 +5,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 
-import com.ubeli.entity.Produk;
-import com.ubeli.entity.Kategori;
-import com.ubeli.entity.Penjual;
-import com.ubeli.entity.FotoProduk;
+import com.ubeli.entity.*;
+import com.ubeli.repository.*;
 
-import com.ubeli.repository.ProdukRepository;
-import com.ubeli.repository.KategoriRepository;
-import com.ubeli.repository.PenjualRepository;
-import com.ubeli.repository.FotoProdukRepository;
+import jakarta.servlet.http.HttpSession;
 
 import java.math.BigDecimal;
-import jakarta.servlet.http.HttpSession;
+import java.nio.file.*;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/penjual")
@@ -30,10 +27,11 @@ public class ProdukController {
     private KategoriRepository kategoriRepo;
 
     @Autowired
-    private PenjualRepository penjualRepo;
-
-    @Autowired
     private FotoProdukRepository fotoRepo;
+
+    /* ===============================
+       TAMBAH PRODUK
+    ================================= */
 
     @GetMapping("/tambah-produk")
     public String halamanTambahProduk() {
@@ -42,18 +40,21 @@ public class ProdukController {
 
     @PostMapping("/tambah-produk")
     public String prosesTambahProduk(
-            @RequestParam("kategoriId") Long kategoriId,
-            @RequestParam("merk") String merk,
-            @RequestParam("namaProduk") String namaProduk,
-            @RequestParam("kondisi") String kondisi,
-            @RequestParam("harga") BigDecimal harga,
-            @RequestParam("deskripsi") String deskripsi,
-            @RequestParam("file") MultipartFile[] files,
-            HttpSession session,
-            RedirectAttributes ra
+            @RequestParam Long kategoriId,
+            @RequestParam String merk,
+            @RequestParam String namaProduk,
+            @RequestParam String kondisi,
+            @RequestParam BigDecimal harga,
+            @RequestParam String deskripsi,
+            @RequestParam(value = "file", required = false) MultipartFile[] files,
+            HttpSession session
     ) {
 
-        // ========== SIMPAN PRODUK ==========
+        System.out.println("JUMLAH FILE = " + files.length);
+
+        Penjual penjual = (Penjual) session.getAttribute("penjual");
+        if (penjual == null) return "redirect:/login";
+
         Produk p = new Produk();
         p.setNamaProduk(namaProduk);
         p.setDeskripsi(deskripsi);
@@ -63,35 +64,112 @@ public class ProdukController {
         p.setMerk(merk);
         p.setKondisi(kondisi);
 
-        // kategori
-        Kategori kategori = kategoriRepo.findById(kategoriId).orElse(null);
-        p.setKategori(kategori);
-
-        Penjual penjual = (Penjual) session.getAttribute("penjual");
-        if (penjual == null) {
-            return "redirect:/login";
-        }
+        p.setKategori(kategoriRepo.findById(kategoriId).orElse(null));
         p.setPenjual(penjual);
-
-        
 
         Produk savedProduk = produkRepo.save(p);
 
-        // ========== SIMPAN FOTO PRODUK ==========
+        System.out.println("JUMLAH FILE: " + files.length);
+        for (MultipartFile f : files) {
+            System.out.println("FILE: " + f.getOriginalFilename() + " | empty=" + f.isEmpty());
+        }
+        // ===== SIMPAN FOTO =====
         for (MultipartFile file : files) {
             if (!file.isEmpty()) {
+
+                String namaFile = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
                 FotoProduk foto = new FotoProduk();
-                foto.setProduk(savedProduk);
-                foto.setUrlFoto(file.getOriginalFilename()); // nanti diganti stored filename
-                fotoRepo.save(foto);
+                foto.setUrlFoto("/img/produk/" + namaFile);
+                foto.setProduk(p);
+
+                p.getListFoto().add(foto);
             }
         }
-
-        // ========== KIRIM SINYAL SUKSES KE HTML ==========
-        ra.addFlashAttribute("success", true);
+        produkRepo.save(p);
 
         return "redirect:/penjual/profil";
     }
+
+
+    /* ===============================
+       EDIT PRODUK
+    ================================= */
+
+    @GetMapping("/edit-produk/{id}")
+    public String halamanEditProduk(
+            @PathVariable Long id,
+            Model model,
+            HttpSession session
+    ) {
+
+        Penjual penjual = (Penjual) session.getAttribute("penjual");
+        if (penjual == null) return "redirect:/login";
+
+        Produk produk = produkRepo.findById(id).orElse(null);
+        if (produk == null ||
+            !produk.getPenjual().getPenjualId().equals(penjual.getPenjualId())) {
+            return "redirect:/penjual/profil";
+        }
+
+        model.addAttribute("produk", produk);
+        model.addAttribute("mode", "edit");
+
+        return "penjual/tambah-produk";
+    }
+
+    @PostMapping("/edit-produk/{id}")
+
+    public String prosesEditProduk(
+            @PathVariable Long id,
+            @RequestParam Long kategoriId,
+            @RequestParam String merk,
+            @RequestParam String namaProduk,
+            @RequestParam String kondisi,
+            @RequestParam BigDecimal harga,
+            @RequestParam String deskripsi,
+            @RequestParam(value = "file", required = false) MultipartFile[] files,
+            HttpSession session
+    ) {
+        System.out.println("=== EDIT PRODUK MASUK ===");
+
+        Penjual penjual = (Penjual) session.getAttribute("penjual");
+        if (penjual == null) return "redirect:/login";
+
+        Produk p = produkRepo.findById(id).orElse(null);
+        if (p == null ||
+            !p.getPenjual().getPenjualId().equals(penjual.getPenjualId())) {
+            return "redirect:/penjual/profil";
+        }
+
+        p.setMerk(merk);
+        p.setNamaProduk(namaProduk);
+        p.setKondisi(kondisi);
+        p.setHarga(harga);
+        p.setDeskripsi(deskripsi);
+
+        Kategori kategori = kategoriRepo.findById(kategoriId).orElse(null);
+        p.setKategori(kategori);
+
+        produkRepo.save(p);
+        
+        if (files != null) {
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                FotoProduk foto = new FotoProduk();
+                foto.setProduk(p);
+                foto.setUrlFoto(file.getOriginalFilename());
+                fotoRepo.save(foto);
+            }
+        }
+    }
+            return "redirect:/penjual/profil";
+        }
+
+
+    /* ===============================
+       HAPUS PRODUK
+    ================================= */
 
     @PostMapping("/hapus-produk/{id}")
     public String hapusProduk(
@@ -99,30 +177,52 @@ public class ProdukController {
             HttpSession session,
             RedirectAttributes ra
     ) {
-        // Pastikan penjual login
+
         Penjual penjual = (Penjual) session.getAttribute("penjual");
-        if (penjual == null) {
-            return "redirect:/login";
-        }
+        if (penjual == null) return "redirect:/login";
 
-        // Ambil produk berdasarkan ID
         Produk produk = produkRepo.findById(id).orElse(null);
-        if (produk == null) {
-            ra.addFlashAttribute("error", "Produk tidak ditemukan.");
+        if (produk == null ||
+            !produk.getPenjual().getPenjualId().equals(penjual.getPenjualId())) {
+            ra.addFlashAttribute("error", "Tidak punya akses");
             return "redirect:/penjual/profil";
         }
 
-        // Cek apakah produk milik penjual yang sedang login
-        if (!produk.getPenjual().getPenjualId().equals(penjual.getPenjualId())) {
-            ra.addFlashAttribute("error", "Anda tidak memiliki izin untuk menghapus produk ini.");
-            return "redirect:/penjual/profil";
-        }
-
-        // Hapus produk (otomatis hapus foto karena cascade = ALL)
         produkRepo.delete(produk);
+        ra.addFlashAttribute("successDelete", true);
 
-        ra.addFlashAttribute("successDelete", "Produk berhasil dihapus!");
+        return "redirect:/penjual/profil";
+    }
 
-        return "redirect:/penjual/profil"; // Setelah hapus balik ke profil penjual
+    /* ===============================
+       UTIL UPLOAD FOTO (SATU SUMBER)
+    ================================= */
+
+    private void simpanFotoProduk(Produk produk, MultipartFile[] files) throws Exception {
+
+        if (files == null || files.length == 0) return;
+
+        Path uploadDir = Paths.get("src/main/resources/static/img/produk/");
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);
+        }
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+
+                String namaFile = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+                Files.copy(
+                    file.getInputStream(),
+                    uploadDir.resolve(namaFile),
+                    StandardCopyOption.REPLACE_EXISTING
+                );
+
+                FotoProduk foto = new FotoProduk();
+                foto.setProduk(produk);
+                foto.setUrlFoto("/img/produk/" + namaFile);
+                fotoRepo.save(foto);
+            }
+        }
     }
 }

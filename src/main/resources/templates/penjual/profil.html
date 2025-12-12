@@ -65,17 +65,29 @@
                         <div th:each="p : ${produkList}" class="product-card">
                             <a th:href="@{/produk/{id}(id=${p.produkId})}">
                                 <div class="product-image-placeholder">
-                                    <span>Foto Produk</span>
+                                    <img th:src="${#lists.isEmpty(p.listFoto) 
+                                        ? '/img/default.png' 
+                                        : p.listFoto[0].urlFoto}">
                                 </div>
                             </a>
+
                             <div class="product-details">
-                                <span class="product-cat" th:text="${p.kategori != null ? p.kategori.namaKategori : 'Tanpa Kategori'}"></span>
-                                <a th:href="@{/produk/{id}(id=${p.produkId})}" class="product-title" th:text="${p.namaProduk}">
-                                    iPhone 17 256GB Like New...
+                                <span class="product-cat"
+                                    th:text="${p.kategori != null ? p.kategori.namaKategori : 'Tanpa Kategori'}">
+                                </span>
+
+                                <a th:href="@{/produk/{id}(id=${p.produkId})}"
+                                class="product-title"
+                                th:text="${p.namaProduk}">
                                 </a>
+
                                 <div class="price-row">
-                                    <span class="price">Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">20.000.000</span></span>
-                                    <button class="btn-wishlist-card"><i class="far fa-heart"></i></button>
+                                    <span class="price">
+                                        Rp <span th:text="${#numbers.formatDecimal(p.harga,0,'COMMA',0,'POINT')}"></span>
+                                    </span>
+                                    <button class="btn-wishlist-card">
+                                        <i class="far fa-heart"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes; // Jangan lupa import ini
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; 
 
 import com.ubeli.entity.*;
 import com.ubeli.repository.*;
@@ -17,11 +17,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin") // Semua URL diawali /admin
+@RequestMapping("/admin") 
 public class AdminController {
 
-    // Panggil semua repo yang dibutuhkan Admin
-    @Autowired private AdminRepository adminRepo; // Pastikan ini ada di paling atas
+    @Autowired private AdminRepository adminRepo; 
     @Autowired private PesananRepository pesananRepo;
     @Autowired private BannerIklanRepository bannerRepo;
     @Autowired private PembeliRepository pembeliRepo;
@@ -30,13 +29,12 @@ public class AdminController {
     @Autowired private ProdukRepository produkRepo;
     
 
-    // 1. TAMPILKAN HALAMAN LOGIN ADMIN
     @GetMapping("/login")
     public String formLoginAdmin() {
-        return "admin/login"; // Mengarah ke templates/admin/login.html
+        return "admin/login"; 
     }
 
-    // 2. PROSES LOGIN ADMIN
+    // PROSES LOGIN ADMIN
     @PostMapping("/proses-login")
     public String prosesLoginAdmin(@RequestParam String username, 
                                    @RequestParam String password, 
@@ -46,7 +44,7 @@ public class AdminController {
         // Cari Admin di Database
         Admin admin = adminRepo.findByUsername(username).orElse(null);
 
-        // Validasi Password (Sederhana)
+        // Validasi Password
         if (admin != null && admin.getPasswordHash().equals(password)) {
             // LOGIN SUKSES
             session.setAttribute("user", admin);
@@ -60,32 +58,30 @@ public class AdminController {
         }
     }
 
-    // 3. LOGOUT ADMIN
+    // LOGOUT ADMIN
     @GetMapping("/logout")
     public String logoutAdmin(HttpSession session) {
         session.invalidate();
         return "redirect:/admin/login";
     }
 
-    // --- 0. DASHBOARD UTAMA (DINAMIS) ---
+    // DASHBOARD UTAMA 
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
-        // (Optional) Cek Login Admin
-        // if (session.getAttribute("user") == null) return "redirect:/admin/login";
 
-        // 1. Hitung Data Verifikasi (Escrow)
+        // Hitung Data Verifikasi (Escrow)
         long totalVerif = pesananRepo.countByStatusPesanan(StatusPesanan.VERIFIKASI_ADMIN);
 
-        // 2. Hitung Iklan Baru
+        // Hitung Iklan Baru
         long totalIklan = bannerRepo.countByStatus(StatusIklan.PENDING);
 
-        // 3. Hitung Laporan Masuk
+        // Hitung Laporan Masuk
         long totalLaporan = laporanRepo.countByStatus("Pending");
 
-        // 4. Hitung Total User (Pembeli + Penjual)
+        // Hitung Total User (Pembeli + Penjual)
         long totalUser = pembeliRepo.count() + penjualRepo.count();
 
-        // 5. Kirim ke HTML
+        // Kirim ke HTML
         model.addAttribute("cntVerif", totalVerif);
         model.addAttribute("cntIklan", totalIklan);
         model.addAttribute("cntLaporan", totalLaporan);
@@ -94,7 +90,7 @@ public class AdminController {
         return "admin/dashboard"; 
     }
 
-    // --- 1. FITUR TINJAU LAPORAN (Gabungan TinjauLaporanController) ---
+    // FITUR TINJAU LAPORAN 
     @GetMapping("/tinjau-laporan")
     public String halamanLaporan(Model model, 
                                  @RequestParam(defaultValue = "pending") String tab) {
@@ -113,7 +109,6 @@ public class AdminController {
             );
         } 
         else {
-            // DEFAULT (PENDING): Laporan baru masuk
             dataTampil.removeIf(l -> !l.getStatus().equalsIgnoreCase("Pending"));
         }
 
@@ -128,8 +123,6 @@ public class AdminController {
         Laporan l = laporanRepo.findById(laporanId).orElse(null);
         
         if (l != null) {
-            // Keputusan bisa: "Proses", "Selesai", "Ditolak"
-            // Case insensitive biar aman
             if (keputusan.equalsIgnoreCase("PROSES")) {
                 l.setStatus("Proses");
             } else if (keputusan.equalsIgnoreCase("SELESAI")) {
@@ -140,7 +133,7 @@ public class AdminController {
             
             laporanRepo.save(l);
         }
-        // Redirect balik ke tab yang sesuai biar UX enak
+
         if (keputusan.equalsIgnoreCase("PROSES")) {
             return "redirect:/admin/tinjau-laporan?tab=proses";
         } else if (keputusan.equalsIgnoreCase("SELESAI") || keputusan.equalsIgnoreCase("TOLAK")) {
@@ -150,26 +143,24 @@ public class AdminController {
         }
     }
 
-    // --- 2. FITUR KELOLA PENGGUNA ---
+    // FITUR KELOLA PENGGUNA 
     
-    // MENAMPILKAN HALAMAN (URL: /admin/kelola-users)
-    @GetMapping("/kelola-users") // Pastikan mappingnya sesuai yg kamu pakai
+    // MENAMPILKAN HALAMAN 
+    @GetMapping("/kelola-users") 
     public String halamanKelolaUser(Model model,
                                     @RequestParam(defaultValue = "") String keyword,
-                                    @RequestParam(defaultValue = "0") int pagePembeli, // Default halaman 0 (pertama)
-                                    @RequestParam(defaultValue = "0") int pagePenjual) { // Default halaman 0
+                                    @RequestParam(defaultValue = "0") int pagePembeli, 
+                                    @RequestParam(defaultValue = "0") int pagePenjual) { 
         
-        int pageSize = 5; // Mau nampilin berapa baris per halaman?
+        int pageSize = 5; 
 
         Page<Pembeli> listPembeli;
         Page<Penjual> listPenjual;
 
         if (keyword.isEmpty()) {
-            // Kalau gak nyari apa-apa, tampilkan semua + pagination
             listPembeli = pembeliRepo.findAll(PageRequest.of(pagePembeli, pageSize));
             listPenjual = penjualRepo.findAll(PageRequest.of(pagePenjual, pageSize));
         } else {
-            // Kalau ada keyword, cari berdasarkan nama
             listPembeli = pembeliRepo.findByNamaLengkapContainingIgnoreCase(keyword, PageRequest.of(pagePembeli, pageSize));
             listPenjual = penjualRepo.findByNamaLengkapContainingIgnoreCase(keyword, PageRequest.of(pagePenjual, pageSize));
         }
@@ -177,14 +168,14 @@ public class AdminController {
         // Kirim Data ke HTML
         model.addAttribute("listPembeli", listPembeli);
         model.addAttribute("listPenjual", listPenjual);
-        model.addAttribute("keyword", keyword); // Balikin keyword biar gak ilang pas pindah halaman
+        model.addAttribute("keyword", keyword); 
         model.addAttribute("currentPagePembeli", pagePembeli);
         model.addAttribute("currentPagePenjual", pagePenjual);
         
-        return "admin/kelola-users"; // Sesuaikan nama file HTML kamu
+        return "admin/kelola-users"; 
     }
 
-    // PROSES BLOKIR (Action: /admin/kelola-users/blokir)
+    // PROSES BLOKIR 
     @PostMapping("/kelola-users/blokir")
     public String blokirUser(@RequestParam Long userId, 
                              @RequestParam String role, 
@@ -220,11 +211,10 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("msgBody", "Akses akun <b>" + namaUser + "</b> telah dipulihkan.");
         }
 
-        // Redirect balik ke URL yang ada 's' nya
         return "redirect:/admin/kelola-users";
     }
 
-    // --- 3. FITUR VERIFIKASI PEMBAYARAN (3 TAB: Pending, Dibatalkan, Sukses) ---
+    // FITUR VERIFIKASI PEMBAYARAN 
     @GetMapping("/verifikasi-bayar")
     public String halamanVerifikasi(Model model, 
                                     @RequestParam(defaultValue = "pending") String tab) {
@@ -232,14 +222,12 @@ public class AdminController {
         List<Pesanan> dataTampil;
 
         if (tab.equals("dibatalkan")) {
-            // TAB 2: Tampilkan yang DIBATALKAN atau PEMBAYARAN_DITOLAK
             dataTampil = pesananRepo.findAll();
             dataTampil.removeIf(p -> 
                 !(p.getStatusPesanan() == StatusPesanan.DIBATALKAN)
             );
         } 
         else if (tab.equals("riwayat")) {
-            // TAB 3: Tampilkan yang BERHASIL (Dibayar / Selesai / Dikirim)
             dataTampil = pesananRepo.findAll();
             dataTampil.removeIf(p -> 
                 !(p.getStatusPesanan() == StatusPesanan.DIBAYAR || 
@@ -248,7 +236,6 @@ public class AdminController {
             );
         } 
         else {
-            // TAB 1 (DEFAULT): Yang butuh verifikasi
             dataTampil = pesananRepo.findByStatusPesanan(StatusPesanan.VERIFIKASI_ADMIN);
         }
 
@@ -263,20 +250,15 @@ public class AdminController {
         Pesanan p = pesananRepo.findById(pesananId).orElse(null);
         if (p != null) {
             if (aksi.equals("TERIMA")) {
-                // Kalau diterima -> Masuk ke Flow Sukses (Tab Riwayat)
                 p.setStatusPesanan(StatusPesanan.DIBAYAR); 
             } else {
-                // Kalau ditolak -> Masuk ke Flow Batal (Tab Dibatalkan)
                 p.setStatusPesanan(StatusPesanan.DIBATALKAN); 
             }
             pesananRepo.save(p);
         }
-        // Redirect balik ke tab pending biar bisa lanjut kerja
         return "redirect:/admin/verifikasi-bayar?tab=pending";
     }
 
-    // --- 4. FITUR VALIDASI IKLAN (Gabungan ValidasiIklanController) ---
-    // --- 4. FITUR VALIDASI IKLAN (3 TAB: Pending, Active, Riwayat) ---
     @GetMapping("/validasi-iklan")
     public String halamanValidasiIklan(Model model, 
                                        @RequestParam(defaultValue = "pending") String tab) {
@@ -286,14 +268,12 @@ public class AdminController {
 
         // LOGIKA FILTERING
         if (tab.equals("active")) {
-            // TAMPILKAN: Yang Status ACTIVE DAN Tanggal Selesai >= Hari Ini
             semuaIklan.removeIf(i -> 
                 !(i.getStatus() == StatusIklan.ACTIVE && 
                  (i.getTanggalSelesai().isAfter(hariIni) || i.getTanggalSelesai().isEqual(hariIni)))
             );
 
         } else if (tab.equals("riwayat")) {
-            // TAMPILKAN: Yang DITOLAK, EXPIRED, atau ACTIVE tapi sudah lewat tanggal
             semuaIklan.removeIf(i -> 
                 !(i.getStatus() == StatusIklan.REJECTED || 
                   i.getStatus() == StatusIklan.EXPIRED ||
@@ -301,12 +281,11 @@ public class AdminController {
             );
 
         } else {
-            // DEFAULT (PENDING): Tampilkan yang belum diproses
             semuaIklan.removeIf(i -> i.getStatus() != StatusIklan.PENDING);
         }
         
         model.addAttribute("listIklan", semuaIklan);
-        model.addAttribute("activeTab", tab); // Kunci buat switch tab di HTML
+        model.addAttribute("activeTab", tab); 
         
         return "admin/validasi-iklan";
     }
@@ -317,15 +296,12 @@ public class AdminController {
         
         if (iklan != null) {
             if (aksi.equals("TERIMA")) {
-                // 1. Update Status Iklan
                 iklan.setStatus(StatusIklan.ACTIVE);
                 iklan.setTanggalMulai(LocalDate.now());
                 
-                // 2. Hitung Tanggal Selesai otomatis (Pake Enum JenisPaket)
                 int durasi = iklan.getJenisPaket().getDurasiHari();
                 iklan.setTanggalSelesai(LocalDate.now().plusDays(durasi));
                 
-                // 3. Update Produk biar muncul di depan
                 Produk p = iklan.getProduk();
                 p.setDiiklankan(true);
                 p.setPeriodeIklan(iklan.getTanggalSelesai());

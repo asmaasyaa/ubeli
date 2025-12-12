@@ -13,7 +13,7 @@ public class Notifikasi {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;   // PRIMARY KEY wajib
+    private Long id;   
 
     private String judul;
 

@@ -23,4 +23,9 @@ public enum JenisPaket {
     public BigDecimal getHarga() {
         return harga;
     }
+
+    public String getLabel() {
+    return "Paket " + durasiHari + " Hari";
+}
+
 }

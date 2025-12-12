@@ -31,7 +31,7 @@ public class Produk {
     @Column(nullable = false, updatable = false)
     private LocalDate createdAt = LocalDate.now();
 
-    // RELASI KE PENJUAL (Many Products -> One Seller)
+    // RELASI KE PENJUAL 
     @ManyToOne
     @JoinColumn(name = "penjual_id")
     private Penjual penjual;
@@ -41,15 +41,14 @@ public class Produk {
     @JoinColumn(name = "kategori_id")
     private Kategori kategori;
 
-    // RELASI KE FOTO (One Product -> Many Photos)
-    // Cascade ALL: Hapus produk = Hapus fotonya
+    // RELASI KE FOTO 
     @OneToMany(mappedBy = "produk", cascade = CascadeType.ALL)
     private List<FotoProduk> listFoto = new ArrayList<>();
 
     public void tambahFoto(String url) {
         FotoProduk foto = new FotoProduk();
         foto.setUrlFoto(url);
-        foto.setProduk(this); // Sambungkan foto ke produk ini
+        foto.setProduk(this); 
         this.listFoto.add(foto);
     }
 }

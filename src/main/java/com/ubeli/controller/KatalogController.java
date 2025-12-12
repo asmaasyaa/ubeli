@@ -33,9 +33,7 @@ public class KatalogController {
     private ProdukRepository produkRepository;
 
 
-    // ============================
     // 1. HALAMAN HOME
-    // ============================
     @GetMapping({"/", "/home"})
     public String home(Model model, HttpSession session) {
 
@@ -49,11 +47,7 @@ public class KatalogController {
         return "general/home";
     }
 
-
-
-    // ============================
     // 2. HALAMAN DETAIL PRODUK
-    // ============================
     @GetMapping("/produk/{id}")
     public String detailProduk(
             @PathVariable Long id,
@@ -69,9 +63,11 @@ public class KatalogController {
         String role = (String) session.getAttribute("role");
         Long pembeliId = (Long) session.getAttribute("pembeliId");
 
+        if (role==null) 
+            return "redirect:/login";
+
         boolean isWishlisted = false;
 
-        // Jika yg buka adalah PENJUAL PEMILIK PRODUK
         if ("PENJUAL".equals(role)) {
             if (penjual != null &&
                 produk.getPenjual().getPenjualId().equals(penjual.getPenjualId())) {
@@ -81,7 +77,6 @@ public class KatalogController {
             }
         }
 
-        // Jika PEMBELI login
         if (pembeliId != null) {
             Pembeli pembeli = pembeliRepository.findById(pembeliId).orElse(null);
             Wishlist w = wishlistRepository.findByPembeliAndProduk(pembeli, produk);
@@ -93,11 +88,7 @@ public class KatalogController {
         return "general/detail-produk";
     }
 
-
-
-    // ============================
     // 3. HALAMAN KATALOG
-    // ============================
     @GetMapping("/katalog")
     public String katalog(Model model, HttpSession session) {
 
@@ -110,11 +101,7 @@ public class KatalogController {
         return "general/katalog";
     }
 
-
-
-    // ============================
     // 4. SEARCH PRODUK
-    // ============================
     @GetMapping("/katalog/search")
     public String searchProduk(
             @RequestParam("q") String keyword,
@@ -131,11 +118,7 @@ public class KatalogController {
         return "general/katalog";
     }
 
-
-
-    // ============================
     // 5. FILTER KATEGORI
-    // ============================
     @GetMapping("/katalog/kategori/{id}")
     public String filterKategori(
             @PathVariable Long id,
@@ -152,11 +135,7 @@ public class KatalogController {
         return "general/katalog";
     }
 
-
-
-    // ============================
     // 6. UTIL: AMBIL WISHLIST USER
-    // ============================
     private Set<Long> getWishlistIds(HttpSession session) {
 
         Pembeli pembeli = (Pembeli) session.getAttribute("pembeli");
@@ -169,10 +148,7 @@ public class KatalogController {
                 .collect(Collectors.toSet());
     }
 
-
-    // ============================
     // 7. LAPORAN (TIDAK DIUBAH)
-    // ============================
     @GetMapping("/laporan/buat/{produkId}")
     public String buatLaporan(@PathVariable Long produkId, Model model) {
         Produk produk = produkRepository.findById(produkId).orElse(null);

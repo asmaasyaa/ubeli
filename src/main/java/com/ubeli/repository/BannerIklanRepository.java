@@ -14,7 +14,7 @@ public interface BannerIklanRepository extends JpaRepository<BannerIklan, Long> 
     @Query("SELECT b FROM BannerIklan b WHERE b.status = :status AND b.tanggalSelesai >= :hariIni")
     List<BannerIklan> findActiveAds(@Param("status") StatusIklan status, @Param("hariIni") LocalDate hariIni);
     
-    // Query buat admin (yang kemarin)
+    // Query buat admin 
     List<BannerIklan> findByStatus(StatusIklan status);
     long countByStatus(StatusIklan status);
 }

@@ -25,7 +25,6 @@ public class AjukanPembelianController {
             pesananService.ajukanPembelian(produkId, pembeliId);
             return "redirect:/produk/" + produkId + "?success=ajuan-dikirim";
         } catch (RuntimeException e) {
-            // encode message minimal (jika ada spasi/dll pada message)
             String msg = e.getMessage() != null ? e.getMessage().replaceAll("\\s+", "%20") : "error";
             return "redirect:/produk/" + produkId + "?error=" + msg;
         }

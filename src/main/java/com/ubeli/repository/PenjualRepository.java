@@ -10,7 +10,6 @@ public interface PenjualRepository extends JpaRepository<Penjual, Long> {
 
     // Cari penjual by email
     Optional<Penjual> findByEmail(String email);
-    //Penjual findByEmailAndPassword(String email, String passwordHash);
 
     // Sama seperti pembeli
     Page<Penjual> findByNamaLengkapContainingIgnoreCase(String keyword, Pageable pageable);

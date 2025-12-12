@@ -18,18 +18,13 @@ public class AuthService {
         // Ambil data pembeli berdasarkan email
         Optional<Pembeli> pembeliOpt = pembeliRepository.findByEmail(email);
 
-        // Kalau email tidak ditemukan
         if (pembeliOpt.isEmpty()) {
             return false;
         }
 
         Pembeli pembeli = pembeliOpt.get();
 
-        // --- CASE 1: Kamu belum pakai hashing (sementara plaintext) ---
-        // Cocokkan langsung:
         return pembeli.getPasswordHash().equals(password);
 
-        // --- CASE 2: Kalau pakai BCrypt (nanti) ---
-        // return passwordEncoder.matches(password, pembeli.getPasswordHash());
     }
 }
