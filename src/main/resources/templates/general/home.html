@@ -14,18 +14,49 @@
     <main class="container">
 
         <section class="hero-banner">
-            <div class="banner-placeholder">
-                <button class="nav-btn prev">←</button>
-                <div class="banner-content">
-                    <h2>Promo Spesial Minggu Ini!</h2>
+        
+            <div th:if="${not #lists.isEmpty(listBoosted)}" class="banner-container">
+                
+                <button class="nav-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+    
+                <div th:each="p, iterStat : ${listBoosted}" 
+                     class="banner-slide fade"
+                     th:classappend="${iterStat.index == 0} ? 'active-slide' : ''"> 
+                     
+                     <div class="banner-content">
+                        <div class="banner-text">
+                            <span class="promo-badge">🔥 Sedang Hangat</span>
+                            <h1 th:text="${p.namaProduk}">Nama Produk</h1>
+                            <p th:text="${p.deskripsi}">Deskripsi...</p>
+                            <a th:href="@{/produk/{id}(id=${p.produkId})}" class="btn-cek">Lihat Produk</a>
+                        </div>
+    
+                        <div class="banner-img-box">
+                            <img th:if="${not #lists.isEmpty(p.listFoto)}" 
+                                 th:src="${p.listFoto[0].urlFoto}" class="banner-img-real">
+                            <div th:if="${#lists.isEmpty(p.listFoto)}" class="banner-img-fallback">No Image</div>
+                        </div>
+                    </div>
                 </div>
-                <button class="nav-btn next">→</button>
+    
+                <button class="nav-btn next" onclick="moveSlide(1)">&#10095;</button>
+    
+                <div class="dots-container">
+                    <span th:each="p, iterStat : ${listBoosted}" 
+                          class="dot" 
+                          th:classappend="${iterStat.index == 0} ? 'active-dot' : ''"
+                          th:onclick="'currentSlide(' + ${iterStat.index + 1} + ')'"></span>
+                </div>
+                
             </div>
-            <div class="banner-dots">
-                <span class="dot active"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
+    
+            <div th:if="${#lists.isEmpty(listBoosted)}" class="banner-placeholder-static">
+                <div class="banner-content-static">
+                    <h2>Promo Spesial Minggu Ini!</h2>
+                    <p>Temukan barang bekas berkualitas dengan harga mahasiswa.</p>
+                </div>
             </div>
+    
         </section>
 
         <section class="categories">
@@ -148,5 +179,47 @@
         &copy; 2023 UBeli. All rights reserved.
     </footer>
 
+    <script>
+        let slideIndex = 1;
+        
+        // Cek apakah ada slide sebelum menjalankan fungsi
+        if (document.getElementsByClassName("banner-slide").length > 0) {
+            showSlides(slideIndex);
+            
+            // Auto Play setiap 5 detik
+            setInterval(function() {
+                moveSlide(1);
+            }, 5000); 
+        }
+    
+        function moveSlide(n) {
+            showSlides(slideIndex += n);
+        }
+    
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+    
+        function showSlides(n) {
+            let i;
+            let slides = document.getElementsByClassName("banner-slide");
+            let dots = document.getElementsByClassName("dot");
+            
+            if (n > slides.length) {slideIndex = 1}     
+            if (n < 1) {slideIndex = slides.length}
+            
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";   
+            }
+            
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active-dot", "");
+            }
+            
+            slides[slideIndex-1].style.display = "flex"; // Pastikan display flex agar layout rapi
+            
+            dots[slideIndex-1].className += " active-dot";
+        }
+    </script>
 </body>
 </html>

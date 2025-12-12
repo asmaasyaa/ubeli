@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Riwayat Pesanan | UBeli</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS SAMA SEPERTI SEBELUMNYA */
+        .history-card {
+            background: white; border: 1px solid #eee; border-radius: 10px;
+            padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .card-header {
+            display: flex; justify-content: space-between; border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 10px; margin-bottom: 15px; font-size: 14px; color: #666;
+        }
+        .card-body { display: flex; gap: 20px; }
+        .product-img {
+            width: 80px; height: 80px; background: #eee; border-radius: 8px; object-fit: cover;
+        }
+        .product-details { flex: 1; }
+        .product-name { font-weight: bold; font-size: 16px; color: #333; margin-bottom: 5px; display: block;}
+        .product-price { color: #E74C3C; font-weight: bold; }
+        
+        .card-footer {
+            margin-top: 15px; padding-top: 15px; border-top: 1px dashed #eee;
+            display: flex; justify-content: flex-end; align-items: center; gap: 10px;
+        }
+
+        /* Badge Status */
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .bg-wait { background: #fff3cd; color: #856404; } /* Kuning */
+        .bg-process { background: #cce5ff; color: #004085; } /* Biru */
+        .bg-done { background: #d4edda; color: #155724; } /* Hijau */
+        .bg-cancel { background: #f8d7da; color: #721c24; } /* Merah */
+    </style>
+</head>
+<body>
+
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <main class="container" style="margin-top: 30px; max-width: 900px;">
+        <h2 style="margin-bottom: 20px;">Riwayat Pesanan</h2>
+
+        <div th:if="${#lists.isEmpty(listPesanan)}" style="text-align: center; padding: 50px;">
+            <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" width="100" style="opacity: 0.5;">
+            <p style="color: #888; margin-top: 20px;">Belum ada pesanan.</p>
+            <a href="/" class="btn-primary">Mulai Belanja</a>
+        </div>
+
+        <div th:each="p : ${listPesanan}" class="history-card">
+            
+            <div class="card-header">
+                <span><i class="far fa-calendar-alt"></i> ID Pesanan: #<span th:text="${p.pesananId}"></span></span>
+                
+                <span class="status-badge"
+                      th:classappend="${p.statusPesanan.name() == 'SELESAI' ? 'bg-done' : 
+                                      (p.statusPesanan.name() == 'DIBATALKAN' ? 'bg-cancel' : 
+                                      (p.statusPesanan.name() == 'MENUNGGU_PEMBAYARAN' ? 'bg-wait' : 'bg-process'))}"
+                      th:text="${p.statusPesanan}">
+                    STATUS
+                </span>
+            </div>
+
+            <div class="card-body">
+                <img th:if="${not #lists.isEmpty(p.items) and not #lists.isEmpty(p.items[0].produk.listFoto)}" 
+                     th:src="${p.items[0].produk.listFoto[0].urlFoto}" class="product-img">
+                <div th:if="${#lists.isEmpty(p.items) or #lists.isEmpty(p.items[0].produk.listFoto)}" 
+                     class="product-img"></div>
+
+                <div class="product-details">
+                    <span class="product-name" 
+                          th:text="${not #lists.isEmpty(p.items) ? p.items[0].produk.namaProduk : 'Produk dihapus'}">
+                          Nama Produk
+                    </span>
+                    
+                    <p class="product-price" 
+                       th:text="'Total: Rp' + ${#numbers.formatDecimal(p.totalHarga, 0, 'COMMA', 0, 'POINT')}">
+                       Rp 0
+                    </p>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                
+                <a th:if="${p.statusPesanan.name() == 'MENUNGGU_PEMBAYARAN'}"
+                   th:href="@{'/pesanan/' + ${p.pesananId} + '/lanjut'}" 
+                   class="btn-primary" style="background: #E74C3C;">
+                   Bayar Sekarang
+                </a>
+
+                <form th:if="${p.statusPesanan.name() == 'DIKIRIM'}"
+                      th:action="@{/transaksi/konfirmasi-terima}" method="post">
+                    <input type="hidden" name="pesananId" th:value="${p.pesananId}">
+                    <button type="submit" class="btn-primary" onclick="return confirm('Barang sudah diterima dengan baik?')">
+                        Pesanan Diterima
+                    </button>
+                </form>
+
+                <a th:if="${p.statusPesanan.name() == 'SELESAI' or p.statusPesanan.name() == 'DIBATALKAN'}"
+                   th:href="@{/}" class="btn-light">
+                   Beli Lagi
+                </a>
+
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>

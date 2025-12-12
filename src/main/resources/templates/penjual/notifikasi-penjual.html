@@ -17,7 +17,7 @@
 
     <h2 class="notif-title">Notifikasi</h2>
 
-    <!-- LIST NOTIFIKASI -->
+    <!-- LIST PESANAN (untuk penjual) -->
     <div th:each="p : ${listPesanan}" class="notif-card">
 
         <!-- Avatar -->
@@ -25,12 +25,16 @@
 
         <!-- Isi -->
         <div class="notif-content">
-            <h4 th:text="${p.pembeli.namaLengkap + ' mengajukan pembelian'}">Judul</h4>
-            <p class="notif-sub" th:text="${p.produk.namaProduk}">Subjudul</p>
-            <span class="notif-time" th:text="${mapNotif[p.pesananId]?.waktu}">Waktu</span>
+            <h4 th:text="${p.pembeli != null ? p.pembeli.namaLengkap + ' mengajukan pembelian' : 'Pengajuan'}">Judul</h4>
+            <p class="notif-sub" th:text="${p.produk != null ? p.produk.namaProduk : '-'}">Subjudul</p>
+
+            <span class="notif-time"
+                  th:text="${mapNotif != null and mapNotif.containsKey(p.pesananId) ? mapNotif[p.pesananId].waktu : ''}">
+                Waktu
+            </span>
         </div>
 
-        <!-- Badge STATUS -->
+        <!-- Badge STATUS (gunakan .name() untuk bandingkan) -->
         <span class="notif-status diterima"
               th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'DITERIMA'}">
             Diterima
@@ -46,7 +50,7 @@
             Menunggu
         </span>
 
-        <!-- Aksi PENJUAL -->
+        <!-- Aksi PENJUAL (hanya ketika PENDING) -->
         <div class="notif-actions"
              th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'PENDING'}">
 
