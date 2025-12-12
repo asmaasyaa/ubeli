@@ -99,6 +99,10 @@
     color: #6b7280;
 }
 
+.katalog-title {
+    padding: 2px 2px;
+}
+
 .product-title {
     display: -webkit-box;
     -webkit-line-clamp: 2;      /* maksimal 2 baris */

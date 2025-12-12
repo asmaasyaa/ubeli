@@ -27,28 +27,28 @@
         <div class="notif-content">
             <h4 th:text="${p.pembeli.namaLengkap + ' mengajukan pembelian'}">Judul</h4>
             <p class="notif-sub" th:text="${p.produk.namaProduk}">Subjudul</p>
-            <span class="notif-time" th:text="${mapNotif[p.pesananId].waktu}">Waktu</span>
+            <span class="notif-time" th:text="${mapNotif[p.pesananId]?.waktu}">Waktu</span>
         </div>
 
-        <!-- Badge -->
+        <!-- Badge STATUS -->
         <span class="notif-status diterima"
-              th:if="${p.statusPengajuan == T(com.ubeli.enums.StatusPengajuan).DITERIMA}">
+              th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'DITERIMA'}">
             Diterima
         </span>
 
         <span class="notif-status ditolak"
-              th:if="${p.statusPengajuan == T(com.ubeli.enums.StatusPengajuan).DITOLAK}">
+              th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'DITOLAK'}">
             Ditolak
         </span>
 
         <span class="notif-status menunggu"
-              th:if="${p.statusPengajuan == T(com.ubeli.enums.StatusPengajuan).PENDING}">
+              th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'PENDING'}">
             Menunggu
         </span>
 
         <!-- Aksi PENJUAL -->
         <div class="notif-actions"
-             th:if="${p.statusPengajuan == T(com.ubeli.enums.StatusPengajuan).PENDING}">
+             th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'PENDING'}">
 
             <button class="btn-tolak" th:attr="data-id=${p.pesananId}">
                 Tolak
