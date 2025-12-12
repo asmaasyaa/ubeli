@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profil Pembeli - UBeli</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/edit-profil.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <main class="container edit-profil-container">
+
+        <form th:action="@{/pembeli/update-profil}" method="post" class="edit-profil-form" enctype="multipart/form-data">
+
+            <!-- Avatar -->
+            <div class="edit-avatar-section">
+                <div class="edit-avatar" id="avatarPreview">
+                    <i class="fas fa-user"></i>
+                    <label for="fotoInput" class="edit-avatar-badge">
+                        <i class="fas fa-pen"></i>
+                    </label>
+                </div>
+                <input type="file" id="fotoInput" name="foto" accept="image/*" style="display:none">
+                <h2 class="edit-nama" th:text="${pembeli.namaLengkap}">Nama Pembeli</h2>
+            </div>
+
+            <!-- Form Fields -->
+            <div class="edit-form-fields">
+
+                <!-- Nama -->
+                <div class="form-field">
+                    <div class="field-input-wrapper">
+                        <input type="text" name="namaLengkap" th:value="${pembeli.namaLengkap}" placeholder="Nama Lengkap">
+                        <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-field">
+                    <div class="field-input-wrapper">
+                        <input type="email" name="email" th:value="${pembeli.email}" placeholder="email@domain.com">
+                        <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
+                    </div>
+                </div>
+
+                <!-- Nomor HP -->
+                <div class="form-field">
+                    <div class="field-input-wrapper">
+                        <input type="tel" name="noHp" th:value="${pembeli.noHp}" placeholder="+62 812 3456 7890">
+                        <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Buttons -->
+            <div class="edit-form-actions">
+                <button type="submit" class="btn-simpan">Simpan Perubahan</button>
+                <a href="/pembeli/profil" class="btn-batal">Batal</a>
+            </div>
+
+        </form>
+
+    </main>
+
+    <!-- JS Avatar Preview -->
+    <script>
+        document.getElementById('fotoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const avatar = document.getElementById('avatarPreview');
+                    avatar.style.backgroundImage = 'url(' + event.target.result + ')';
+                    avatar.style.backgroundSize = 'cover';
+                    avatar.querySelector('i').style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.querySelectorAll('.btn-field-edit').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.parentElement.querySelector('input').focus();
+            });
+        });
+    </script>
+
+</body>
+</html>

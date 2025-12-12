@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.ubeli.entity.Kategori;
-import com.ubeli.entity.Notifikasi;
 import com.ubeli.entity.Penjual;
 import com.ubeli.entity.Produk;
 
@@ -40,53 +39,5 @@ public class PembeliPageController {
 
         // arahkan ke HTML
         return "pembeli/checkout";
-    }
-
-    @GetMapping("/notifikasi/{filter}")
-    public String notifPage(@PathVariable String filter, Model model) {
-
-        model.addAttribute("filter", filter);
-
-        List<Notifikasi> list = new ArrayList<>();
-
-        switch (filter) {
-
-            case "jual":
-                list.add(new Notifikasi(
-                    "Hassan tertarik dengan produk Anda",
-                    "iPhone 17 256GB Like New",
-                    "29–10–2025 14:00",
-                    "MENUNGGU"  // tombol terima & tolak muncul
-                ));
-                break;
-
-            case "beli":
-                list.add(new Notifikasi(
-                    "Penjual menerima pengajuan Anda",   // ganti kata sesuai kamu: pengajuan
-                    "iPhone 17 256GB Like New",
-                    "29–10–2025 14:00",
-                    "DITERIMA"   // tombol lanjutkan transaksi & batal muncul
-                ));
-
-                list.add(new Notifikasi(
-                    "Penjual menolak pengajuan Anda",
-                    "iPhone 17 256GB Like New",
-                    "29–10–2025 14:00",
-                    "DITOLAK"    // hanya status, no buttons
-                ));
-                break;
-
-            case "pembayaran":
-                list.add(new Notifikasi(
-                    "Pembayaran berhasil, menunggu verifikasi admin",
-                    "iPhone 17 256GB Like New",
-                    "29–10–2025 14:00",
-                    "MENUNGGU_VERIFIKASI"
-                ));
-                break;
-        }
-        
-        model.addAttribute("listNotif", list);
-        return "general/notifikasi";  // atau pembeli/notifikasi
     }
 }

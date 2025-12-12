@@ -6,6 +6,10 @@
     margin: 30px 0;
 }
 
+.notif-title {
+    padding: 18px 20px;
+}
+
 .filter-btn {
     padding: 8px 20px;
     border-radius: 20px;

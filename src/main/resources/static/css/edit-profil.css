@@ -1,0 +1,191 @@
+.edit-avatar-section {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.edit-avatar {
+    width: 120px;
+    height: 120px;
+    background-color: #315AE8;
+    border-radius: 50%;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    color: white;
+}
+
+.edit-avatar-badge {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    background: #FF6B57;
+    color: white;
+    padding: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;   
+    height: 32px;
+}
+
+.edit-nama {
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1F3C88;
+}
+
+.edit-form-fields {
+    margin-top: 30px;
+}
+
+.form-field {
+    margin-bottom: 18px;
+}
+
+.field-input-wrapper {
+    position: relative;
+}
+
+.field-input-wrapper input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #1F3C88;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.btn-field-edit {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    color: #1F3C88;
+    cursor: pointer;
+}
+
+.payment-section {
+    margin-top: 35px;
+}
+
+.payment-section h4 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #1F3C88;
+    padding-bottom: 8px;
+}
+
+.payment-option {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.payment-option input {
+    display: none;
+}
+
+.payment-option-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px;
+    background: #E8EEF9;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.payment-option-box.selected {
+    background: #D1DBF6;
+    border: 2px solid #1F3C88;
+}
+
+.payment-option-box .payment-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.payment-option-box .payment-check i {
+    color: #FF6B57;
+    font-size: 22px;
+}
+
+.payment-option-box:not(.selected) .payment-check {
+    border: 3px solid #FF6B57;
+}
+
+.payment-option-box:not(.selected) .payment-check i {
+    display: none; 
+}
+
+
+.payment-icon {
+    font-size: 26px;
+    color: white;
+    padding: 12px;
+    border-radius: 12px;
+    background: #1F3C88;
+}
+
+.payment-info .payment-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+.payment-info .payment-desc {
+    font-size: 13px;
+    opacity: 0.8;
+    display: block;
+}
+
+.payment-check {
+    margin-left: auto;
+    font-size: 20px;
+    color: #FF6B57;
+}
+
+.edit-form-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn-simpan {
+    background: #1F3C88;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.btn-batal {
+    background: #DDE3F3;
+    color: #1F3C88;
+    padding: 12px 30px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.desc-field {
+    width: 100%;
+    height: 120px;
+    padding: 14px;
+    border: 2px solid #1F3C88;
+    border-radius: 10px;
+}

@@ -9,7 +9,10 @@
         <!-- SEARCH -->
         <div class="search-box">
             <span class="search-icon"><i class="fas fa-search"></i></span>
-            <input type="text" placeholder="Cari Barang...">
+
+            <form action="/katalog/search" method="get" style="flex:1;">
+                <input type="text" name="q" placeholder="Cari Barang..." style="width:100%;">
+            </form>
         </div>
 
         <!-- RIGHT -->
@@ -35,7 +38,7 @@
                    class="icon-link"><i class="far fa-heart"></i></a>
 
                 <!-- Notifikasi -->
-                <a href="/notifikasi/jual" class="icon-link">
+                <a href="/notifikasi" class="icon-link">
                     <i class="far fa-bell"></i>
                 </a>
 

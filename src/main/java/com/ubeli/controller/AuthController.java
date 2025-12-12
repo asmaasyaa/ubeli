@@ -50,6 +50,7 @@ public class AuthController {
             }
 
             session.setAttribute("pembeli", pembeli);
+            session.setAttribute("userId", pembeli.getPembeliId());
             session.setAttribute("pembeliId", pembeli.getPembeliId());
             session.setAttribute("role", "PEMBELI");
             session.removeAttribute("penjual");
@@ -65,6 +66,8 @@ public class AuthController {
             }
 
             session.setAttribute("penjual", penjual);
+            session.setAttribute("penjualId", penjual.getPenjualId());
+            session.setAttribute("userId", penjual.getPenjualId());
             session.setAttribute("role", "PENJUAL");
             session.removeAttribute("pembeli");
         }

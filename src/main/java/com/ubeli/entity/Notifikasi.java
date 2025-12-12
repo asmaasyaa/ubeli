@@ -23,11 +23,17 @@ public class Notifikasi {
 
     private String status;
 
-    public Notifikasi(String judul, String subJudul, String waktu, String status) {
-    this.judul = judul;
-    this.subJudul = subJudul;
-    this.waktu = waktu;
-    this.status = status;
-}
+    // RELASI PENERIMA NOTIFIKASI
+    @ManyToOne
+    @JoinColumn(name = "pembeli_id")
+    private Pembeli pembeli;
+
+    @ManyToOne
+    @JoinColumn(name = "penjual_id")
+    private Penjual penjual;
+
+    @ManyToOne
+    @JoinColumn(name="pesanan_id")
+    private Pesanan pesanan;
 
 }
