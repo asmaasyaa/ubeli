@@ -58,9 +58,7 @@
                     
                     <!-- Filter Tabs -->
                     <div class="filter-tabs">
-                        <button class="filter-tab active" data-filter="dijual">Dijual</button>
-                        <button class="filter-tab" data-filter="menunggu">Menunggu Konfirmasi</button>
-                        <button class="filter-tab" data-filter="terjual">Terjual</button>
+                        <h2 class="katalog-title">Katalog Anda</h2>
                     </div>
 
                     <!-- Product Grid -->
@@ -161,5 +159,23 @@
         });
     </script>
 
+    <div id="popupOverlay" class="modal-overlay" style="display:none;">
+        <div class="modal-content-small">
+
+            <div class="modal-header">
+                <h2 id="popupTitle">Judul</h2>
+                <button class="modal-close" onclick="closePopup()">×</button>
+            </div>
+
+            <div class="modal-body" id="popupMessage">
+                Pesan tampil di sini.
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-action btn-dark" onclick="closePopup()">Oke</button>
+            </div>
+
+        </div>
+    </div>
 </body>
 </html>

@@ -6,19 +6,25 @@ import org.springframework.ui.Model;
 
 import jakarta.servlet.http.HttpSession;
 
-import com.ubeli.entity.Notifikasi;
 import com.ubeli.repository.NotifikasiRepository;
+import com.ubeli.repository.PesananRepository;
+import com.ubeli.entity.Notifikasi;
+import com.ubeli.entity.Pesanan;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class NotifikasiController {
 
     private final NotifikasiRepository notifRepo;
+    private final PesananRepository pesananRepo;
 
-    // Constructor injection manual (biar tidak pakai Lombok)
-    public NotifikasiController(NotifikasiRepository notifRepo) {
+    public NotifikasiController(NotifikasiRepository notifRepo,
+                                PesananRepository pesananRepo) {
         this.notifRepo = notifRepo;
+        this.pesananRepo = pesananRepo;
     }
 
     @GetMapping("/notifikasi")
@@ -31,20 +37,39 @@ public class NotifikasiController {
 
         model.addAttribute("role", role);
 
+        // ======================
+        // PEMBELI → Notifikasi Pembeli
+        // ======================
         if (role.equals("PEMBELI")) {
             model.addAttribute("listNotif",
                 notifRepo.findByPembeli_PembeliId(userId));
+
             return "pembeli/notifikasi-pembeli";
         }
 
+        // ======================
+        // PENJUAL → Daftar Pesanan + Notifikasi
+        // ======================
         if (role.equals("PENJUAL")) {
-            model.addAttribute("listNotif",
-                notifRepo.findByPenjual_PenjualId(userId));
+
+            List<Pesanan> listPesanan =
+                    pesananRepo.findByPenjual_PenjualId(userId);
+
+            // Buat map: pesananId → notifikasi
+            Map<Long, Notifikasi> mapNotif = new HashMap<>();
+
+            for (Pesanan p : listPesanan) {
+                Notifikasi notif =
+                        notifRepo.findFirstByPesanan_PesananIdOrderByIdDesc(p.getPesananId());
+                mapNotif.put(p.getPesananId(), notif);
+            }
+
+            model.addAttribute("listPesanan", listPesanan);
+            model.addAttribute("mapNotif", mapNotif);
+
             return "penjual/notifikasi-penjual";
         }
 
         return "redirect:/home";
     }
-
-
 }

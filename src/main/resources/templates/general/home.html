@@ -60,18 +60,26 @@
         </section>
 
         <section class="categories">
-            <a href="#" class="cat-item">
-                <div class="cat-icon">📱</div><span>Elektronik</span>
-            </a>
-            <a href="#" class="cat-item">
-                <div class="cat-icon">👕</div><span>Fashion</span>
-            </a>
-            <a href="#" class="cat-item">
-                <div class="cat-icon">🏠</div><span>Furnitur</span>
-            </a>
-            <a href="#" class="cat-item">
-                <div class="cat-icon">📚</div><span>Buku</span>
-            </a>
+            <a th:href="@{/katalog/kategori/10003}" class="cat-item">
+            <div class="cat-icon">📱</div>
+            <span>Elektronik</span>
+        </a>
+
+        <a th:href="@{/katalog/kategori/10004}" class="cat-item">
+            <div class="cat-icon">👕</div>
+            <span>Pakaian</span>
+        </a>
+
+        <a th:href="@{/katalog/kategori/10001}" class="cat-item">
+            <div class="cat-icon">🏠</div>
+            <span>Furnitur</span>
+        </a>
+
+        <a th:href="@{/katalog/kategori/10002}" class="cat-item">
+            <div class="cat-icon">📚</div>
+            <span>Buku</span>
+        </a>
+
         </section>
 
         <section class="product-section" th:if="${not #lists.isEmpty(listBoosted)}">
@@ -94,8 +102,32 @@
                     <div class="product-details">
                         <span class="product-cat" th:text="${p.kategori?.namaKategori ?: 'Umum'}">Kat</span>
                         
-                        <a th:href="@{/produk/{id}(id=${p.produkId})}" class="product-title" th:text="${p.namaProduk}">Nama</a>
-                        
+                        <a th:href="@{/produk/{id}(id=${p.produkId})}" class="product-title" th:text="${p.namaProduk}">
+                            Contoh Nama Produk Yang Agak Panjang Sedikit
+                        </a>
+                        <div class="price-row">
+                            <span class="price">Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">20.000.000</span></span>
+                            <button class="btn-wishlist-card" disabled
+                                    th:title="${wishlistProdukIds.contains(p.produkId) 
+                                            ? 'Ada di wishlist' 
+                                            : 'Tambahkan lewat halaman detail'}">
+
+                                <i class="fa-heart"
+                                th:classappend="${wishlistProdukIds.contains(p.produkId) 
+                                                    ? ' fas active' 
+                                                    : ' far'}">
+                                </i>
+
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card" th:if="${produkList == null or produkList.empty}">
+                    <div class="product-image-placeholder" style="background: #e1e5ea;">Dummy 1</div>
+                    <div class="product-details">
+                        <span class="product-cat">Elektronik</span>
+                        <a href="#" class="product-title">iPhone 17 Pro Max Dummy</a>
                         <div class="price-row">
                             <span class="price">Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}"></span></span>
                         </div>
@@ -115,19 +147,31 @@
                 <div th:each="p : ${produkList}" class="product-card">
                     
                     <div class="product-image-placeholder">
-                        <img th:if="${not #lists.isEmpty(p.listFoto)}" th:src="${p.listFoto[0].urlFoto}" style="width:100%; height:100%; object-fit:cover;">
-                        <div th:if="${#lists.isEmpty(p.listFoto)}" style="width:100%; height:100%; background:#eee; display:flex; justify-content:center; align-items:center; color:#ccc;">No Img</div>
+                        <span>Foto Produk</span>
                     </div>
-    
+
                     <div class="product-details">
-                        <span class="product-cat" th:text="${p.kategori?.namaKategori ?: 'Umum'}">Kat</span>
+                        <span class="product-cat" th:text="${p.kategori != null ? p.kategori.namaKategori : 'Tanpa Kategori'}"></span>
                         
-                        <a th:href="@{/produk/{id}(id=${p.produkId})}" class="product-title" th:text="${p.namaProduk}">Nama</a>
+                        <a th:href="@{/produk/{id}(id=${p.produkId})}" class="product-title" th:text="${p.namaProduk}">
+                            Contoh Nama Produk Yang Agak Panjang Sedikit
+                        </a>
                         <div class="price-row">
-                            <span class="price">Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}"></span></span>
+                            <span class="price">Rp <span th:text="${#numbers.formatDecimal(p.harga, 0, 'COMMA', 0, 'POINT')}">20.000.000</span></span>
+                            <button class="btn-wishlist-card" disabled
+                                    th:title="${wishlistProdukIds.contains(p.produkId) 
+                                            ? 'Ada di wishlist' 
+                                            : 'Tambahkan lewat halaman detail'}">
+
+                                <i class="fa-heart"
+                                th:classappend="${wishlistProdukIds.contains(p.produkId) 
+                                                    ? ' fas active' 
+                                                    : ' far'}">
+                                </i>
+
+                            </button>
                         </div>
                     </div>
-                    <button class="btn-wishlist-card">❤️</button>
                 </div>
             </div>
         </section>

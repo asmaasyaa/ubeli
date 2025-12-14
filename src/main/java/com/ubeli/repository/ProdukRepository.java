@@ -17,4 +17,10 @@ public interface ProdukRepository extends JpaRepository<Produk, Long> {
     
     // Fitur Toko: Cari semua produk milik penjual tertentu
     List<Produk> findByPenjual_PenjualId(Long penjualId);
+
+    List<Produk> findByStatusIgnoreCase(String status);
+
+    List<Produk> findByNamaProdukContainingAndStatusIgnoreCase(String keyword, String status);
+
+    List<Produk> findByKategori_KategoriIdAndStatusIgnoreCase(Long kategoriId, String status);
 }

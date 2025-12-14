@@ -12,6 +12,8 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 import java.util.Optional; // Digunakan untuk findById
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +43,17 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
         Pembeli pembeli = pembeliRepo.findById(pembeliId)
                 .orElseThrow(() -> new RuntimeException("Pembeli tidak ditemukan"));
 
-        // 1. BUAT PESANAN UTAMA
+        List<Pesanan> existing = pesananRepo
+        .findByPembeli_PembeliIdAndProduk_ProdukIdAndStatusPengajuan(
+                pembeliId,
+                produkId,
+                StatusPengajuan.PENDING
+        );
+
+        if (!existing.isEmpty()) {
+            throw new RuntimeException("Anda sudah mengajukan pembelian produk ini sebelumnya.");
+        }
+
         Pesanan pesanan = new Pesanan();
         // ASUMSI: Di entity Pesanan kamu punya field setProduk, setPembeli, dll.
         // Jika tidak ada setProduk di Pesanan, hapus baris ini:
@@ -97,20 +109,63 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
         Pesanan pesanan = pesananRepo.findById(pesananId)
                 .orElseThrow(() -> new RuntimeException("Pesanan tidak ditemukan"));
 
-        // Ambil produk dari item pertama (Asumsi 1 Item per Pesanan)
-        Produk produk = pesanan.getItems().get(0).getProduk(); 
+        // ===============================
+        // GUARD: Tidak boleh terima ulang
+        // ===============================
+        if (pesanan.getStatusPengajuan() != StatusPengajuan.PENDING) {
+            return pesanan; // langsung keluar
+        }
 
-        // Terima pengajuan ini
+        Produk produk = pesanan.getProduk();
+
+        // ===============================
+        // 1) Terima pesanan ini
+        // ===============================
         pesanan.setStatusPengajuan(StatusPengajuan.DITERIMA);
         // *SET STATUS PESANAN AWAL AGAR PEMBELI TAHU HARUS BAYAR*
         pesanan.setStatusPesanan(StatusPesanan.MENUNGGU_PEMBAYARAN); 
         pesananRepo.save(pesanan);
 
-        // Kunci produk
+        // ===============================
+        // 2) Update notifikasi lama (supaya tombol hilang di penjual)
+        // ===============================
+        notifRepo.findByPesanan_PesananId(pesananId).ifPresent(n -> {
+            n.setStatus("DITERIMA");
+            notifRepo.save(n);
+        });
+
+        // ===============================
+        // 3) Tolak pesanan lain di DB
+        // ===============================
+        pesananRepo.updateStatusPengajuanForOthers(
+                produk.getProdukId(),
+                pesananId,
+                StatusPengajuan.DITOLAK
+        );
+
+        // ===============================
+        // 4) Update notifikasi pembeli lain
+        // ===============================
+        List<Notifikasi> notifsOthers =
+                notifRepo.findByPesanan_Produk_ProdukIdAndPesanan_PesananIdNot(
+                        produk.getProdukId(),
+                        pesananId
+                );
+
+        for (Notifikasi n : notifsOthers) {
+            n.setStatus("DITOLAK");
+            notifRepo.save(n);
+        }
+
+        // ===============================
+        // 5) Kunci produk
+        // ===============================
         produk.setStatus("Locked");
         produkRepo.save(produk);
 
-        // 3. NOTIFIKASI UNTUK PEMBELI YANG DITERIMA
+        // ===============================
+        // 6) Kirim notifikasi ke pembeli yang diterima 
+        // ===============================
         Notifikasi notif = new Notifikasi();
         notif.setJudul("Pengajuan Anda diterima");
         notif.setSubJudul("Lanjutkan pembayaran untuk: " + produk.getNamaProduk());
@@ -123,9 +178,8 @@ public class PesananServiceImpl implements com.ubeli.service.PesananService {
         return pesanan;
     }
 
-
-    @Override
-    @Transactional
+        @Override
+        @Transactional
     public void tolakPengajuan(Long pesananId) {
 
         Pesanan pesanan = pesananRepo.findById(pesananId)
