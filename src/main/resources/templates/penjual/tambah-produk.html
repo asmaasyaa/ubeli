@@ -15,11 +15,18 @@
 
 <main class="container jual-wrapper">
 
-    <h1 class="jual-title">Jual Barang</h1>
+    <h1 class="jual-title"
+        th:text="${mode == 'edit' ? 'Edit Produk' : 'Jual Barang'}">
+    </h1>
 
     <div class="form-box">
 
-        <form th:action="@{/penjual/tambah-produk}" method="post" enctype="multipart/form-data" class="form-jual">
+        <!-- MODE TAMBAH -->
+        <form th:if="${mode == null}"
+            th:action="@{/penjual/tambah-produk}"
+            method="post"
+            enctype="multipart/form-data"
+            class="form-jual">
 
             <h3 class="form-section-title">Informasi Dasar</h3>
 
@@ -28,23 +35,23 @@
                 <label>Kategori</label>
                 <select name="kategoriId" required class="input-field">
                     <option value="">Pilih Kategori</option>
-                    <option value="10001">Furnitur</option>
-                    <option value="10002">Buku</option>
-                    <option value="10003">Elektronik</option>
-                    <option value="10004">Pakaian</option>
+                    <option value="10001" th:selected="${produk?.kategori?.kategoriId == 10001}">Furnitur</option>
+                    <option value="10002" th:selected="${produk?.kategori?.kategoriId == 10002}">Buku</option>
+                    <option value="10003" th:selected="${produk?.kategori?.kategoriId == 10003}">Elektronik</option>
+                    <option value="10004" th:selected="${produk?.kategori?.kategoriId == 10004}">Pakaian</option>
                 </select>
             </div>
 
             <!-- MERK -->
             <div class="form-group">
                 <label>Merk</label>
-                <input type="text" name="merk" placeholder="Merk" required class="input-field">
+                <input type="text" name="merk" class="input-field" th:value="${produk?.merk}">
             </div>
 
             <!-- NAMA PRODUK -->
             <div class="form-group">
                 <label>Nama Produk</label>
-                <input type="text" name="namaProduk" placeholder="Nama Produk" required class="input-field">
+                <input type="text" name="namaProduk" class="input-field" th:value="${produk?.namaProduk}">
             </div>
 
             <!-- KONDISI -->
@@ -52,23 +59,25 @@
                 <label>Kondisi</label>
                 <select name="kondisi" required class="input-field">
                     <option value="">Pilih Kondisi</option>
-                    <option value="Baru">Baru</option>
-                    <option value="Bekas">Bekas</option>
+                    <option value="Baru" th:selected="${produk?.kondisi == 'Baru'}">Baru</option>
+                    <option value="Bekas" th:selected="${produk?.kondisi == 'Bekas'}">Bekas</option>
                 </select>
             </div>
 
             <!-- HARGA -->
             <div class="form-group">
                 <label>Harga</label>
-                <input type="text" id="hargaInput" name="hargaDisplay" placeholder="Rp 0" class="input-field">
-                <input type="hidden" id="hargaReal" name="harga" value="" required>
+                <input type="text" id="hargaInput" class="input-field"
+                    th:value="${produk != null ? 'Rp ' + #numbers.formatDecimal(produk.harga,0,'COMMA',0,'POINT') : ''}">
 
+                <input type="hidden" id="hargaReal" name="harga"
+                    th:value="${produk?.harga}">
             </div>
 
             <!-- DESKRIPSI -->
             <div class="form-group">
                 <label>Deskripsi</label>
-                <textarea name="deskripsi" placeholder="Tambahkan deskripsi produk..." class="input-field"></textarea>
+                <textarea name="deskripsi" class="input-field" th:text="${produk?.deskripsi}"></textarea>
             </div>
 
             <!-- FOTO -->
@@ -85,7 +94,88 @@
 
             <!-- BUTTON -->
             <div class="form-actions">
-                <button type="submit" class="btn-submit">Jual</button>
+                <button type="submit" class="btn-submit"
+                        th:text="${mode == 'edit' ? 'Simpan Perubahan' : 'Jual'}">
+                </button>
+                <a href="/penjual/profil" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+
+        <form th:if="${mode == 'edit'}"
+            th:action="@{/penjual/edit-produk/{id}(id=${produk.produkId})}"
+            method="post"
+            enctype="multipart/form-data"
+            class="form-jual">
+
+            <h3 class="form-section-title">Informasi Dasar</h3>
+
+            <!-- KATEGORI -->
+            <div class="form-group">
+                <label>Kategori</label>
+                <select name="kategoriId" required class="input-field">
+                    <option value="">Pilih Kategori</option>
+                    <option value="10001" th:selected="${produk?.kategori?.kategoriId == 10001}">Furnitur</option>
+                    <option value="10002" th:selected="${produk?.kategori?.kategoriId == 10002}">Buku</option>
+                    <option value="10003" th:selected="${produk?.kategori?.kategoriId == 10003}">Elektronik</option>
+                    <option value="10004" th:selected="${produk?.kategori?.kategoriId == 10004}">Pakaian</option>
+                </select>
+            </div>
+
+            <!-- MERK -->
+            <div class="form-group">
+                <label>Merk</label>
+                <input type="text" name="merk" class="input-field" th:value="${produk?.merk}">
+            </div>
+
+            <!-- NAMA PRODUK -->
+            <div class="form-group">
+                <label>Nama Produk</label>
+                <input type="text" name="namaProduk" class="input-field" th:value="${produk?.namaProduk}">
+            </div>
+
+            <!-- KONDISI -->
+            <div class="form-group">
+                <label>Kondisi</label>
+                <select name="kondisi" required class="input-field">
+                    <option value="">Pilih Kondisi</option>
+                    <option value="Baru" th:selected="${produk?.kondisi == 'Baru'}">Baru</option>
+                    <option value="Bekas" th:selected="${produk?.kondisi == 'Bekas'}">Bekas</option>
+                </select>
+            </div>
+
+            <!-- HARGA -->
+            <div class="form-group">
+                <label>Harga</label>
+                <input type="text" id="hargaInput" class="input-field"
+                    th:value="${produk != null ? 'Rp ' + #numbers.formatDecimal(produk.harga,0,'COMMA',0,'POINT') : ''}">
+
+                <input type="hidden" id="hargaReal" name="harga"
+                    th:value="${produk?.harga}">
+            </div>
+
+            <!-- DESKRIPSI -->
+            <div class="form-group">
+                <label>Deskripsi</label>
+                <textarea name="deskripsi" class="input-field" th:text="${produk?.deskripsi}"></textarea>
+            </div>
+
+            <!-- FOTO -->
+            <div class="form-group">
+                <label>Foto Produk</label>
+                <div class="upload-box">
+                    <label for="fileInput" class="upload-btn">Choose File</label>
+                    <input id="fileInput" type="file" name="file" multiple class="file-input">
+
+                    <p id="fileName" class="file-name">Tidak ada file yang dipilih</p>
+                    <div id="previewContainer" class="preview-container"></div>
+                </div>
+            </div>
+
+            <!-- BUTTON -->
+            <div class="form-actions">
+                <button type="submit" class="btn-submit"
+                        th:text="${mode == 'edit' ? 'Simpan Perubahan' : 'Jual'}">
+                </button>
                 <a href="/penjual/profil" class="btn-cancel">Cancel</a>
             </div>
         </form>

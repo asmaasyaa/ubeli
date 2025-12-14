@@ -20,18 +20,13 @@ public class AuthController {
     private PenjualRepository penjualRepo;
 
 
-    // ============================
     // LOGIN PAGE
-    // ============================
     @GetMapping("/login")
     public String loginPage() {
         return "general/login";
     }
 
-
-    // ============================
     // LOGIN PROCESS
-    // ============================
     @PostMapping("/login")
     public String doLogin(
             @RequestParam String email,
@@ -40,7 +35,7 @@ public class AuthController {
             HttpSession session
     ) {
 
-        // ================= LOGIN PEMBELI =================
+        // LOGIN PEMBELI 
         if (role.equals("PEMBELI")) {
 
             Pembeli pembeli = pembeliRepo.findByEmail(email).orElse(null);
@@ -56,7 +51,7 @@ public class AuthController {
             session.removeAttribute("penjual");
         }
 
-        // ================= LOGIN PENJUAL =================
+        // LOGIN PENJUAL 
         else if (role.equals("PENJUAL")) {
 
             Penjual penjual = penjualRepo.findByEmail(email).orElse(null);
@@ -80,18 +75,14 @@ public class AuthController {
     }
 
 
-    // ============================
+    
     // REGISTER PAGE
-    // ============================
     @GetMapping("/register")
     public String registerPage() {
         return "general/registration";
     }
 
-
-    // ============================
     // REGISTER PROCESS
-    // ============================
     @PostMapping("/register")
     public String doRegister(
             @RequestParam String namaLengkap,
@@ -105,12 +96,11 @@ public class AuthController {
             
     ) {
 
-        // Cek kalau pembeli sudah terdaftar
         if (pembeliRepo.existsByEmail(email)) {
             return "redirect:/register?error=email";
         }
 
-        // ========== BUAT PEMBELI ==========
+        // BUAT PEMBELI 
         Pembeli pembeli = new Pembeli();
         pembeli.setNamaLengkap(namaLengkap);
         pembeli.setEmail(email);
@@ -121,7 +111,7 @@ public class AuthController {
         pembeliRepo.save(pembeli);
 
 
-        // ========== BUAT PENJUAL ==========
+        // BUAT PENJUAL 
         Penjual penjual = new Penjual();
         penjual.setNamaLengkap(namaLengkap);
         penjual.setEmail(email);
@@ -135,14 +125,10 @@ public class AuthController {
 
         penjualRepo.save(penjual);
 
-        // selesai -> menuju login
         return "redirect:/login?registered";
     }
 
-
-    // ============================
     // LOGOUT
-    // ============================
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();

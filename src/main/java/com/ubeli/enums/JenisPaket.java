@@ -18,7 +18,16 @@ public enum JenisPaket {
         this.label = label;
     }
 
-    public int getDurasiHari() { return durasiHari; }
-    public BigDecimal getHarga() { return harga; }
-    public String getLabel() { return label; }
+    public int getDurasiHari() {
+        return durasiHari;
+    }
+
+    public BigDecimal getHarga() {
+        return harga;
+    }
+
+    public String getLabel() {
+    return "Paket " + durasiHari + " Hari";
+}
+
 }

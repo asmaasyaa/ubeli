@@ -5,18 +5,16 @@ import com.ubeli.enums.StatusIklan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
 import java.time.LocalDate;
 import java.util.List;
 
 public interface BannerIklanRepository extends JpaRepository<BannerIklan, Long> {
 
-    // QUERY SAKTI: 
-    // Ambil Iklan yang Statusnya ACTIVE 
-    // DAN Tanggal Selesainya >= Hari Ini (Belum kadaluarsa)
     @Query("SELECT b FROM BannerIklan b WHERE b.status = :status AND b.tanggalSelesai >= :hariIni")
     List<BannerIklan> findActiveAds(@Param("status") StatusIklan status, @Param("hariIni") LocalDate hariIni);
     
-    // Query buat admin (yang kemarin)
+    // Query buat admin 
     List<BannerIklan> findByStatus(StatusIklan status);
     long countByStatus(StatusIklan status);
 }

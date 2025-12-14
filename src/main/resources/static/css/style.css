@@ -74,6 +74,10 @@ main.container { padding-bottom: 80px; }
 }
 
 
+<<<<<<< HEAD
+=======
+/* ================= HERO BANNER ================= */
+>>>>>>> main
 /* ================= HERO BANNER (CAROUSEL) - BAGIAN PENTING ================= */
 .hero-banner {
     margin-top: 20px;
@@ -196,7 +200,10 @@ main.container { padding-bottom: 80px; }
     font-size: 28px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s;
 }
 .cat-item:hover .cat-icon { border-color: #3B5998; transform: translateY(-3px); }
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
 
 /* ================= PRODUCT SECTION ================= */
 .product-section { margin-bottom: 50px; }

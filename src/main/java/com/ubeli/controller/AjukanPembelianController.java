@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-
 public class AjukanPembelianController {
 
     private final PesananService pesananService;
@@ -21,12 +20,13 @@ public class AjukanPembelianController {
     @PostMapping("/ajukan/{produkId}")
     public String ajukanPembelian(@PathVariable Long produkId,
                                   @RequestParam Long pembeliId) {
-        
+
         try {
             pesananService.ajukanPembelian(produkId, pembeliId);
             return "redirect:/produk/" + produkId + "?success=ajuan-dikirim";
         } catch (RuntimeException e) {
-            return "redirect:/produk/" + produkId + "?error=" + e.getMessage();
+            String msg = e.getMessage() != null ? e.getMessage().replaceAll("\\s+", "%20") : "error";
+            return "redirect:/produk/" + produkId + "?error=" + msg;
         }
     }
 
@@ -34,8 +34,6 @@ public class AjukanPembelianController {
     public String terimaPengajuan(@PathVariable Long pesananId) {
 
         Pesanan pesanan = pesananService.terimaPengajuan(pesananId);
-        Long produkId = pesanan.getProduk().getProdukId();
-
         return "redirect:/notifikasi?success=diterima";
     }
 
@@ -43,7 +41,6 @@ public class AjukanPembelianController {
     public String tolakPengajuan(@PathVariable Long pesananId) {
 
         pesananService.tolakPengajuan(pesananId);
-
         return "redirect:/notifikasi?success=ditolak";
     }
 }

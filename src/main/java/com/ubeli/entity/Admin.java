@@ -1,11 +1,11 @@
 package com.ubeli.entity;
 
-import jakarta.persistence.*; // Import wajib buat database
-import lombok.Data;           // Import Lombok (Otomatis Getter/Setter)
+import jakarta.persistence.*; 
+import lombok.Data;           
 
-@Entity       // Menandakan ini Tabel Database
-@Data         // Menandakan ini punya Getter, Setter, Constructor otomatis
-@Table(name = "admin") // Opsional: Nama tabel di SQL
+@Entity       
+@Data         
+@Table(name = "admin") 
 public class Admin {
 
     @Id

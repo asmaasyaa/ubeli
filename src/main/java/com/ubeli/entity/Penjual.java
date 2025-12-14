@@ -15,17 +15,17 @@ public class Penjual {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long penjualId;
 
-    private String namaLengkap; // Bisa dipakai sebagai nama toko
+    private String namaLengkap; 
     private String email;
     private String passwordHash;
     private String noHp;
 
-    private String lokasiToko;       // contoh: Lowokwaru, Malang
-    private String deskripsiToko;    // bio/deskripsi toko
+    private String lokasiToko;       
+    private String deskripsiToko;    
 
     private String bank;
     private String noRekening;
-    private String status; // Active, Banned
+    private String status; 
     
     @Column(nullable = false, updatable = false)
     private LocalDate createdAt = LocalDate.now();

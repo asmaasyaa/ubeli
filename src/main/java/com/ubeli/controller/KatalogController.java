@@ -33,11 +33,11 @@ public class KatalogController {
     @Autowired private WishlistRepository wishlistRepository;
     @Autowired private PembeliRepository pembeliRepository;
 
-    // HAPUS DUPLIKASI: private ProdukRepository produkRepository; (Cukup pakai produkRepo)
+    @Autowired
+    private ProdukRepository produkRepository;
 
-    // ============================
+
     // 1. HALAMAN HOME
-    // ============================
     @GetMapping({"/", "/home"})
     public String home(Model model, HttpSession session) {
 
@@ -58,11 +58,9 @@ public class KatalogController {
         model.addAttribute("wishlistProdukIds", getWishlistIds(session));
 
         return "general/home";
-    }    
+    }
 
-    // ============================
     // 2. HALAMAN DETAIL PRODUK
-    // ============================
     @GetMapping("/produk/{id}")
     public String detailProduk(@PathVariable Long id, Model model, HttpSession session) { // TAMBAH HttpSession
         
@@ -78,7 +76,11 @@ public class KatalogController {
         Long pembeliId = (Long) session.getAttribute("pembeliId"); // Ambil ID Pembeli jika ada
         String role = (String) session.getAttribute("role");
 
-        // LOGIC 1: Jika PENJUAL membuka produknya sendiri
+        if (role==null) 
+            return "redirect:/login";
+
+        boolean isWishlisted = false;
+
         if ("PENJUAL".equals(role)) {
             if (penjual != null && 
                 produk.getPenjual().getPenjualId().equals(penjual.getPenjualId())) {
@@ -89,7 +91,6 @@ public class KatalogController {
         }
 
         // LOGIC 2: Jika PEMBELI melihat produk (Cek Wishlist)
-        boolean isWishlisted = false;
         if (pembeliId != null) { // PERBAIKAN: Cek variabel pembeliId, bukan Class Pembeli
             Pembeli pembeli = pembeliRepository.findById(pembeliId).orElse(null);
             if (pembeli != null) {
@@ -103,9 +104,7 @@ public class KatalogController {
         return "general/detail-produk";
     }
 
-    // ============================
     // 3. HALAMAN KATALOG
-    // ============================
     @GetMapping("/katalog")
     public String katalog(Model model, HttpSession session) {
         // Gunakan produkRepo (konsisten)
@@ -118,9 +117,7 @@ public class KatalogController {
         return "general/katalog";
     }
 
-    // ============================
     // 4. SEARCH PRODUK
-    // ============================
     @GetMapping("/katalog/search")
     public String searchProduk(@RequestParam("q") String keyword, Model model, HttpSession session) {
         
@@ -133,9 +130,7 @@ public class KatalogController {
         return "general/katalog";
     }
 
-    // ============================
     // 5. FILTER KATEGORI
-    // ============================
     @GetMapping("/katalog/kategori/{id}")
     public String filterKategori(@PathVariable Long id, Model model, HttpSession session) {
         
@@ -148,9 +143,7 @@ public class KatalogController {
         return "general/katalog";
     }
 
-    // ============================
     // 6. UTIL: AMBIL WISHLIST USER
-    // ============================
     private Set<Long> getWishlistIds(HttpSession session) {
         // Cek login via atribut "pembeli" atau "user"
         Object userObj = session.getAttribute("pembeli"); 
@@ -168,9 +161,7 @@ public class KatalogController {
                 .collect(Collectors.toSet());
     }
 
-    // ============================
-    // 7. LAPORAN
-    // ============================
+    // 7. LAPORAN (TIDAK DIUBAH)
     @GetMapping("/laporan/buat/{produkId}")
     public String buatLaporan(@PathVariable Long produkId, Model model) {
         Produk produk = produkRepo.findById(produkId).orElse(null);

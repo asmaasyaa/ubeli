@@ -18,13 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransaksiController {
 
-    private final PesananRepository pesananRepo;
-
-    // ========================================================
-    // ⚠️ LOGIC "AJUKAN PEMBELIAN" SUDAH DIHAPUS DARI SINI
-    // KARENA SUDAH DITANGANI OLEH 'AjukanPembelianController.java'
-    // ========================================================
-
+    // ✅ BEST PRACTICE: Gunakan 'final' agar @RequiredArgsConstructor berfungsi
+    // Tidak perlu @Autowired lagi di sini
+    private final PesananRepository pesananRepo; 
 
     // ========================================================
     // 1. USE CASE: TAMPILKAN HALAMAN RIWAYAT
@@ -33,25 +29,28 @@ public class TransaksiController {
     @GetMapping("/riwayat-pesanan")
     public String halamanRiwayat(Model model, HttpSession session) {
         
-        // 1. Ambil User dari Session
+        // 1. Cek Login (Support key "user" atau "pembeli" biar aman)
         Object userObj = session.getAttribute("user");
         if (userObj == null) {
             userObj = session.getAttribute("pembeli");
         }
 
-        // 2. Cek Login
+        // 2. Jika tetap null, tendang ke login
         if (userObj == null) {
             return "redirect:/login";
         }
 
-        // 3. Casting ke Pembeli
+        // 3. Pastikan yang login adalah Pembeli (Safety check)
+        if (!(userObj instanceof Pembeli)) {
+            // Jika admin/penjual nyasar ke sini, balikin ke home
+            return "redirect:/home"; 
+        }
+
         Pembeli pembeli = (Pembeli) userObj;
 
-        // 4. Ambil Data Pesanan (PERBAIKAN DI SINI)
-        // Kita ambil SEMUA pesanan milik pembeli ini, urut dari yang paling baru
-        // Jangan filter pakai ID Produk (p), karena kita mau lihat semua sejarah belanja.
-        
-        List<Pesanan> listPesanan = pesananRepo.findByPembeli_PembeliIdAndProduk_ProdukIdAndStatusPengajuan(null, null, null);
+        // 4. Ambil Data Pesanan (Pakai Logic Kode Bawah yang BENAR)
+        // Mengambil semua pesanan berdasarkan ID pembeli
+        List<Pesanan> listPesanan = pesananRepo.findByPembeli_PembeliIdOrderByPesananIdDesc(pembeli.getPembeliId());
         
         model.addAttribute("listPesanan", listPesanan);
         model.addAttribute("pembeli", pembeli); 
@@ -77,8 +76,6 @@ public class TransaksiController {
             // Ubah Status jadi SELESAI
             pesanan.setStatusPesanan(StatusPesanan.SELESAI);
             pesananRepo.save(pesanan);
-
-            // System.out.println("Pesanan Selesai. Dana diteruskan ke Penjual.");
         }
 
         return "redirect:/riwayat-pesanan";

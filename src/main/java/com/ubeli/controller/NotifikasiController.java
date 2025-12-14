@@ -31,42 +31,42 @@ public class NotifikasiController {
     public String notifPage(Model model, HttpSession session) {
 
         String role = (String) session.getAttribute("role");
-        Long userId = (Long) session.getAttribute("userId");
+        Long userId = null;
 
-        if (role == null) return "redirect:/login";
+        if ("PEMBELI".equals(role)) {
+            userId = (Long) session.getAttribute("pembeliId");
+        } else if ("PENJUAL".equals(role)) {
+            userId = (Long) session.getAttribute("penjualId");
+            if (userId == null) userId = (Long) session.getAttribute("userId");
+        } else {
+            userId = (Long) session.getAttribute("userId");
+        }
+
+        if (role == null || userId == null) {
+            return "redirect:/login";
+        }
 
         model.addAttribute("role", role);
 
-        // ======================
-        // PEMBELI → Notifikasi Pembeli
-        // ======================
         if (role.equals("PEMBELI")) {
             model.addAttribute("listNotif",
                 notifRepo.findByPembeli_PembeliId(userId));
-
             return "pembeli/notifikasi-pembeli";
         }
 
-        // ======================
-        // PENJUAL → Daftar Pesanan + Notifikasi
-        // ======================
         if (role.equals("PENJUAL")) {
 
-            List<Pesanan> listPesanan =
-                    pesananRepo.findByPenjual_PenjualId(userId);
+            List<Pesanan> listPesanan = pesananRepo.findByPenjual_PenjualId(userId);
 
-            // Buat map: pesananId → notifikasi
             Map<Long, Notifikasi> mapNotif = new HashMap<>();
 
             for (Pesanan p : listPesanan) {
-                Notifikasi notif =
-                        notifRepo.findFirstByPesanan_PesananIdOrderByIdDesc(p.getPesananId());
-                mapNotif.put(p.getPesananId(), notif);
+                notifRepo.findFirstByPesanan_PesananIdOrderByIdDesc(p.getPesananId())
+                        .ifPresent(n -> mapNotif.put(p.getPesananId(), n));
             }
 
             model.addAttribute("listPesanan", listPesanan);
             model.addAttribute("mapNotif", mapNotif);
-
             return "penjual/notifikasi-penjual";
         }
 

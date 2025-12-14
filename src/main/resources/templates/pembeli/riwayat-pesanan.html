@@ -74,9 +74,8 @@
                           th:text="${not #lists.isEmpty(p.items) ? p.items[0].produk.namaProduk : 'Produk dihapus'}">
                           Nama Produk
                     </span>
-                    <p style="font-size: 13px; color: #666; margin: 0;">
-                        Jumlah: <span th:text="${not #lists.isEmpty(p.items) ? p.items[0].jumlah : 0}">1</span> barang
-                    </p>
+                    
+                    
                     <p class="product-price" 
                        th:text="'Total: Rp' + ${#numbers.formatDecimal(p.totalHarga, 0, 'COMMA', 0, 'POINT')}">
                        Rp 0
