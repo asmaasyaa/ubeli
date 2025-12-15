@@ -6,14 +6,34 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Tambahan Style untuk Info Detail */
+        /* Styling Tambahan */
         .detail-info { font-size: 13px; color: #555; line-height: 1.4; }
         .detail-info strong { color: #333; }
+        
+        /* Badge Metode */
         .badge-method { 
-            padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+            padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; margin-top:3px;
         }
         .badge-cod { background: #E8EDF5; color: #3B5998; border: 1px solid #3B5998; }
         .badge-tf { background: #e3f2fd; color: #2196f3; border: 1px solid #2196f3; }
+        
+        .rekening-box {
+            margin-top: 4px; font-size: 11px; background: #f9f9f9; padding: 4px; border-radius: 4px; border: 1px solid #eee;
+        }
+
+        /* Badge Khusus Status Bukti (Baru) */
+        .status-cod-text {
+            font-size: 12px; font-weight: 600; color: #3B5998; background: #E8EDF5; padding: 5px 10px; border-radius: 20px;
+        }
+        
+        /* Status Badge General */
+        .badge-status { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-info { background: #cce5ff; color: #004085; }
+        
+        .btn-link { color: #2196f3; text-decoration: none; font-size: 13px; font-weight: 500; }
+        .btn-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -46,7 +66,7 @@
         <header class="top-navbar">
             <div class="page-header" style="margin-bottom:0;">
                 <h1 class="page-title">Verifikasi Pembayaran</h1>
-                <p class="page-subtitle">Kelola bukti transfer dan konfirmasi pesanan.</p>
+                <p class="page-subtitle">Kelola bukti transfer dan konfirmasi pesanan (Termasuk COD).</p>
             </div>
             <div class="profile-dropdown"><div class="avatar">A</div><div class="profile-info"><span class="name">Administrator</span>
                 <span class="role">Super Admin</span></div></div>
@@ -67,7 +87,11 @@
                     </a>
                     <a href="?tab=riwayat" class="btn-tab"
                        th:classappend="${activeTab == 'riwayat'} ? 'active' : ''">
-                       Riwayat Sukses
+                       Proses Kirim
+                    </a>
+                    <a href="?tab=selesai" class="btn-tab"
+                       th:classappend="${activeTab == 'selesai'} ? 'active' : ''">
+                       Transaksi Selesai
                     </a>
                 </div>
                 
@@ -79,7 +103,7 @@
                                 <th>Produk & Penjual</th>
                                 <th>Pembeli & Metode</th>
                                 <th>Total</th>
-                                <th>Bukti</th>
+                                <th>Bukti / Info</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -89,11 +113,11 @@
                                 
                                 <td>
                                     <div class="detail-info">
-                                        <strong th:text="${p.item != null ? p.item.produk.namaProduk : 'Produk'}">Produk</strong><br>
+                                        <strong th:text="${not #lists.isEmpty(p.items) ? p.items[0].produk.namaProduk : 'Produk'}">Produk</strong><br>
                                         <span style="font-size:12px; color:#888;">Penjual: </span>
                                         <span th:text="${p.penjual.namaLengkap}">Nama Penjual</span><br>
                                         
-                                        <div style="margin-top:4px; font-size:11px; background:#f9f9f9; padding:4px; border-radius:4px;">
+                                        <div class="rekening-box">
                                             <i class="fas fa-university"></i> 
                                             <span th:text="${p.penjual.namaBank != null ? p.penjual.namaBank : '-'}">Bank</span> - 
                                             <span th:text="${p.penjual.noRekening != null ? p.penjual.noRekening : '-'}">No Rek</span>
@@ -104,7 +128,6 @@
                                 <td>
                                     <div class="detail-info">
                                         <strong th:text="${p.pembeli.namaLengkap}">Nama Pembeli</strong><br>
-                                        
                                         <span class="badge-method badge-cod" th:if="${p.metodePembayaran == 'COD'}">COD</span>
                                         <span class="badge-method badge-tf" th:if="${p.metodePembayaran != 'COD'}">TRANSFER</span>
                                     </div>
@@ -113,14 +136,22 @@
                                 <td>Rp <span th:text="${#numbers.formatDecimal(p.totalHarga, 0, 'COMMA', 0, 'POINT')}"></span></td>
                                 
                                 <td>
-                                    <a th:if="${p.buktiTransferUrl != null}" th:href="${p.buktiTransferUrl}" target="_blank" class="btn-link">Lihat Bukti</a>
-                                    <span th:if="${p.buktiTransferUrl == null}" style="color:#aaa; font-size:12px;">-</span>
+                                    <a th:if="${p.metodePembayaran != 'COD' and p.buktiTransferUrl != null}" 
+                                       th:href="${p.buktiTransferUrl}" target="_blank" class="btn-link">
+                                       <i class="fas fa-image"></i> Lihat Bukti
+                                    </a>
+
+                                    <span th:if="${p.metodePembayaran == 'COD'}" class="status-cod-text">
+                                        <i class="fas fa-handshake"></i> Bayar Ditempat
+                                    </span>
+
+                                    <span th:if="${p.metodePembayaran != 'COD' and p.buktiTransferUrl == null}" style="color:#aaa; font-size:12px;">-</span>
                                 </td>
 
                                 <td>
                                     <form action="/admin/verifikasi-bayar/proses" method="post" style="display:flex; gap:8px;">
                                         <input type="hidden" name="pesananId" th:value="${p.pesananId}">
-                                        <button type="submit" name="aksi" value="TERIMA" class="btn-icon btn-approve" title="Terima/ACC"><i class="fas fa-check"></i></button>
+                                        <button type="submit" name="aksi" value="TERIMA" class="btn-icon btn-approve" title="Terima / ACC"><i class="fas fa-check"></i></button>
                                         <button type="submit" name="aksi" value="TOLAK" class="btn-icon btn-reject" title="Tolak"><i class="fas fa-times"></i></button>
                                     </form>
                                 </td>
@@ -136,14 +167,33 @@
                     <table th:if="${not #lists.isEmpty(listPesanan)}">
                         <thead>
                             <tr>
-                                <th>ID</th><th>Pembeli</th><th>Metode</th><th>Total</th><th>Status</th>
+                                <th>ID</th>
+                                <th>Produk & Penjual</th> 
+                                <th>Pembeli & Metode</th>
+                                <th>Total</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="p : ${listPesanan}">
                                 <td><span class="id-badge" th:text="'#' + ${p.pesananId}"></span></td>
-                                <td th:text="${p.pembeli.namaLengkap}"></td>
-                                <td th:text="${p.metodePembayaran}"></td>
+                                
+                                <td>
+                                    <div class="detail-info">
+                                        <strong th:text="${not #lists.isEmpty(p.items) ? p.items[0].produk.namaProduk : 'Produk'}">Produk</strong><br>
+                                        <span style="font-size:12px; color:#888;">Penjual: </span>
+                                        <span th:text="${p.penjual.namaLengkap}">Nama Penjual</span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="detail-info">
+                                        <strong th:text="${p.pembeli.namaLengkap}">Nama Pembeli</strong><br>
+                                        <span class="badge-method badge-cod" th:if="${p.metodePembayaran == 'COD'}">COD</span>
+                                        <span class="badge-method badge-tf" th:if="${p.metodePembayaran != 'COD'}">TRANSFER</span>
+                                    </div>
+                                </td>
+
                                 <td th:text="'Rp ' + ${#numbers.formatDecimal(p.totalHarga, 0, 'COMMA', 0, 'POINT')}"></td>
                                 <td>
                                     <span class="badge-status badge-danger">DIBATALKAN</span>
@@ -160,23 +210,86 @@
                     <table th:if="${not #lists.isEmpty(listPesanan)}">
                         <thead>
                             <tr>
-                                <th>ID</th><th>Pembeli</th><th>Metode</th><th>Total</th><th>Status Akhir</th>
+                                <th>ID</th>
+                                <th>Produk & Penjual</th> 
+                                <th>Pembeli & Metode</th>
+                                <th>Total</th>
+                                <th>Status Akhir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="p : ${listPesanan}">
                                 <td><span class="id-badge" th:text="'#' + ${p.pesananId}"></span></td>
-                                <td th:text="${p.pembeli.namaLengkap}"></td>
-                                <td th:text="${p.metodePembayaran}"></td>
+                                
+                                <td>
+                                    <div class="detail-info">
+                                        <strong th:text="${not #lists.isEmpty(p.items) ? p.items[0].produk.namaProduk : 'Produk'}">Produk</strong><br>
+                                        <span style="font-size:12px; color:#888;">Penjual: </span>
+                                        <span th:text="${p.penjual.namaLengkap}">Nama Penjual</span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="detail-info">
+                                        <strong th:text="${p.pembeli.namaLengkap}">Nama Pembeli</strong><br>
+                                        <span class="badge-method badge-cod" th:if="${p.metodePembayaran == 'COD'}">COD</span>
+                                        <span class="badge-method badge-tf" th:if="${p.metodePembayaran != 'COD'}">TRANSFER</span>
+                                    </div>
+                                </td>
+
                                 <td th:text="'Rp ' + ${#numbers.formatDecimal(p.totalHarga, 0, 'COMMA', 0, 'POINT')}"></td>
                                 <td>
-                                    <span class="badge-status badge-success" th:text="${p.statusPesanan}"></span>
+                                    <span th:if="${p.statusPesanan.name() == 'DIBAYAR'}" class="badge-status badge-info">DIBAYAR</span>
+                                    <span th:if="${p.statusPesanan.name() == 'DIKIRIM'}" class="badge-status badge-info">DIKIRIM</span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                     <p th:if="${#lists.isEmpty(listPesanan)}" style="text-align:center; padding:20px; color:#888;">
-                        Belum ada riwayat transaksi sukses.
+                        Belum ada riwayat transaksi dalam proses kirim.
+                    </p>
+                </div>
+
+                <div th:if="${activeTab == 'selesai'}">
+                    <table th:if="${not #lists.isEmpty(listPesanan)}">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Produk & Penjual</th> 
+                                <th>Pembeli & Metode</th>
+                                <th>Total</th>
+                                <th>Status Akhir</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="p : ${listPesanan}">
+                                <td><span class="id-badge" th:text="'#' + ${p.pesananId}"></span></td>
+                                
+                                <td>
+                                    <div class="detail-info">
+                                        <strong th:text="${not #lists.isEmpty(p.items) ? p.items[0].produk.namaProduk : 'Produk'}">Produk</strong><br>
+                                        <span style="font-size:12px; color:#888;">Penjual: </span>
+                                        <span th:text="${p.penjual.namaLengkap}">Nama Penjual</span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="detail-info">
+                                        <strong th:text="${p.pembeli.namaLengkap}">Nama Pembeli</strong><br>
+                                        <span class="badge-method badge-cod" th:if="${p.metodePembayaran == 'COD'}">COD</span>
+                                        <span class="badge-method badge-tf" th:if="${p.metodePembayaran != 'COD'}">TRANSFER</span>
+                                    </div>
+                                </td>
+
+                                <td th:text="'Rp ' + ${#numbers.formatDecimal(p.totalHarga, 0, 'COMMA', 0, 'POINT')}"></td>
+                                <td>
+                                    <span class="badge-status badge-success">SELESAI</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p th:if="${#lists.isEmpty(listPesanan)}" style="text-align:center; padding:20px; color:#888;">
+                        Belum ada transaksi selesai.
                     </p>
                 </div>
 

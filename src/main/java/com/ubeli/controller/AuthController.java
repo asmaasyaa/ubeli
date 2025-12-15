@@ -90,7 +90,7 @@ public class AuthController {
             @RequestParam String password,
             @RequestParam String noHp,
             @RequestParam String noRekening,
-            @RequestParam String bank,
+            @RequestParam String namaBank,
             @RequestParam String lokasiToko,
             @RequestParam(required = false) String deskripsiToko
             
@@ -118,7 +118,7 @@ public class AuthController {
         penjual.setPasswordHash(password);
         penjual.setNoHp(noHp);
         penjual.setLokasiToko(lokasiToko);
-        penjual.setBank(bank);
+        penjual.setNamaBank(namaBank);
         penjual.setNoRekening(noRekening);
         penjual.setDeskripsiToko(deskripsiToko);
         penjual.setStatus("Active");

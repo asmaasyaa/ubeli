@@ -183,11 +183,6 @@
         // Cek apakah ada slide sebelum menjalankan fungsi
         if (document.getElementsByClassName("banner-slide").length > 0) {
             showSlides(slideIndex);
-            
-            // Auto Play setiap 5 detik
-            setInterval(function() {
-                moveSlide(1);
-            }, 5000); 
         }
     
         function moveSlide(n) {
@@ -199,23 +194,33 @@
         }
     
         function showSlides(n) {
-            let i;
-            let slides = document.getElementsByClassName("banner-slide");
-            let dots = document.getElementsByClassName("dot");
-            
-            if (n > slides.length) {slideIndex = 1}     
-            if (n < 1) {slideIndex = slides.length}
-            
-            for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";   
-            }
-            
-            for (i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" active-dot", "");
-            }
-            
-            slides[slideIndex-1].style.display = "flex"; 
-            dots[slideIndex-1].className += " active-dot";
+        let i;
+        let slides = document.getElementsByClassName("banner-slide");
+        let dots = document.getElementsByClassName("dot");
+        
+        if (n > slides.length) {slideIndex = 1}     
+        if (n < 1) {slideIndex = slides.length}
+        
+        // RESET SEMUA SLIDE
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";  // Sembunyikan lewat CSS inline
+            slides[i].classList.remove("active-slide"); // Hapus class active-slide
+        }
+        
+        // RESET SEMUA DOTS
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active-dot", "");
+        }
+        
+        // TAMPILKAN SLIDE AKTIF
+        // Kita tidak perlu set style.display = "flex" manual, 
+        // cukup tambah class "active-slide" karena di CSS sudah ada aturan display:flex untuk class ini.
+        slides[slideIndex-1].classList.add("active-slide"); 
+        
+        // Tambahan: Pastikan display flex tetap jalan (jaga-jaga)
+        slides[slideIndex-1].style.display = "flex"; 
+        
+        dots[slideIndex-1].className += " active-dot";
         }
     </script>
 </body>

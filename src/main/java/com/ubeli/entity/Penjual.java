@@ -17,19 +17,22 @@ public class Penjual {
 
     private String namaLengkap; 
     private String email;
-    private String passwordHash;
+    private String passwordHash; // Pastikan di controller login kamu panggilnya getPasswordHash() ya
     private String noHp;
 
     private String lokasiToko;       
     private String deskripsiToko;    
 
-    private String bank;
+    // === PERBAIKAN DI SINI ===
+    @Column(name = "nama_bank") // Tambah anotasi biar rapi di DB
+    private String namaBank;    // UBAH DARI 'bank' JADI 'namaBank' (Biar cocok sama HTML)
+    
     private String noRekening;
+    
     private String status; 
     
     @Column(nullable = false, updatable = false)
     private LocalDate createdAt = LocalDate.now();
-
 
     @OneToMany(mappedBy = "penjual", cascade = CascadeType.ALL)
     private List<Produk> produks = new ArrayList<>();

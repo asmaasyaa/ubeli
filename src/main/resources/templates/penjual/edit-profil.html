@@ -11,7 +11,6 @@
 </head>
 <body>
 
-    <!-- HEADER -->
     <div th:replace="fragments/navbar-penjual :: navbar-penjual"></div>
 
     <main class="container">
@@ -20,7 +19,6 @@
             
             <form th:action="@{/penjual/update-profil}" method="post" class="edit-profil-form">
                 
-                <!-- Avatar Section -->
                 <div class="edit-avatar-section">
                     <div class="edit-avatar">
                         <i class="fas fa-user"></i>
@@ -32,10 +30,8 @@
                     <h2 class="edit-nama" th:text="${penjual.namaLengkap}">Fajar</h2>
                 </div>
 
-                <!-- Form Fields -->
                 <div class="edit-form-fields">
                     
-                    <!-- Nama Lengkap -->
                     <div class="form-field">
                         <div class="field-input-wrapper">
                             <input type="text" name="namaLengkap" th:value="${penjual.namaLengkap}" placeholder="Nama Lengkap">
@@ -43,7 +39,6 @@
                         </div>
                     </div>
 
-                    <!-- Email -->
                     <div class="form-field">
                         <div class="field-input-wrapper">
                             <input type="email" name="email" th:value="${penjual.email}" placeholder="email@domain.com">
@@ -51,7 +46,6 @@
                         </div>
                     </div>
 
-                    <!-- No HP -->
                     <div class="form-field">
                         <div class="field-input-wrapper">
                             <input type="tel" name="noHp" th:value="${penjual.noHp}" placeholder="+62 898 9289 2839">
@@ -59,7 +53,6 @@
                         </div>
                     </div>
 
-                    <!-- lokasi toko -->
                     <div class="form-field">
                         <div class="field-input-wrapper">
                             <input type="text" name="lokasiToko" th:value="${penjual.lokasiToko}" placeholder="Lokasi Toko">
@@ -67,23 +60,39 @@
                         </div>
                     </div>
 
-                    <!-- Description -->
                     <div class="form-field">
                         <div class="field-input-wrapper">
-                            <input type="text" class="desc-field" name="deskripsi" placeholder="Description" th:value="${penjual.deskripsiToko}">
+                            <input type="text" class="desc-field" name="deskripsi" placeholder="Deskripsi Toko" th:value="${penjual.deskripsiToko}">
+                            <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px; margin-bottom: 15px; border-top: 1px solid #eee; padding-top: 20px;">
+                        <h4 style="color: #333; font-size: 16px; font-weight: 600; margin: 0 0 5px 0;">Informasi Keuangan</h4>
+                        <p style="font-size: 12px; color: #888; margin: 0;">Digunakan Admin untuk mentransfer hasil penjualan.</p>
+                    </div>
+
+                    <div class="form-field">
+                        <div class="field-input-wrapper">
+                            <input type="text" name="namaBank" th:value="${penjual.namaBank}" placeholder="Nama Bank (cth: BCA, Mandiri)">
+                            <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <div class="field-input-wrapper">
+                            <input type="text" name="noRekening" th:value="${penjual.noRekening}" placeholder="Nomor Rekening">
                             <button type="button" class="btn-field-edit"><i class="fas fa-pen"></i></button>
                         </div>
                     </div>
 
                 </div>
 
-                <!-- Metode Pembayaran -->
-                <div class="payment-section">
-                    <h4>Metode Pembayaran yang Diterima</h4>
+                <div class="payment-section" style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                    <h4 style="color: #333; font-size: 16px; font-weight: 600; margin-bottom: 15px;">Metode Pembayaran yang Diterima</h4>
                     
                     <div class="payment-options">
                         
-                        <!-- COD -->
                         <label class="payment-option">
                             <input type="checkbox" name="metodePembayaran" value="COD" 
                                    th:checked="${penjual.metodePembayaran != null and #strings.contains(penjual.metodePembayaran, 'COD')}">
@@ -123,10 +132,9 @@
                     </div>
                 </div>
 
-                <!-- Buttons -->
                 <div class="edit-form-actions">
                     <button type="submit" class="btn-simpan">Simpan Perubahan</button>
-                    <a href="/penjual/profil-toko" class="btn-batal">Batal</a>
+                    <a href="/penjual/profil" class="btn-batal">Batal</a>
                 </div>
 
             </form>
@@ -140,7 +148,7 @@
     </footer>
 
     <script>
-        // Photo preview
+        // Photo preview logic
         document.getElementById('fotoInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {

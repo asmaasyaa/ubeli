@@ -86,7 +86,9 @@
             <div class="action-card">
 
                 <form th:action="@{'/ajukan/' + ${p.produkId}}" method="post">
-                    <input type="hidden" name="pembeliId" th:value="${session.pembeli.pembeliId}">
+                    <th:block th:if="${session.pembeli != null}">
+                        <input type="hidden" name="pembeliId" th:value="${session.pembeli.pembeliId}">
+                    </th:block>
                     <button type="submit" class="btn-action btn-dark">Ajukan Pembelian</button>
                 </form>
 

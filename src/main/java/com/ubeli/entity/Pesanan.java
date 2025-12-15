@@ -19,7 +19,6 @@ public class Pesanan {
     private Long pesananId;
 
     private BigDecimal totalHarga;
-    private String buktiTransferUrl;
 
     // STATUS PENGAJUAN (Baru Ditambah)
     @Enumerated(EnumType.STRING)
@@ -47,4 +46,11 @@ public class Pesanan {
     // ITEM (untuk transaksi multi produk)
     @OneToMany(mappedBy = "pesanan", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();
+
+    @Column(name = "metode_pembayaran")
+    private String metodePembayaran; // Isinya: "COD", "TRANSFER", atau "QRIS"
+    
+    @Column(name = "bukti_transfer_url")
+    private String buktiTransferUrl;
+
 }

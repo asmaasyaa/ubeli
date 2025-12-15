@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-// import org.springframework.web.multipart.MultipartFile; // Aktifkan jika sudah ada logic upload foto
 
 import java.util.List;
 
@@ -30,23 +29,30 @@ public class PenjualProfilController {
     @GetMapping("/penjual/profil")
     public String profilPenjual(HttpSession session, Model model) {
 
-        // CEK ROLE
-        if (!"PENJUAL".equals(session.getAttribute("role"))) {
+        // 1. Ambil Penjual dari Session (Cuma buat ambil ID)
+        Penjual sessionPenjual = (Penjual) session.getAttribute("penjual");
+
+        // 2. Cek Login & Role
+        if (sessionPenjual == null || !"PENJUAL".equals(session.getAttribute("role"))) {
             return "redirect:/login";
         }
 
-        // CEK OBJEK PENJUAL DI SESSION
-        Penjual penjual = (Penjual) session.getAttribute("penjual");
-
-        if (penjual == null) {  
+        // 3. AMBIL DATA TERBARU DARI DATABASE (PENTING! Biar data gak hilang/sinkron)
+        // Kita gunakan ID dari session untuk mencari data asli di DB
+        Penjual penjualDb = penjualRepo.findById(sessionPenjual.getPenjualId()).orElse(null);
+        
+        if (penjualDb == null) {
             session.invalidate();
             return "redirect:/login";
         }
 
-        // AMBIL PRODUK
-        List<Produk> produkList = produkRepo.findByPenjual_PenjualId(penjual.getPenjualId());
+        // 4. Update Session dengan data terbaru
+        session.setAttribute("penjual", penjualDb);
 
-        model.addAttribute("penjual", penjual);
+        // Ambil Produk
+        List<Produk> produkList = produkRepo.findByPenjual_PenjualId(penjualDb.getPenjualId());
+
+        model.addAttribute("penjual", penjualDb); // Kirim data DB ke HTML
         model.addAttribute("produkList", produkList);
 
         return "penjual/profil";
@@ -58,19 +64,16 @@ public class PenjualProfilController {
     @GetMapping("/penjual/edit-profil")
     public String editProfil(HttpSession session, Model model) {
 
-        // CEK ROLE
-        if (!"PENJUAL".equals(session.getAttribute("role"))) {
+        Penjual sessionPenjual = (Penjual) session.getAttribute("penjual");
+
+        if (sessionPenjual == null || !"PENJUAL".equals(session.getAttribute("role"))) {
             return "redirect:/login";
         }
 
-        Penjual penjual = (Penjual) session.getAttribute("penjual");
+        // AMBIL DATA SEGAR DARI DATABASE
+        Penjual penjualDb = penjualRepo.findById(sessionPenjual.getPenjualId()).orElse(null);
 
-        if (penjual == null) {
-            session.invalidate();
-            return "redirect:/login";
-        }
-
-        model.addAttribute("penjual", penjual);
+        model.addAttribute("penjual", penjualDb); // Pastikan HTML pakai data DB
 
         return "penjual/edit-profil"; 
     }
@@ -86,52 +89,48 @@ public class PenjualProfilController {
             @RequestParam(required = false) String deskripsi,
             @RequestParam(required = false) String lokasiToko,
             
-            // --- PERBAIKAN UTAMA ADA DI SINI ---
-            // Kita tangkap checkbox dari HTML (name="metodePembayaran") 
-            // lalu masukkan ke variable Java bernama 'metodeList'
-            @RequestParam(value = "metodePembayaran", required = false) List<String> metodeList, 
+            // === TAMBAHAN BARU (WAJIB ADA) ===
+            @RequestParam(required = false) String namaBank,
+            @RequestParam(required = false) String noRekening,
             
-            // @RequestParam(value = "foto", required = false) MultipartFile foto, // (Opsional: Aktifkan jika mau handle upload foto)
-
-            HttpSession session,
-            Model model
+            // Tangkap checkbox payment
+            @RequestParam(value = "metodePembayaran", required = false) List<String> metodeList, 
+            HttpSession session
     ) {
 
-        // 1. CEK SESSION
-        if (!"PENJUAL".equals(session.getAttribute("role"))) {
+        Penjual sessionPenjual = (Penjual) session.getAttribute("penjual");
+
+        if (sessionPenjual == null || !"PENJUAL".equals(session.getAttribute("role"))) {
             return "redirect:/login";
         }
 
-        Penjual penjual = (Penjual) session.getAttribute("penjual");
+        // 1. Ambil data lama dari DB berdasarkan ID di session
+        Penjual penjual = penjualRepo.findById(sessionPenjual.getPenjualId()).orElse(null);
+        if (penjual == null) return "redirect:/login";
 
-        if (penjual == null) {
-            session.invalidate();
-            return "redirect:/login";
-        }
-
-        // 2. UPDATE DATA DASAR
+        // 2. Update Field Dasar
         penjual.setNamaLengkap(namaLengkap);
         penjual.setEmail(email);
         penjual.setNoHp(noHp);
         penjual.setDeskripsiToko(deskripsi); 
         penjual.setLokasiToko(lokasiToko);
+        
+        // 3. Update Bank & Rekening
+        penjual.setNamaBank(namaBank);
+        penjual.setNoRekening(noRekening);
 
-        // 3. LOGIKA METODE PEMBAYARAN (GABUNGKAN LIST JADI STRING)
-        // Checkbox HTML mengirim list ["COD", "QRIS"], kita ubah jadi "COD,QRIS" buat database
+        // 4. Update Metode Pembayaran
         if (metodeList != null && !metodeList.isEmpty()) {
             String metodeGabungan = String.join(",", metodeList);
             penjual.setMetodePembayaran(metodeGabungan);
         } else {
-            // Jika user uncheck semua, set null di database
             penjual.setMetodePembayaran(null);
         }
 
-        // 4. SIMPAN KE DATABASE
-        penjualRepo.save(penjual); 
+        // 5. SIMPAN KE DB & UPDATE SESSION
+        Penjual savedPenjual = penjualRepo.save(penjual); 
+        session.setAttribute("penjual", savedPenjual); // Simpan hasil save ke session
 
-        // 5. UPDATE SESSION (Penting! Biar pas redirect datanya langsung berubah)
-        session.setAttribute("penjual", penjual);
-
-        return "redirect:/penjual/profil?success=true";
+        return "redirect:/penjual/profil?success=true"; 
     }
 }

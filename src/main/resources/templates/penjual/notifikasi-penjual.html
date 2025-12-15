@@ -6,39 +6,41 @@
 
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/notifikasi.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <div th:replace="fragments/navbar-penjual :: navbar-penjual"></div>
 
 <main class="container">
 
     <h2 class="notif-title">Notifikasi</h2>
 
-    <!-- LIST PESANAN (untuk penjual) -->
     <div th:each="p : ${listPesanan}" class="notif-card">
 
-        <!-- Avatar -->
         <div class="notif-avatar"></div>
 
-        <!-- Isi -->
         <div class="notif-content">
-            <h4 th:text="${p.pembeli != null ? p.pembeli.namaLengkap + ' mengajukan pembelian' : 'Pengajuan'}">Judul</h4>
-            <p class="notif-sub" th:text="${p.produk != null ? p.produk.namaProduk : '-'}">Subjudul</p>
+            <h4 th:text="${mapNotif != null and mapNotif.containsKey(p.pesananId) 
+                          ? mapNotif[p.pesananId].judul 
+                          : (p.pembeli.namaLengkap + ' mengajukan pembelian')}">
+                Judul Notifikasi
+            </h4>
+            
+            <p class="notif-sub" th:text="${mapNotif != null and mapNotif.containsKey(p.pesananId) 
+                          ? mapNotif[p.pesananId].subJudul 
+                          : (p.produk != null ? p.produk.namaProduk : '-')}">
+                Subjudul
+            </p>
 
             <span class="notif-time"
-                  th:text="${mapNotif != null and mapNotif.containsKey(p.pesananId) ? mapNotif[p.pesananId].waktu : ''}">
+                  th:text="${mapNotif != null and mapNotif.containsKey(p.pesananId) 
+                           ? #temporals.format(mapNotif[p.pesananId].waktu, 'dd-MM-yyyy HH:mm') 
+                           : ''}">
                 Waktu
             </span>
         </div>
-
-        <!-- Badge STATUS (gunakan .name() untuk bandingkan) -->
-        <span class="notif-status diterima"
-              th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'DITERIMA'}">
-            Diterima
-        </span>
 
         <span class="notif-status ditolak"
               th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'DITOLAK'}">
@@ -50,17 +52,50 @@
             Menunggu
         </span>
 
-        <!-- Aksi PENJUAL (hanya ketika PENDING) -->
-        <div class="notif-actions"
-             th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'PENDING'}">
+        <span class="notif-status dibayar" style="background: #d4edda; color: #155724; border: 1px solid #c3e6cb;"
+              th:if="${p.statusPesanan != null and p.statusPesanan.name() == 'DIBAYAR'}">
+            <i class="fas fa-box"></i> Siap Kirim
+        </span>
 
-            <button class="btn-tolak" th:attr="data-id=${p.pesananId}">
-                Tolak
-            </button>
+        <span class="notif-status dikirim" style="background: #cce5ff; color: #004085; border: 1px solid #b8daff;"
+              th:if="${p.statusPesanan != null and p.statusPesanan.name() == 'DIKIRIM'}">
+            <i class="fas fa-truck"></i> Sedang Dikirim
+        </span>
+        
+        <span class="notif-status selesai" style="background: #d4edda; color: #155724;"
+              th:if="${p.statusPesanan != null and p.statusPesanan.name() == 'SELESAI'}">
+            <i class="fas fa-check-circle"></i> Selesai
+        </span>
 
-            <button class="btn-terima" th:attr="data-id=${p.pesananId}">
-                Terima
-            </button>
+        <span class="notif-status diterima"
+              th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'DITERIMA' 
+                       and (p.statusPesanan == null or p.statusPesanan.name() == 'MENUNGGU_PEMBAYARAN' or p.statusPesanan.name() == 'VERIFIKASI_ADMIN')}">
+            Menunggu Bayar
+        </span>
+
+        <div class="notif-actions">
+
+            <th:block th:if="${p.statusPengajuan != null and p.statusPengajuan.name() == 'PENDING'}">
+                <button class="btn-tolak" th:attr="data-id=${p.pesananId}">
+                    Tolak
+                </button>
+                <button class="btn-terima" th:attr="data-id=${p.pesananId}">
+                    Terima
+                </button>
+            </th:block>
+
+            <form th:if="${p.statusPesanan != null and p.statusPesanan.name() == 'DIBAYAR'}"
+                  th:action="@{/transaksi/kirim-barang}" method="post"
+                  style="display: inline-block;">
+                
+                <input type="hidden" name="pesananId" th:value="${p.pesananId}">
+                
+                <button type="submit" class="btn-primary" 
+                        style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-truck"></i> Konfirmasi Kirim
+                </button>
+            </form>
+
         </div>
 
     </div>
@@ -69,7 +104,7 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-
+    // Event Listener untuk Tombol Terima (Pending)
     document.querySelectorAll(".btn-terima").forEach(btn => {
         btn.addEventListener("click", function () {
             let id = this.dataset.id;
@@ -80,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Event Listener untuk Tombol Tolak (Pending)
     document.querySelectorAll(".btn-tolak").forEach(btn => {
         btn.addEventListener("click", function () {
             let id = this.dataset.id;
@@ -89,7 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
-
 });
 </script>
 

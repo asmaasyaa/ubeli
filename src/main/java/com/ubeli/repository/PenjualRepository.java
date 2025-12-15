@@ -11,6 +11,9 @@ public interface PenjualRepository extends JpaRepository<Penjual, Long> {
     // Cari penjual by email
     Optional<Penjual> findByEmail(String email);
 
+    boolean existsByEmail(String email);
+    //Pembeli findByEmailAndPassword(String email, String password);
+
     // Sama seperti pembeli
     Page<Penjual> findByNamaLengkapContainingIgnoreCase(String keyword, Pageable pageable);
 

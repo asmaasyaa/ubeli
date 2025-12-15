@@ -14,6 +14,7 @@ import com.ubeli.repository.*;
 import com.ubeli.enums.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -27,7 +28,7 @@ public class AdminController {
     @Autowired private PenjualRepository penjualRepo;
     @Autowired private LaporanRepository laporanRepo;
     @Autowired private ProdukRepository produkRepo;
-    
+    @Autowired private NotifikasiRepository notifikasiRepo;
 
     @GetMapping("/login")
     public String formLoginAdmin() {
@@ -216,27 +217,24 @@ public class AdminController {
 
     // FITUR VERIFIKASI PEMBAYARAN 
     @GetMapping("/verifikasi-bayar")
-    public String halamanVerifikasi(Model model, 
-                                    @RequestParam(defaultValue = "pending") String tab) {
+    public String halamanVerifikasi(Model model, @RequestParam(defaultValue = "pending") String tab) {
         
-        List<Pesanan> dataTampil;
+        List<Pesanan> dataTampil = pesananRepo.findAll();
 
         if (tab.equals("dibatalkan")) {
-            dataTampil = pesananRepo.findAll();
-            dataTampil.removeIf(p -> 
-                !(p.getStatusPesanan() == StatusPesanan.DIBATALKAN)
-            );
+            dataTampil.removeIf(p -> !(p.getStatusPesanan() == StatusPesanan.DIBATALKAN));
         } 
         else if (tab.equals("riwayat")) {
-            dataTampil = pesananRepo.findAll();
-            dataTampil.removeIf(p -> 
-                !(p.getStatusPesanan() == StatusPesanan.DIBAYAR || 
-                  p.getStatusPesanan() == StatusPesanan.DIKIRIM || 
-                  p.getStatusPesanan() == StatusPesanan.SELESAI)
-            );
+            // Updated logic for 'riwayat' to include 'DIKIRIM' and 'DIBAYAR' (processing)
+            dataTampil.removeIf(p -> !(p.getStatusPesanan() == StatusPesanan.DIBAYAR || 
+                                      p.getStatusPesanan() == StatusPesanan.DIKIRIM));
         } 
+        else if (tab.equals("selesai")) { // NEW TAB LOGIC
+             dataTampil.removeIf(p -> !(p.getStatusPesanan() == StatusPesanan.SELESAI));
+        }
         else {
-            dataTampil = pesananRepo.findByStatusPesanan(StatusPesanan.VERIFIKASI_ADMIN);
+            // Default: pending verifikasi
+            dataTampil.removeIf(p -> p.getStatusPesanan() != StatusPesanan.VERIFIKASI_ADMIN);
         }
 
         model.addAttribute("listPesanan", dataTampil);
@@ -250,7 +248,33 @@ public class AdminController {
         Pesanan p = pesananRepo.findById(pesananId).orElse(null);
         if (p != null) {
             if (aksi.equals("TERIMA")) {
-                p.setStatusPesanan(StatusPesanan.DIBAYAR); 
+                p.setStatusPesanan(StatusPesanan.DIBAYAR);
+                
+                String namaProduk = "Barang"; // Default kalau gak nemu
+                
+                // Cek 1: Ambil dari relasi langsung (kalau ada)
+                if (p.getProduk() != null) {
+                    namaProduk = p.getProduk().getNamaProduk();
+                } 
+                // Cek 2: Ambil dari Item pertama (kalau relasi langsung kosong)
+                else if (p.getItems() != null && !p.getItems().isEmpty()) {
+                    if (p.getItems().get(0).getProduk() != null) {
+                        namaProduk = p.getItems().get(0).getProduk().getNamaProduk();
+                    }
+                }
+
+                Notifikasi notif = new Notifikasi();
+                notif.setJudul("Pembayaran Diterima ✅");
+                notif.setSubJudul("Pesanan untuk " + namaProduk + " sudah lunas. Segera kirim barang!");
+                notif.setWaktu(LocalDateTime.now());
+                notif.setStatus("DIBAYAR"); // Status khusus buat badge notif
+                
+                notif.setPesanan(p);
+                notif.setPenjual(p.getPenjual()); // Kirim ke Penjual
+                // notif.setPembeli(p.getPembeli()); // Opsional
+                
+                notifikasiRepo.save(notif);
+
             } else {
                 p.setStatusPesanan(StatusPesanan.DIBATALKAN); 
             }
