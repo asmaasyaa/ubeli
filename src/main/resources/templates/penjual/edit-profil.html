@@ -85,7 +85,9 @@
                         
                         <!-- COD -->
                         <label class="payment-option">
-                            <input type="checkbox" name="metodePembayaran" value="COD" checked>
+                            <input type="checkbox" name="metodePembayaran" value="COD" 
+                                   th:checked="${penjual.metodePembayaran != null and #strings.contains(penjual.metodePembayaran, 'COD')}">
+                                   
                             <div class="payment-option-box">
                                 <div class="payment-icon cod">
                                     <i class="fas fa-hand-holding-usd"></i>
@@ -99,10 +101,11 @@
                                 </div>
                             </div>
                         </label>
-
-                        <!-- QRIS -->
+                        
                         <label class="payment-option">
-                            <input type="checkbox" name="metodePembayaran" value="QRIS" checked>
+                            <input type="checkbox" name="metodePembayaran" value="QRIS"
+                                   th:checked="${penjual.metodePembayaran != null and #strings.contains(penjual.metodePembayaran, 'QRIS')}">
+                                   
                             <div class="payment-option-box">
                                 <div class="payment-icon qris">
                                     <i class="fas fa-qrcode"></i>

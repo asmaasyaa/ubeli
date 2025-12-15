@@ -5,6 +5,16 @@
     <link rel="stylesheet" href="/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Tambahan Style untuk Info Detail */
+        .detail-info { font-size: 13px; color: #555; line-height: 1.4; }
+        .detail-info strong { color: #333; }
+        .badge-method { 
+            padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+        }
+        .badge-cod { background: #E8EDF5; color: #3B5998; border: 1px solid #3B5998; }
+        .badge-tf { background: #e3f2fd; color: #2196f3; border: 1px solid #2196f3; }
+    </style>
 </head>
 <body>
 
@@ -36,7 +46,7 @@
         <header class="top-navbar">
             <div class="page-header" style="margin-bottom:0;">
                 <h1 class="page-title">Verifikasi Pembayaran</h1>
-                <p class="page-subtitle">Kelola bukti transfer masuk.</p>
+                <p class="page-subtitle">Kelola bukti transfer dan konfirmasi pesanan.</p>
             </div>
             <div class="profile-dropdown"><div class="avatar">A</div><div class="profile-info"><span class="name">Administrator</span>
                 <span class="role">Super Admin</span></div></div>
@@ -65,19 +75,52 @@
                     <table th:if="${not #lists.isEmpty(listPesanan)}">
                         <thead>
                             <tr>
-                                <th>ID</th><th>Pembeli</th><th>Total</th><th>Bukti</th><th>Aksi</th>
+                                <th>ID</th>
+                                <th>Produk & Penjual</th>
+                                <th>Pembeli & Metode</th>
+                                <th>Total</th>
+                                <th>Bukti</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="p : ${listPesanan}">
                                 <td><span class="id-badge" th:text="'#' + ${p.pesananId}"></span></td>
-                                <td th:text="${p.pembeli.namaLengkap}"></td>
+                                
+                                <td>
+                                    <div class="detail-info">
+                                        <strong th:text="${p.item != null ? p.item.produk.namaProduk : 'Produk'}">Produk</strong><br>
+                                        <span style="font-size:12px; color:#888;">Penjual: </span>
+                                        <span th:text="${p.penjual.namaLengkap}">Nama Penjual</span><br>
+                                        
+                                        <div style="margin-top:4px; font-size:11px; background:#f9f9f9; padding:4px; border-radius:4px;">
+                                            <i class="fas fa-university"></i> 
+                                            <span th:text="${p.penjual.namaBank != null ? p.penjual.namaBank : '-'}">Bank</span> - 
+                                            <span th:text="${p.penjual.noRekening != null ? p.penjual.noRekening : '-'}">No Rek</span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="detail-info">
+                                        <strong th:text="${p.pembeli.namaLengkap}">Nama Pembeli</strong><br>
+                                        
+                                        <span class="badge-method badge-cod" th:if="${p.metodePembayaran == 'COD'}">COD</span>
+                                        <span class="badge-method badge-tf" th:if="${p.metodePembayaran != 'COD'}">TRANSFER</span>
+                                    </div>
+                                </td>
+
                                 <td>Rp <span th:text="${#numbers.formatDecimal(p.totalHarga, 0, 'COMMA', 0, 'POINT')}"></span></td>
-                                <td><a th:href="${p.buktiTransferUrl}" target="_blank" class="btn-link">Lihat Bukti</a></td>
+                                
+                                <td>
+                                    <a th:if="${p.buktiTransferUrl != null}" th:href="${p.buktiTransferUrl}" target="_blank" class="btn-link">Lihat Bukti</a>
+                                    <span th:if="${p.buktiTransferUrl == null}" style="color:#aaa; font-size:12px;">-</span>
+                                </td>
+
                                 <td>
                                     <form action="/admin/verifikasi-bayar/proses" method="post" style="display:flex; gap:8px;">
                                         <input type="hidden" name="pesananId" th:value="${p.pesananId}">
-                                        <button type="submit" name="aksi" value="TERIMA" class="btn-icon btn-approve" title="Terima"><i class="fas fa-check"></i></button>
+                                        <button type="submit" name="aksi" value="TERIMA" class="btn-icon btn-approve" title="Terima/ACC"><i class="fas fa-check"></i></button>
                                         <button type="submit" name="aksi" value="TOLAK" class="btn-icon btn-reject" title="Tolak"><i class="fas fa-times"></i></button>
                                     </form>
                                 </td>
@@ -85,7 +128,7 @@
                         </tbody>
                     </table>
                     <p th:if="${#lists.isEmpty(listPesanan)}" style="text-align:center; padding:20px; color:#888;">
-                        Tidak ada pembayaran baru.
+                        Tidak ada pembayaran baru yang perlu diverifikasi.
                     </p>
                 </div>
 
@@ -93,13 +136,14 @@
                     <table th:if="${not #lists.isEmpty(listPesanan)}">
                         <thead>
                             <tr>
-                                <th>ID</th><th>Pembeli</th><th>Total</th><th>Status</th>
+                                <th>ID</th><th>Pembeli</th><th>Metode</th><th>Total</th><th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="p : ${listPesanan}">
                                 <td><span class="id-badge" th:text="'#' + ${p.pesananId}"></span></td>
                                 <td th:text="${p.pembeli.namaLengkap}"></td>
+                                <td th:text="${p.metodePembayaran}"></td>
                                 <td th:text="'Rp ' + ${#numbers.formatDecimal(p.totalHarga, 0, 'COMMA', 0, 'POINT')}"></td>
                                 <td>
                                     <span class="badge-status badge-danger">DIBATALKAN</span>
@@ -116,13 +160,14 @@
                     <table th:if="${not #lists.isEmpty(listPesanan)}">
                         <thead>
                             <tr>
-                                <th>ID</th><th>Pembeli</th><th>Total</th><th>Status Akhir</th>
+                                <th>ID</th><th>Pembeli</th><th>Metode</th><th>Total</th><th>Status Akhir</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="p : ${listPesanan}">
                                 <td><span class="id-badge" th:text="'#' + ${p.pesananId}"></span></td>
                                 <td th:text="${p.pembeli.namaLengkap}"></td>
+                                <td th:text="${p.metodePembayaran}"></td>
                                 <td th:text="'Rp ' + ${#numbers.formatDecimal(p.totalHarga, 0, 'COMMA', 0, 'POINT')}"></td>
                                 <td>
                                     <span class="badge-status badge-success" th:text="${p.statusPesanan}"></span>

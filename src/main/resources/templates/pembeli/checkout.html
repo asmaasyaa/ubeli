@@ -3,55 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Bukti Pembayaran | UBeli</title>
+    <title>Checkout & Pembayaran | UBeli</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/checkout.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* CSS Tambahan untuk Area Upload */
+        /* --- CSS Tambahan --- */
         .upload-area {
-            border: 2px dashed #3B5998;
-            padding: 25px;
-            text-align: center;
-            border-radius: 12px;
-            background: #f8f9fa;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: all 0.3s ease;
+            border: 2px dashed #3B5998; padding: 25px; text-align: center;
+            border-radius: 12px; background: #f8f9fa; cursor: pointer;
+            margin-top: 15px; transition: all 0.3s ease;
         }
         .upload-area:hover { background: #eef2ff; border-color: #2c4275; }
         .upload-text { color: #555; margin-top: 10px; font-size: 14px; }
         #preview-container { margin-top: 15px; display: none; }
         #preview-img { max-width: 100%; border-radius: 8px; border: 1px solid #ddd; }
 
-        /* CSS untuk Pilihan Metode Pembayaran */
+        /* Card Metode Pembayaran */
         .method-card {
-            cursor: pointer;
-            border: 1px solid #eee;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            gap: 15px;
+            cursor: pointer; border: 1px solid #eee; transition: 0.2s;
+            display: flex; align-items: center; padding: 15px;
+            border-radius: 8px; margin-bottom: 10px; gap: 15px;
         }
         .method-card:hover { border-color: #3B5998; background: #f8f9fa; }
-        .method-card.active {
-            border-color: #3B5998;
-            background: #eef2ff;
-        }
+        .method-card.active { border-color: #3B5998; background: #eef2ff; }
         .method-check { display: none; color: #3B5998; font-weight: bold; font-size: 18px; margin-left: auto; }
         .method-card.active .method-check { display: block; }
         .method-icon { font-size: 24px; color: #555; width: 30px; text-align: center;}
         
+        /* Tombol QRIS */
         .btn-view-qris {
             background: #fff; border: 1px solid #3B5998; color: #3B5998;
             padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-top: 5px;
         }
         .btn-view-qris:hover { background: #3B5998; color: white; }
 
-        /* CSS Modal (Pop-up QRIS) */
+        /* Modal QRIS */
         .modal {
             display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center;
@@ -60,10 +47,29 @@
             background-color: #fff; padding: 20px; border-radius: 10px; text-align: center;
             max-width: 350px; width: 90%; position: relative;
         }
-        .close-btn {
-            position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #aaa;
-        }
+        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #aaa; }
         .qr-image-full { width: 100%; max-width: 300px; margin-top: 10px; }
+
+        /* --- BOX DETAIL PENGAMBILAN (Desain Baru Sesuai Foto) --- */
+        .pickup-section-title {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 16px; font-weight: 700; color: #333; margin-bottom: 10px; margin-top: 25px;
+        }
+        .pickup-box {
+            background-color: #E8EDF5; /* Warna abu kebiruan persis foto */
+            border-radius: 8px; 
+            padding: 15px;
+            display: flex; align-items: flex-start; gap: 15px;
+            border: none;
+        }
+        .pickup-icon-box {
+            background: #3B5998; color: white; width: 45px; height: 45px;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+        }
+        .pickup-content h4 { margin: 0 0 4px 0; font-size: 15px; color: #222; font-weight: 600; }
+        .pickup-content p { margin: 0 0 4px 0; font-size: 14px; color: #555; }
+        .pickup-estimate { color: #E74C3C; font-size: 13px; font-weight: 500; display: block; }
     </style>
 </head>
 <body>
@@ -83,37 +89,47 @@
                 <div class="box item-box">
                     <h3 class="box-title">Item yang dipesan <span style="font-weight:400; font-size:14px; color:#888;">(ID: #<span th:text="${pesanan.pesananId}"></span>)</span></h3>
 
-                    <div class="item-card" style="display: flex; align-items: center;"> <img th:if="${produk != null && not #lists.isEmpty(produk.listFoto)}" 
-                        th:src="${produk.listFoto[0].urlFoto}" class="item-thumb"
-                        style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
-                   <div th:if="${produk == null or #lists.isEmpty(produk.listFoto)}" 
-                        class="item-thumb" style="width: 80px; height: 80px; background: #3B5998; border-radius: 8px;"></div>
-               
-                   <div class="item-info" style="flex: 1; margin-left: 15px; display: flex; flex-direction: column; justify-content: center;">
-                       
-                       <h4 class="item-name" 
-                           th:text="${produk != null ? produk.namaProduk : 'Produk'}"
-                           style="margin: 0 0 5px 0; font-size: 16px;">
-                           Nama Produk
-                       </h4>
-                       
-                       <div class="item-meta" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-               
-                           <span class="qty" style="color: #666; font-size: 14px;">
-                               Qty: <b style="color: #000;">1</b>
-                           </span> 
-                           
-                           <span class="price" style="color:#E74C3C; font-weight: bold; font-size: 16px;" 
-                                 th:text="'Rp' + ${#numbers.formatDecimal(pesanan.totalHarga, 0, 'COMMA', 0, 'POINT')}">
-                                 Rp 0
-                           </span>
-                       
-                       </div>
-                   </div>
-               </div>
+                    <div class="item-card" style="display: flex; align-items: center;"> 
+                        <img th:if="${produk != null && not #lists.isEmpty(produk.listFoto)}" 
+                             th:src="${produk.listFoto[0].urlFoto}" class="item-thumb"
+                             style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                        <div th:if="${produk == null or #lists.isEmpty(produk.listFoto)}" 
+                             class="item-thumb" style="width: 80px; height: 80px; background: #3B5998; border-radius: 8px;"></div>
+                
+                        <div class="item-info" style="flex: 1; margin-left: 15px; display: flex; flex-direction: column; justify-content: center;">
+                            <h4 class="item-name" 
+                                th:text="${produk != null ? produk.namaProduk : 'Produk'}"
+                                style="margin: 0 0 5px 0; font-size: 16px;">Nama Produk</h4>
+                            
+                            <div class="item-meta" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <span class="qty" style="color: #666; font-size: 14px;">Qty: <b style="color: #000;">1</b></span> 
+                                <span class="price" style="color:#E74C3C; font-weight: bold; font-size: 16px;" 
+                                      th:text="'Rp' + ${#numbers.formatDecimal(pesanan.totalHarga, 0, 'COMMA', 0, 'POINT')}">Rp 0</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="box">
+                <div id="detail-pengambilan-section" style="display: none;">
+                    
+                    <div class="pickup-section-title">
+                        <span>Detail Pengambilan</span>
+                        <i class="fas fa-chevron-right" style="font-size: 14px; color: #888;"></i>
+                    </div>
+
+                    <div class="pickup-box">
+                        <div class="pickup-icon-box">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="pickup-content">
+                            <h4>Cash on Delivery (COD)</h4>
+                            <p>Pembayaran di Tempat (Chat Penjual)</p>
+                            <span class="pickup-estimate">Estimasi: Hari ini atau Besok (Chat Penjual)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box" id="box-konfirmasi-upload" style="margin-top: 20px;">
                     <h3 class="box-title" style="color:#3B5998;">Konfirmasi Pembayaran</h3>
                     
                     <div id="info-transfer" class="alert-safe" style="background:#e3f2fd; border-left: 4px solid #2196f3; margin-bottom:15px;">
@@ -132,7 +148,7 @@
                     <div class="upload-area" onclick="document.getElementById('fileBukti').click()">
                         <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: #3B5998;"></i>
                         <p class="upload-text">Klik di sini untuk upload bukti transfer (JPG/PNG)</p>
-                        <input type="file" id="fileBukti" name="fileBukti" accept="image/*" hidden required onchange="previewImage(this)">
+                        <input type="file" id="fileBukti" name="fileBukti" accept="image/*" hidden onchange="previewImage(this)">
                     </div>
 
                     <div id="preview-container">
@@ -169,7 +185,8 @@
                         <div class="method-check"><i class="fas fa-check-circle"></i></div>
                     </div>
 
-                    <div class="method-card" id="card-qris" onclick="selectMethod('QRIS')">
+                    <div class="method-card" id="card-qris" onclick="selectMethod('QRIS')"
+                         th:if="${pesanan.penjual.metodePembayaran != null and #strings.contains(pesanan.penjual.metodePembayaran, 'QRIS')}">
                         <div class="method-icon"><i class="fas fa-qrcode"></i></div>
                         <div>
                             <strong>QRIS</strong>
@@ -178,22 +195,27 @@
                         <div class="method-check"><i class="fas fa-check-circle"></i></div>
                     </div>
 
+                    <div class="method-card" id="card-cod" onclick="selectMethod('COD')"
+                         th:if="${pesanan.penjual.metodePembayaran != null and #strings.contains(pesanan.penjual.metodePembayaran, 'COD')}">
+                        <div class="method-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                        <div>
+                            <strong>Cash on Delivery (COD)</strong>
+                            <p style="font-size:12px; margin:0; color:#666;">Bayar saat barang tiba</p>
+                        </div>
+                        <div class="method-check"><i class="fas fa-check-circle"></i></div>
+                    </div>
+
                 </div>
 
                 <div class="alert-safe">
                     <strong>Transaksi Aman</strong>
-                    <p>Bukti pembayaran Anda akan diverifikasi oleh Admin.</p>
+                    <p>Semua pembayaran dienkripsi dan diproses melalui pembayaran terverifikasi.</p>
                 </div>
 
-                <form th:action="@{/transaksi/bayar}" method="post" enctype="multipart/form-data">
-
-                    <div class="btn-row">
-                        <a href="/riwayat-pesanan" class="btn-light" style="text-align:center; padding-top:12px;">Batal</a>
-                        
-                        <button type="submit" class="btn-primary">Kirim Bukti Pembayaran</button>
-                    </div>
-                
-                </form>
+                <div class="btn-row">
+                    <a href="/riwayat-pesanan" class="btn-light" style="text-align:center; padding-top:12px;">Batal</a>
+                    <button type="submit" class="btn-primary" id="btn-submit">Kirim Bukti Pembayaran</button>
+                </div>
 
             </section>
 
@@ -226,40 +248,52 @@
 
         // Logic Ganti Metode Pembayaran
         function selectMethod(method) {
-            // Reset Class Active
-            document.getElementById('card-transfer').classList.remove('active');
-            document.getElementById('card-qris').classList.remove('active');
-
-            // Hide Info
+            // 1. Reset Tampilan
+            document.querySelectorAll('.method-card').forEach(el => el.classList.remove('active'));
             document.getElementById('info-transfer').style.display = 'none';
             document.getElementById('info-qris').style.display = 'none';
-
-            // Set Value Hidden Input
+            
+            // Default State
+            document.getElementById('box-konfirmasi-upload').style.display = 'block'; // Tampilkan upload box
+            document.getElementById('detail-pengambilan-section').style.display = 'none'; // Sembunyikan detail COD
+            document.getElementById('btn-submit').innerText = "Kirim Bukti Pembayaran";
+            document.getElementById('fileBukti').required = true;
+            
+            // Set Hidden Input
             document.getElementById('selectedMethod').value = method;
 
+            // 2. Logic Per Metode
             if (method === 'TRANSFER') {
                 document.getElementById('card-transfer').classList.add('active');
                 document.getElementById('info-transfer').style.display = 'block';
+
             } else if (method === 'QRIS') {
-                document.getElementById('card-qris').classList.add('active');
+                const cardQris = document.getElementById('card-qris');
+                if(cardQris) cardQris.classList.add('active');
                 document.getElementById('info-qris').style.display = 'block';
+
+            } else if (method === 'COD') {
+                const cardCod = document.getElementById('card-cod');
+                if(cardCod) cardCod.classList.add('active');
+
+                // Tampilkan Detail Pengambilan (Box Abu-abu)
+                document.getElementById('detail-pengambilan-section').style.display = 'block';
+                
+                // SEMBUNYIKAN Box Upload (Karena COD gak perlu bukti transfer)
+                document.getElementById('box-konfirmasi-upload').style.display = 'none';
+                
+                // Ubah Text Tombol
+                document.getElementById('btn-submit').innerText = "Pesan Sekarang";
+                document.getElementById('fileBukti').required = false; 
             }
         }
 
         // Logic Modal QRIS
-        function openQrisModal() {
-            document.getElementById('qrisModal').style.display = 'flex';
-        }
-        function closeQrisModal() {
-            document.getElementById('qrisModal').style.display = 'none';
-        }
-
-        // Close modal when clicking outside
+        function openQrisModal() { document.getElementById('qrisModal').style.display = 'flex'; }
+        function closeQrisModal() { document.getElementById('qrisModal').style.display = 'none'; }
         window.onclick = function(event) {
             var modal = document.getElementById('qrisModal');
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+            if (event.target == modal) modal.style.display = "none";
         }
     </script>
 

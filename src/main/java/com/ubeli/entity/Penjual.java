@@ -39,4 +39,7 @@ public class Penjual {
 
     @OneToMany(mappedBy = "terlapor")
     private List<Laporan> laporans = new ArrayList<>();
+    
+    @Column(name = "metode_pembayaran")
+    private String metodePembayaran;
 }

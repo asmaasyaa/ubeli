@@ -74,11 +74,7 @@ main.container { padding-bottom: 80px; }
 }
 
 
-<<<<<<< HEAD
-=======
-/* ================= HERO BANNER ================= */
->>>>>>> main
-/* ================= HERO BANNER (CAROUSEL) - BAGIAN PENTING ================= */
+/* ================= HERO BANNER (CAROUSEL) ================= */
 .hero-banner {
     margin-top: 20px;
     position: relative;
@@ -200,10 +196,7 @@ main.container { padding-bottom: 80px; }
     font-size: 28px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s;
 }
 .cat-item:hover .cat-icon { border-color: #3B5998; transform: translateY(-3px); }
-<<<<<<< HEAD
 
-=======
->>>>>>> main
 
 /* ================= PRODUCT SECTION ================= */
 .product-section { margin-bottom: 50px; }
@@ -258,36 +251,27 @@ main.container { padding-bottom: 80px; }
 .price { color: #E74C3C; font-weight: 700; font-size: 16px; }
 .original-price { font-size: 12px; color: #aaa; text-decoration: line-through; }
 
+/* --- PERBAIKAN KONFLIK TOMBOL WISHLIST --- */
 .btn-wishlist-card {
-<<<<<<< HEAD
     position: absolute; bottom: 15px; right: 15px;
     background: none; border: none; font-size: 20px; color: #ccc; cursor: pointer;
-=======
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: default;
->>>>>>> UI-dulu
 }
 .btn-wishlist-card:hover { color: #E74C3C; }
 
-<<<<<<< HEAD
-=======
+/* Style Icon Hati (Tambahan dari UI-dulu, digabung kesini) */
 .btn-wishlist-card i {
-    color: white;
+    color: #ccc; /* Default abu */
+    transition: 0.3s;
 }
 
 .btn-wishlist-card i.active {
-    color: #E74C3C; /* merah */
+    color: #E74C3C; /* Merah jika di-wishlist */
 }
 
 .btn-wishlist-card:disabled {
-    opacity: 1;
+    opacity: 1; cursor: default;
 }
->>>>>>> UI-dulu
+
 
 /* ================= DETAIL PAGE ================= */
 .detail-page {

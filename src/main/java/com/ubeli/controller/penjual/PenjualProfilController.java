@@ -9,10 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+// import org.springframework.web.multipart.MultipartFile; // Aktifkan jika sudah ada logic upload foto
 
 import java.util.List;
 
@@ -25,6 +24,9 @@ public class PenjualProfilController {
     @Autowired
     private PenjualRepository penjualRepo;
 
+    // ==========================================
+    // 1. HALAMAN PROFIL (READ)
+    // ==========================================
     @GetMapping("/penjual/profil")
     public String profilPenjual(HttpSession session, Model model) {
 
@@ -37,7 +39,6 @@ public class PenjualProfilController {
         Penjual penjual = (Penjual) session.getAttribute("penjual");
 
         if (penjual == null) {  
-            // kalau null, langsung logout untuk bersihkan session rusak
             session.invalidate();
             return "redirect:/login";
         }
@@ -51,7 +52,9 @@ public class PenjualProfilController {
         return "penjual/profil";
     }
     
-    // HALAMAN EDIT PROFIL 
+    // ==========================================
+    // 2. HALAMAN EDIT PROFIL (FORM)
+    // ==========================================
     @GetMapping("/penjual/edit-profil")
     public String editProfil(HttpSession session, Model model) {
 
@@ -60,7 +63,6 @@ public class PenjualProfilController {
             return "redirect:/login";
         }
 
-        // CEK PENJUAL DALAM SESSION
         Penjual penjual = (Penjual) session.getAttribute("penjual");
 
         if (penjual == null) {
@@ -73,6 +75,9 @@ public class PenjualProfilController {
         return "penjual/edit-profil"; 
     }
 
+    // ==========================================
+    // 3. PROSES UPDATE PROFIL (ACTION)
+    // ==========================================
     @PostMapping("/penjual/update-profil")
     public String updateProfil(
             @RequestParam String namaLengkap,
@@ -80,16 +85,23 @@ public class PenjualProfilController {
             @RequestParam String noHp,
             @RequestParam(required = false) String deskripsi,
             @RequestParam(required = false) String lokasiToko,
+            
+            // --- PERBAIKAN UTAMA ADA DI SINI ---
+            // Kita tangkap checkbox dari HTML (name="metodePembayaran") 
+            // lalu masukkan ke variable Java bernama 'metodeList'
+            @RequestParam(value = "metodePembayaran", required = false) List<String> metodeList, 
+            
+            // @RequestParam(value = "foto", required = false) MultipartFile foto, // (Opsional: Aktifkan jika mau handle upload foto)
+
             HttpSession session,
             Model model
     ) {
 
-        // CEK ROLE
+        // 1. CEK SESSION
         if (!"PENJUAL".equals(session.getAttribute("role"))) {
             return "redirect:/login";
         }
 
-        // AMBIL PENJUAL DARI SESSION
         Penjual penjual = (Penjual) session.getAttribute("penjual");
 
         if (penjual == null) {
@@ -97,20 +109,29 @@ public class PenjualProfilController {
             return "redirect:/login";
         }
 
-        // UPDATE FIELD
+        // 2. UPDATE DATA DASAR
         penjual.setNamaLengkap(namaLengkap);
         penjual.setEmail(email);
         penjual.setNoHp(noHp);
         penjual.setDeskripsiToko(deskripsi); 
         penjual.setLokasiToko(lokasiToko);
 
-        // SIMPAN KE DATABASE
+        // 3. LOGIKA METODE PEMBAYARAN (GABUNGKAN LIST JADI STRING)
+        // Checkbox HTML mengirim list ["COD", "QRIS"], kita ubah jadi "COD,QRIS" buat database
+        if (metodeList != null && !metodeList.isEmpty()) {
+            String metodeGabungan = String.join(",", metodeList);
+            penjual.setMetodePembayaran(metodeGabungan);
+        } else {
+            // Jika user uncheck semua, set null di database
+            penjual.setMetodePembayaran(null);
+        }
+
+        // 4. SIMPAN KE DATABASE
         penjualRepo.save(penjual); 
 
-        // UPDATE DATA DI SESSION AGAR PERUBAHAN LANGSUNG TERLIHAT
+        // 5. UPDATE SESSION (Penting! Biar pas redirect datanya langsung berubah)
         session.setAttribute("penjual", penjual);
 
-        return "redirect:/penjual/profil?success";
+        return "redirect:/penjual/profil?success=true";
     }
-
 }

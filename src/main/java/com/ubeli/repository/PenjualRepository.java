@@ -13,4 +13,6 @@ public interface PenjualRepository extends JpaRepository<Penjual, Long> {
 
     // Sama seperti pembeli
     Page<Penjual> findByNamaLengkapContainingIgnoreCase(String keyword, Pageable pageable);
+
+    
 }
