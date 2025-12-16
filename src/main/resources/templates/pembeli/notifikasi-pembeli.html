@@ -6,80 +6,68 @@
 
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/notifikasi.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <div th:replace="fragments/navbar :: navbar"></div>
 
 <main class="container">
 
     <h2 class="notif-title">Notifikasi</h2>
 
-    <!-- LIST NOTIFIKASI -->
     <div th:each="n : ${listNotif}" class="notif-card">
 
-        <!-- Avatar -->
         <div class="notif-avatar"></div>
 
-        <!-- Isi -->
         <div class="notif-content">
             <h4 th:text="${n.judul}">Judul</h4>
             <p class="notif-sub" th:text="${n.subJudul}">Subjudul</p>
-            <span class="notif-time" th:text="${n.waktu}">Waktu</span>
+            <span class="notif-time" th:text="${#temporals.format(n.waktu, 'dd-MM-yyyy HH:mm')}">Waktu</span>
         </div>
 
-        <!-- Badge -->
-        <span class="notif-status diterima"  th:if="${n.status == 'DITERIMA'}">Diterima</span>
-        <span class="notif-status ditolak"   th:if="${n.status == 'DITOLAK'}">Ditolak</span>
-        <span class="notif-status menunggu"  th:if="${n.status == 'MENUNGGU'}">Menunggu</span>
+        <span class="notif-status diterima" th:if="${n.status == 'DITERIMA'}">Menunggu Bayar</span>
+        <span class="notif-status ditolak"  th:if="${n.status == 'DITOLAK'}">Ditolak</span>
+        <span class="notif-status menunggu" th:if="${n.status == 'MENUNGGU'}">Menunggu</span>
+        
+        <span class="notif-status dikirim" 
+              style="background: #cce5ff; color: #004085; border: 1px solid #b8daff;"
+              th:if="${n.status == 'DIKIRIM'}">
+            <i class="fas fa-truck"></i> Sedang Dikirim
+        </span>
 
-        <!-- ========================= -->
-        <!-- AKSI UNTUK PEMBELI -->
-        <!-- ========================= -->
-        <div class="notif-actions"
-            th:if="${role == 'PEMBELI' and n.status == 'DITERIMA'}">
+        <span class="notif-status selesai" 
+              style="background: #d4edda; color: #155724;"
+              th:if="${n.status == 'SELESAI'}">
+            <i class="fas fa-check-circle"></i> Selesai
+        </span>
 
-            <a th:href="@{'/pesanan/' + ${n.pesanan.pesananId} + '/lanjut'}"
+        <div class="notif-actions">
+
+            <a th:if="${n.status == 'DITERIMA'}"
+               th:href="@{'/pesanan/' + ${n.pesanan.pesananId} + '/lanjut'}"
                class="btn-primary">
                 Lanjutkan Transaksi
             </a>
 
-        </div>
+            <form th:if="${n.status == 'DIKIRIM'}"
+                  th:action="@{/transaksi/konfirmasi-terima}" method="post">
+                
+                <input type="hidden" name="pesananId" th:value="${n.pesanan.pesananId}">
+                
+                <button type="submit" class="btn-primary" 
+                        onclick="return confirm('Apakah barang sudah diterima dengan baik?')"
+                        style="background: #3B5998; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-box-open"></i> Pesanan Diterima
+                </button>
+            </form>
+
+            </div>
 
     </div>
 
 </main>
-
-<!-- ========================= -->
-<!-- JAVASCRIPT POPUP TERIMA/TOLAK -->
-<!-- ========================= -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-    // tombol terima
-    document.querySelectorAll(".btn-terima").forEach(btn => {
-        btn.addEventListener("click", function () {
-            let id = this.dataset.id;
-            if (confirm("Yakin ingin MENERIMA pengajuan ini?")) {
-                window.location.href = "/terima/" + id;
-            }
-        });
-    });
-
-    // tombol tolak
-    document.querySelectorAll(".btn-tolak").forEach(btn => {
-        btn.addEventListener("click", function () {
-            let id = this.dataset.id;
-            if (confirm("Yakin ingin MENOLAK pengajuan ini?")) {
-                window.location.href = "/tolak/" + id;
-            }
-        });
-    });
-
-});
-</script>
 
 </body>
 </html>
